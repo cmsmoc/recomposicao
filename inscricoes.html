@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscrições — CMS Montes Claros</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2E5A;--blue:#1B6CB5;--green:#1E8A4A;--yellow:#F5C400;--white:#FFFFFF;--off:#F7F8FA;--ink:#111827;--muted:#6B7280;--border:#E5E7EB;--text:#374151;--red:#DC2626;--orange:#D97706;--font-d:'Montserrat',sans-serif;--font-b:'Open Sans',sans-serif;--r-sm:6px;--r-md:12px;--r-lg:16px}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--off);color:var(--text);font-family:var(--font-b);min-height:100vh}
+.stripe{height:4px;background:linear-gradient(to right,#F5C400 33.3%,#1E8A4A 33.3% 66.6%,#1B6CB5 66.6%)}
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(13,46,90,.3)}
+.brand{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:white;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-bar{width:3px;height:22px;background:var(--yellow);border-radius:2px}.brand span{color:var(--yellow)}
+.nav{display:flex;gap:2px}.nav a{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:6px 13px;border-radius:var(--r-sm);transition:all .18s}
+.nav a:hover{color:var(--yellow);background:rgba(245,196,0,.08)}.nav a.active{color:var(--yellow);background:rgba(245,196,0,.12)}
+.hero{background:var(--navy);padding:40px 48px 36px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-80px;right:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(245,196,0,.09) 0%,transparent 65%);pointer-events:none}
+.ey{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ey::before{content:'';width:20px;height:2px;background:var(--yellow)}
+.hero h1{font-family:var(--font-d);font-size:clamp(26px,3vw,42px);font-weight:900;letter-spacing:-2px;line-height:.95;color:white;margin-bottom:8px;position:relative;z-index:1}
+.hero h1 em{color:var(--yellow);font-style:normal}.hero p{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1}
+main{max-width:1360px;margin:0 auto;padding:32px 48px}
+@media(max-width:768px){.topbar,.hero,main{padding-left:20px;padding-right:20px}}
+
+/* STATS */
+.stats{display:flex;gap:0;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:20px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.st{flex:1;padding:16px 20px;border-right:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.st:last-child{border-right:none}
+.st-bar{width:4px;height:36px;border-radius:2px;flex-shrink:0}
+.st-num{font-family:var(--font-d);font-size:1.8rem;font-weight:900;letter-spacing:-1px;line-height:1}
+.st-lbl{font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.st.blue .st-num{color:var(--blue)}.st.blue .st-bar{background:var(--blue)}
+.st.green .st-num{color:var(--green)}.st.green .st-bar{background:var(--green)}
+.st.yellow .st-num{color:#9A7D00}.st.yellow .st-bar{background:var(--yellow)}
+.st.red .st-num{color:var(--red)}.st.red .st-bar{background:var(--red)}
+
+/* FILTER */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:14px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.fb{background:var(--off);border:1.5px solid var(--border);color:var(--muted);padding:6px 16px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .15s}
+.fb:hover{border-color:var(--blue);color:var(--blue)}.fb.active{background:var(--navy);border-color:var(--navy);color:white}
+.search-i{padding:7px 12px;background:var(--off);border:1.5px solid var(--border);color:var(--ink);border-radius:var(--r-sm);font-size:13px;outline:none;transition:border-color .2s;font-family:var(--font-b);width:240px}
+.search-i:focus{border-color:var(--blue)}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.ic{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 20px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.ic:hover{border-color:var(--blue);box-shadow:0 6px 20px rgba(27,108,181,.12);transform:translateY(-1px)}
+.ic-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ic-name{font-family:var(--font-d);font-size:.88rem;font-weight:700;line-height:1.3;flex:1;color:var(--navy)}
+.stag{display:inline-block;padding:3px 10px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.stag.COMPLETO{background:#D1FAE5;color:#065F46}.stag.INCOMPLETO{background:#FEF3C7;color:#92400E}.stag.PENDENTE{background:#F3F4F6;color:var(--muted)}
+
+/* PROGRESS MINI */
+.pm-wrap{height:6px;background:var(--off);border-radius:99px;overflow:hidden;border:1px solid var(--border);margin:.5rem 0}
+.pm-fill{height:100%;border-radius:99px;transition:width .6s}
+.pm-info{font-family:var(--font-d);font-size:10px;font-weight:700;color:var(--muted);margin-bottom:8px}
+
+/* DOCS GRID */
+.docs-g{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
+.di{display:flex;align-items:center;gap:4px;font-size:11.5px;padding:4px 6px;border-radius:4px;border:1px solid var(--border)}
+.di.ok{background:#D1FAE5;border-color:#A7F3D0;color:#065F46}
+.di.no{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
+.di-lbl{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(13,46,90,.6);backdrop-filter:blur(2px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.open{opacity:1;pointer-events:all}
+.mo-box{background:var(--white);border-radius:var(--r-lg);max-width:620px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.mo-s{height:4px;background:linear-gradient(to right,#F5C400 33%,#1E8A4A 33% 66%,#1B6CB5 66%);border-radius:var(--r-lg) var(--r-lg) 0 0}
+.mo-inner{padding:28px 32px}
+.mo-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.mo-hdr h2{font-family:var(--font-d);font-size:1.1rem;font-weight:900;letter-spacing:-.5px;color:var(--navy)}
+.mo-close{background:var(--off);border:1px solid var(--border);color:var(--muted);font-size:1rem;cursor:pointer;border-radius:var(--r-sm);width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mo-close:hover{background:var(--border)}
+.mo-sec{margin-bottom:18px}
+.mo-st{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin-bottom:10px;padding-bottom:7px;border-bottom:2px solid var(--blue)}
+.mo-row{display:flex;gap:12px;margin-bottom:7px;font-size:13.5px}
+.mo-l{color:var(--muted);width:140px;flex-shrink:0;font-size:13px}.mo-v{color:var(--ink);word-break:break-word;font-weight:500}
+
+.empty{grid-column:1/-1;text-align:center;padding:48px;color:var(--muted);font-size:14px}
+.empty strong{display:block;font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--navy);margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<nav class="topbar">
+  <a class="brand" href="index.html"><div class="brand-bar"></div>CMS · <span>Montes Claros</span></a>
+  <div class="nav">
+    <a href="index.html">Dashboard</a><a href="entidades.html">Entidades</a>
+    <a href="conselheiros.html">Conselheiros</a>
+    <a href="inscricoes.html" class="active">Inscrições</a>
+    <a href="painel.html">Painel Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="ey">Novas Candidaturas · Verificação Documental</div>
+  <h1><em>Inscrições</em></h1>
+  <p>Entidades candidatas à composição do conselho — checklist de documentação</p>
+</div>
+<main>
+  <div class="stats">
+    <div class="st blue"><div class="st-bar"></div><div><div class="st-num" id="s-tot">—</div><div class="st-lbl">Total</div></div></div>
+    <div class="st green"><div class="st-bar"></div><div><div class="st-num" id="s-comp">—</div><div class="st-lbl">Completo</div></div></div>
+    <div class="st yellow"><div class="st-bar"></div><div><div class="st-num" id="s-inc">—</div><div class="st-lbl">Incompleto</div></div></div>
+    <div class="st red"><div class="st-bar"></div><div><div class="st-num" id="s-pend">—</div><div class="st-lbl">Pendente</div></div></div>
+  </div>
+  <div class="filter-bar">
+    <input class="search-i" id="search" placeholder="🔍 Buscar instituição..." oninput="filtrar()">
+    <button class="fb active" onclick="setF(this,'TODOS')">Todos</button>
+    <button class="fb" onclick="setF(this,'COMPLETO')">✅ Completo</button>
+    <button class="fb" onclick="setF(this,'INCOMPLETO')">⚠ Incompleto</button>
+    <button class="fb" onclick="setF(this,'PENDENTE')">⏳ Pendente</button>
+  </div>
+  <div class="grid" id="grid">
+    <div class="empty"><strong>Carregando...</strong>Buscando inscrições</div>
+  </div>
+</main>
+<div class="mo" id="mo" onclick="closeMo(event)">
+  <div class="mo-box"><div class="mo-s"></div><div class="mo-inner" id="mo-inner"></div></div>
+</div>
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbwxbdUvBWGMYjQoRFHhkFQZ5NXqMPJ7vtqjWC0Naw-ZCiIMukMtroI4s-FoEEVABUM/exec";
+let todas=[]; let fs="TODOS";
+const DLBL={estatuto:"Estatuto",ataFundacao:"Ata Fund.",ataEleicao:"Ata Eleição",docCNPJ:"CNPJ",utilidadePubl:"Util. Pública",docsPresidente:"Docs Pres."};
+function t(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+async function load(){
+  const d=await fetch(`${API_URL}?action=getInscricoes`).then(r=>r.json());
+  if(!d.ok)return;
+  todas=d.inscricoes||[];
+  t("s-tot",d.resumo.total);t("s-comp",d.resumo.completo);
+  t("s-inc",d.resumo.incompleto);t("s-pend",d.resumo.pendente);
+  filtrar();
+}
+function setF(btn,s){document.querySelectorAll(".fb").forEach(b=>b.classList.remove("active"));btn.classList.add("active");fs=s;filtrar()}
+function filtrar(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  let l=todas;
+  if(fs!=="TODOS") l=l.filter(i=>i.statusGeral===fs);
+  if(q) l=l.filter(i=>i.nomeInstituicao.toLowerCase().includes(q));
+  render(l);
+}
+function pct(ok,tot){return tot?Math.round(ok/tot*100):0}
+function pcolor(p){return p===100?"var(--green)":p>=50?"var(--yellow)":"var(--red)"}
+function render(l){
+  const g=document.getElementById("grid");
+  if(!l.length){g.innerHTML=`<div class="empty"><strong>Nenhum resultado</strong>Ajuste os filtros</div>`;return}
+  const slbl={COMPLETO:"✅ Completo",INCOMPLETO:"⚠ Incompleto",PENDENTE:"⏳ Pendente"};
+  g.innerHTML=l.map(i=>{
+    const p=pct(i.docsOk,i.totalDocs);
+    const docs=Object.entries(DLBL).map(([k,lb])=>{
+      const ok=i.docs[k]&&i.docs[k]!=="";
+      return `<div class="di ${ok?"ok":"no"}"><span>${ok?"✅":"❌"}</span><span class="di-lbl">${lb}</span></div>`;
+    }).join("");
+    return `<div class="ic" onclick='openMo(${JSON.stringify(i).replace(/'/g,"&#39;")})'>
+      <div class="ic-top">
+        <div class="ic-name">${i.nomeInstituicao||"Sem nome"}</div>
+        <span class="stag ${i.statusGeral}">${slbl[i.statusGeral]||i.statusGeral}</span>
+      </div>
+      <div class="pm-info">${i.docsOk}/${i.totalDocs} documentos · ${p}%</div>
+      <div class="pm-wrap"><div class="pm-fill" style="width:${p}%;background:${pcolor(p)}"></div></div>
+      <div class="docs-g">${docs}</div>
+      ${i.segmento?`<span style="font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)">${i.segmento}</span>`:""}
+    </div>`;
+  }).join("");
+}
+function openMo(i){
+  const p=pct(i.docsOk,i.totalDocs);
+  let h=`<div class="mo-hdr">
+    <div><h2>${i.nomeInstituicao}</h2><span class="stag ${i.statusGeral}" style="margin-top:6px;display:inline-block">${i.statusGeral}</span></div>
+    <button class="mo-close" onclick="document.getElementById('mo').classList.remove('open')">✕</button>
+  </div>
+  <div class="mo-sec">
+    <div class="mo-st">Informações Gerais</div>
+    <div class="mo-row"><span class="mo-l">Segmento</span><span class="mo-v">${i.segmento||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">CNPJ</span><span class="mo-v">${i.cnpj||"—"} ${i.cnpjValido?"✅":"❌"}</span></div>
+    <div class="mo-row"><span class="mo-l">Fundação</span><span class="mo-v">${i.fundacao||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">Endereço</span><span class="mo-v">${i.endereco||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">Telefone</span><span class="mo-v">${i.telefone||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">E-mail</span><span class="mo-v">${i.email||"—"}</span></div>
+  </div>
+  <div class="mo-sec">
+    <div class="mo-st">Diretor</div>
+    <div class="mo-row"><span class="mo-l">Nome</span><span class="mo-v">${i.diretor||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">Telefone</span><span class="mo-v">${i.telDiretor||"—"}</span></div>
+    <div class="mo-row"><span class="mo-l">E-mail</span><span class="mo-v">${i.emailDiretor||"—"}</span></div>
+  </div>
+  <div class="mo-sec">
+    <div class="mo-st">Documentação (${i.docsOk}/${i.totalDocs} · ${p}%)</div>
+    <div style="height:6px;background:var(--off);border-radius:99px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border)">
+      <div style="width:${p}%;height:100%;background:${pcolor(p)};border-radius:99px"></div>
+    </div>
+    ${Object.entries(DLBL).map(([k,lb])=>{
+      const v=i.docs[k]; const ok=v&&v!=="";
+      return `<div class="mo-row"><span class="mo-l">${lb}</span><span class="mo-v">${ok?(v.startsWith("http")?`<a href="${v}" target="_blank" style="color:var(--blue)">🔗 Abrir</a>`:"✅ Enviado"):`<span style="color:var(--red)">❌ Faltante</span>`}</span></div>`;
+    }).join("")}
+  </div>
+  ${i.links?`<div class="mo-sec"><div class="mo-st">Links</div><div class="mo-row"><span class="mo-l">Pasta de docs</span><span class="mo-v"><a href="${i.links}" target="_blank" style="color:var(--blue)">🔗 Abrir pasta</a></span></div></div>`:""}`;
+  document.getElementById("mo-inner").innerHTML=h;
+  document.getElementById("mo").classList.add("open");
+}
+function closeMo(e){if(e.target===document.getElementById("mo"))document.getElementById("mo").classList.remove("open")}
+document.addEventListener("DOMContentLoaded",load);
+</script>
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscrição CLS — Recomposição CMSMOC 2026–2029</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #0D2E5A;
+  --blue:   #1B6CB5;
+  --green:  #1E8A4A;
+  --yellow: #F5C400;
+  --off:    #F7F8FA;
+  --ink:    #111827;
+  --muted:  #6B7280;
+  --border: #E5E7EB;
+  --error:  #DC2626;
+  --radius: 10px;
+  --shadow: 0 2px 14px rgba(13,46,90,0.08);
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: var(--off);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--navy);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,.25);
+}
+.header-stripe {
+  height: 4px;
+  background: linear-gradient(to right, var(--yellow) 33.3%, var(--green) 33.3% 66.6%, var(--blue) 66.6%);
+}
+.header-inner {
+  display: flex; align-items: center; gap: 16px;
+  padding: 13px 40px;
+}
+.header-logo { width: 38px; height: 38px; object-fit: contain; }
+.header-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 11px;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.85); line-height: 1.4;
+}
+.header-brand span {
+  color: var(--yellow); display: block;
+  font-size: 9px; letter-spacing: 1.5px; font-weight: 600; margin-top: 1px;
+}
+.header-progress {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 10px;
+}
+.progress-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  white-space: nowrap;
+}
+.progress-track {
+  width: 100px; height: 4px;
+  background: rgba(255,255,255,.12);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--yellow);
+  border-radius: 2px; transition: width .5s ease;
+  width: 0%;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  color: white;
+  padding: 52px 40px 60px;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -80px; right: -80px;
+  width: 380px; height: 380px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,196,0,.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--yellow); margin-bottom: 12px;
+}
+.hero h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(24px, 3.8vw, 42px);
+  font-weight: 900; letter-spacing: -1px; line-height: 1.05;
+  margin-bottom: 14px;
+}
+.hero h1 em { color: var(--yellow); font-style: normal; }
+.hero p {
+  font-size: 14px; color: rgba(255,255,255,.55);
+  max-width: 520px; font-weight: 300; line-height: 1.7;
+}
+
+/* ── CONTAINER ── */
+.form-container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── ACCORDION ── */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.acc-item {
+  background: white;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.acc-item.open { border-color: var(--blue); }
+.acc-item.has-error { border-color: var(--error); }
+.acc-item.complete { border-color: rgba(30,138,74,.4); }
+
+/* Trigger (cabeçalho clicável) */
+.acc-trigger {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  cursor: pointer;
+  background: var(--navy);
+  user-select: none;
+  transition: background .2s;
+  position: relative;
+}
+.acc-item.open .acc-trigger { background: var(--navy); }
+.acc-item.complete:not(.open) .acc-trigger { background: #0a2545; }
+
+.acc-icon {
+  width: 34px; height: 34px;
+  background: rgba(245,196,0,.15);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+  transition: background .2s;
+}
+.acc-item.complete:not(.open) .acc-icon { background: rgba(30,138,74,.25); }
+
+.acc-title-wrap { flex: 1; min-width: 0; }
+.acc-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: white; line-height: 1;
+}
+.acc-subtitle {
+  font-size: 11px; color: rgba(255,255,255,.45);
+  margin-top: 3px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.acc-item.open .acc-subtitle { display: none; }
+
+.acc-badges { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.acc-tag {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  background: rgba(245,196,0,.2);
+  color: var(--yellow);
+  padding: 3px 8px; border-radius: 4px;
+}
+.acc-status {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.4);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.acc-item.complete .acc-status {
+  background: var(--green);
+  color: white;
+}
+.acc-item.has-error .acc-status {
+  background: var(--error);
+  color: white;
+}
+.acc-chevron {
+  font-size: 12px; color: rgba(255,255,255,.4);
+  transition: transform .3s ease;
+  flex-shrink: 0;
+}
+.acc-item.open .acc-chevron { transform: rotate(180deg); color: var(--yellow); }
+
+/* Corpo */
+.acc-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .32s ease;
+}
+.acc-item.open .acc-body { grid-template-rows: 1fr; }
+.acc-inner { overflow: hidden; }
+.acc-content { padding: 28px; border-top: 1px solid var(--border); }
+
+/* ── FORM ELEMENTS ── */
+.field-row {
+  display: grid; gap: 16px; margin-bottom: 20px;
+}
+.field-row:last-child { margin-bottom: 0; }
+.field-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.field-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.field-row.cols-1 { grid-template-columns: 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--navy);
+}
+.field label .req { color: var(--error); margin-left: 3px; }
+.field label .opt {
+  color: var(--muted); font-weight: 400;
+  font-size: 9px; letter-spacing: 0;
+  text-transform: none; margin-left: 4px;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="date"],
+.field input[type="file"],
+.field select,
+.field textarea {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px; color: var(--ink);
+  background: var(--off);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; -webkit-appearance: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--blue); background: white;
+  box-shadow: 0 0 0 3px rgba(27,108,181,.12);
+}
+.field input.error, .field select.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(220,38,38,.10);
+}
+.field input[type="file"] { padding: 9px 14px; cursor: pointer; font-size: 13px; }
+.field-hint { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.field-error { font-size: 11px; color: var(--error); font-weight: 600; display: none; }
+.field-error.show { display: block; }
+
+/* ── COPY CHECK ── */
+.copy-check {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 15px;
+  background: rgba(27,108,181,.05);
+  border: 1.5px dashed rgba(27,108,181,.25);
+  border-radius: 7px; margin-bottom: 16px; cursor: pointer;
+}
+.copy-check input[type="checkbox"] {
+  width: 17px; height: 17px; accent-color: var(--blue);
+  cursor: pointer; flex-shrink: 0;
+}
+.copy-check-label { font-size: 13px; color: var(--blue); font-weight: 600; cursor: pointer; }
+
+/* ── DIVISOR DE SUBSECÇÃO ── */
+.subsec-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--blue); margin: 24px 0 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.subsec-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── LGPD ── */
+.lgpd-box {
+  background: rgba(245,196,0,.06);
+  border: 1.5px solid rgba(245,196,0,.35);
+  border-radius: var(--radius);
+  padding: 18px 22px; margin-bottom: 20px;
+}
+.lgpd-box h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--navy); margin-bottom: 8px;
+}
+.lgpd-box p { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+
+/* ── DECLARAÇÃO ── */
+.declaracao-box {
+  background: var(--off); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px;
+}
+.declaracao-text { font-size: 13px; line-height: 1.8; color: var(--ink); }
+.declaracao-name { font-weight: 700; color: var(--blue); }
+.declaracao-check {
+  display: flex; align-items: flex-start; gap: 12px; margin-top: 16px;
+}
+.declaracao-check input[type="checkbox"] {
+  width: 20px; height: 20px; accent-color: var(--navy);
+  cursor: pointer; flex-shrink: 0; margin-top: 1px;
+}
+.declaracao-check label {
+  font-size: 13px; font-weight: 600;
+  color: var(--navy); cursor: pointer; line-height: 1.5;
+}
+
+/* ── SUBMIT AREA ── */
+.submit-area {
+  display: flex; flex-direction: column; gap: 16px; margin-top: 8px;
+}
+.btn-submit {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 15px 32px; border-radius: 8px; border: none;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 10px;
+  background: var(--green); color: white;
+  transition: all .2s; width: 100%;
+}
+.btn-submit:hover:not(:disabled) {
+  background: #176e3a; transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(30,138,74,.3);
+}
+.btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+/* ── OVERLAY ── */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,46,90,.72);
+  z-index: 500; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+}
+.overlay.active { display: flex; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 4px solid rgba(255,255,255,.2);
+  border-top-color: var(--yellow);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.overlay p {
+  color: white; font-family: 'Montserrat', sans-serif;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* ── SUCCESS ── */
+.success-screen {
+  display: none; text-align: center; padding: 72px 24px;
+}
+.success-screen.active { display: block; }
+.success-icon {
+  width: 80px; height: 80px; background: var(--green);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 36px; margin: 0 auto 24px;
+}
+.success-screen h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px; font-weight: 900;
+  color: var(--navy); margin-bottom: 12px;
+}
+.success-screen p { color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.7; }
+.success-id {
+  display: inline-block; margin-top: 24px;
+  background: var(--navy); color: var(--yellow);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 2px; padding: 12px 28px; border-radius: 7px;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  background: var(--navy); color: rgba(255,255,255,.4);
+  text-align: center; padding: 22px 40px; font-size: 12px; line-height: 1.7;
+}
+.site-footer strong { color: rgba(255,255,255,.7); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 620px) {
+  .field-row.cols-2, .field-row.cols-3 { grid-template-columns: 1fr; }
+  .header-inner { padding: 11px 18px; }
+  .header-progress { display: none; }
+  .hero { padding: 36px 18px 48px; }
+  .form-container { padding: 28px 14px 60px; }
+  .acc-content { padding: 20px; }
+  .acc-trigger { padding: 16px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <img src="https://i.ibb.co/qM8MN3zx/Logotipo-CMSMOC-2025-ICONE-A.png" alt="CMSMOC" class="header-logo">
+    <div class="header-brand">
+      Conselho Municipal de Saúde
+      <span>Montes Claros — MG</span>
+    </div>
+    <div class="header-progress">
+      <span class="progress-label" id="progressLabel">0 / 6</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Recomposição 2026–2029</div>
+  <h1>Inscrição dos<br><em>Conselhos Locais</em><br>de Saúde</h1>
+  <p>Preencha todas as seções abaixo. Clique em cada bloco para expandir. Ao concluir, envie no final da página.</p>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Registrando inscrição…</p>
+</div>
+
+<!-- FORM -->
+<div class="form-container">
+
+  <form id="mainForm" novalidate>
+  <div class="accordion" id="accordion">
+
+    <!-- ══ 1. DADOS DO CLS ══ -->
+    <div class="acc-item open" id="acc-cls" data-section="cls">
+      <div class="acc-trigger" onclick="toggleAcc('cls')">
+        <div class="acc-icon">🏛️</div>
+        <div class="acc-title-wrap">
+          <div class="acc-title">Dados do CLS</div>
+          <div class="acc-subtitle" id="sub-cls">Nome, endereço, contatos</div>
+        </div>
+        <div class="acc-badges">
+          <div class="acc-status" id="st-cls">1</div>
+          <div class="acc-chevron">▼</div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="acc-content">
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="cls_nome">Nome completo do CLS <span class="req">*</span></label>
+                <input type="text" id="cls_nome" name="cls_nome" placeholder="Ex: Conselho Local de Saúde do Todos os Santos — UBS Pérola" required>
+                <div class="field-error" id="err_cls_nome">Campo obrigatório.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="cls_email">E-mail do CLS</label>
+                <input type="email" id="cls_email" name="cls_email" placeholder="cls.exemplo@email.com">
+                <div class="field-error" id="err_cls_email">E-mail inválido.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="cls_endereco">Endereço <span class="req">*</span></label>
+                <input type="text" id="cls_endereco" name="cls_endereco" placeholder="Rua, nº, Bairro — Montes Claros/MG" required>
+                <div class="field-error" id="err_cls_endereco">Campo obrigatório.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-2">
+              <div class="field">
+                <label for="cls_tel1">Telefone 1 <span class="req">*</span></label>
+                <input type="tel" id="cls_tel1" name="cls_tel1" placeholder="(38) 9 9999-9999" required>
+                <div class="field-error" id="err_cls_tel1">Campo obrigatório.</div>
+              </div>
+              <div class="field">
+                <label for="cls_tel2">Telefone 2 <span class="opt">(opcional)</span></label>
+                <input type="tel" id="cls_tel2" name="cls_tel2" placeholder="(38) 9 9999-9999">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 2. GERENTE ══ -->
+    <div class="acc-item" id="acc-ger" data-section="ger">
+      <div class="acc-trigger" onclick="toggleAcc('ger')">
+        <div class="acc-icon">👩‍⚕️</div>
+        <div class="acc-title-wrap">
+          <div class="acc-title">Gerente da Unidade</div>
+          <div class="acc-subtitle" id="sub-ger">Nome e contato</div>
+        </div>
+        <div class="acc-badges">
+          <div class="acc-status" id="st-ger">2</div>
+          <div class="acc-chevron">▼</div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="acc-content">
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="ger_nome">Nome completo do/a gerente <span class="req">*</span></label>
+                <input type="text" id="ger_nome" name="ger_nome" placeholder="Nome completo" required>
+                <div class="field-error" id="err_ger_nome">Campo obrigatório.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-2">
+              <div class="field">
+                <label for="ger_tel1">Telefone 1 <span class="req">*</span></label>
+                <input type="tel" id="ger_tel1" name="ger_tel1" placeholder="(38) 9 9999-9999" required>
+                <div class="field-error" id="err_ger_tel1">Campo obrigatório.</div>
+              </div>
+              <div class="field">
+                <label for="ger_tel2">Telefone 2 <span class="opt">(opcional)</span></label>
+                <input type="tel" id="ger_tel2" name="ger_tel2" placeholder="(38) 9 9999-9999">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 3. PRESIDENTE ══ -->
+    <div class="acc-item" id="acc-pres" data-section="pres">
+      <div class="acc-trigger" onclick="toggleAcc('pres')">
+        <div class="acc-icon">🤝</div>
+        <div class="acc-title-wrap">
+          <div class="acc-title">Presidente do CLS</div>
+          <div class="acc-subtitle" id="sub-pres">Nome e contato</div>
+        </div>
+        <div class="acc-badges">
+          <div class="acc-status" id="st-pres">3</div>
+          <div class="acc-chevron">▼</div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="acc-content">
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="pres_nome">Nome completo do/a presidente <span class="req">*</span></label>
+                <input type="text" id="pres_nome" name="pres_nome" placeholder="Nome completo" required>
+                <div class="field-error" id="err_pres_nome">Campo obrigatório.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-2">
+              <div class="field">
+                <label for="pres_tel1">Telefone / WhatsApp 1 <span class="req">*</span></label>
+                <input type="tel" id="pres_tel1" name="pres_tel1" placeholder="(38) 9 9999-9999" required>
+                <div class="field-error" id="err_pres_tel1">Campo obrigatório.</div>
+              </div>
+              <div class="field">
+                <label for="pres_tel2">Telefone 2 <span class="opt">(opcional)</span></label>
+                <input type="tel" id="pres_tel2" name="pres_tel2" placeholder="(38) 9 9999-9999">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 4. OFÍCIO + RESPONSÁVEL ══ -->
+    <div class="acc-item" id="acc-resp" data-section="resp">
+      <div class="acc-trigger" onclick="toggleAcc('resp')">
+        <div class="acc-icon">✍️</div>
+        <div class="acc-title-wrap">
+          <div class="acc-title">Ofício e Responsável</div>
+          <div class="acc-subtitle" id="sub-resp">Quem preencheu · anexo de ofício</div>
+        </div>
+        <div class="acc-badges">
+          <div class="acc-status" id="st-resp">4</div>
+          <div class="acc-chevron">▼</div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="acc-content">
+
+            <div class="subsec-label">Ofício de Manifestação de Interesse</div>
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="oficio_file">Anexar ofício assinado pelo presidente do CLS <span class="opt">(opcional)</span></label>
+                <input type="file" id="oficio_file" name="oficio_file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                <div class="field-hint">Formatos aceitos: PDF, Word, JPG, PNG · Tamanho máximo: 5 MB</div>
+              </div>
+            </div>
+
+            <div class="subsec-label">Responsável pelo Preenchimento</div>
+
+            <label class="copy-check">
+              <input type="checkbox" id="chk_resp_pres" onchange="copyFromPresToResp()">
+              <span class="copy-check-label">⚡ Sou o/a presidente do CLS informado acima</span>
+            </label>
+            <label class="copy-check" style="margin-bottom:20px">
+              <input type="checkbox" id="chk_resp_ger" onchange="copyFromGerToResp()">
+              <span class="copy-check-label">⚡ Sou o/a gerente da unidade informado/a acima</span>
+            </label>
+
+            <div class="field-row cols-1">
+              <div class="field">
+                <label for="resp_nome">Nome de quem preencheu este formulário <span class="req">*</span></label>
+                <input type="text" id="resp_nome" name="resp_nome" placeholder="Nome completo" required>
+                <div class="field-error" id="err_resp_nome">Campo obrigatório.</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-2">
+              <div class="field">
+                <label for="resp_email">E-mail para receber o comprovante <span class="req">*</span></label>
+                <input type="email" id="resp_email" name="resp_email" placeholder="seu@email.com" required>
+                <div class="field-error" id="err_resp_email">E-mail inválido ou obrigatório.</div>
+              </div>
+              <div class="field">
+                <label for="resp_email2">E-mail adicional <span class="opt">(opcional)</span></label>
+                <input type="email" id="resp_email2" name="resp_email2" placeholder="outro@email.com">
+                <div class="field-error" id="err_resp_email2">E-mail inválido.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /accordion -->
+
+  <!-- LGPD -->
+  <div class="lgpd-box">
+    <h4>🔒 Aviso de Privacidade — LGPD</h4>
+    <p>Os dados pessoais coletados são tratados exclusivamente para fins do processo de recomposição do CMSMOC, com base na Lei nº 13.709/2018. O titular pode solicitar acesso, correção ou exclusão pelo e-mail <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f89b958b95979bb89d95999194d69b9795">[email&#160;protected]</a></strong>. Os dados não serão compartilhados para finalidades alheias ao processo.</p>
+  </div>
+
+  <!-- DECLARAÇÃO -->
+  <div class="declaracao-box">
+    <div class="declaracao-text">
+      Eu, <strong class="declaracao-name" id="decl-nome">[nome de quem preencheu]</strong>, declaro, para os devidos fins, que as informações prestadas neste formulário são verdadeiras e de minha inteira responsabilidade, estando ciente de que informações falsas poderão acarretar a desclassificação do Conselho Local de Saúde do processo de recomposição do CMSMOC 2026–2029 e as sanções previstas na legislação vigente.
+    </div>
+    <div class="declaracao-check">
+      <input type="checkbox" id="chk_declaracao">
+      <label for="chk_declaracao">Li e concordo com a declaração acima e com o aviso de privacidade (LGPD).</label>
+    </div>
+    <div class="field-error" id="err_declaracao" style="margin-top:8px">Você precisa confirmar a declaração para enviar.</div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-area">
+    <button type="button" class="btn-submit" id="btnSubmit" onclick="submitForm()">
+      ✅ Enviar Inscrição
+    </button>
+  </div>
+
+  </form>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✅</div>
+    <h2>Inscrição Registrada!</h2>
+    <p>A inscrição do <strong id="succ-cls"></strong> foi recebida com sucesso.<br>Um comprovante foi enviado para o e-mail informado.</p>
+    <div class="success-id" id="succ-id">Protocolo: —</div>
+  </div>
+
+</div><!-- /form-container -->
+
+<footer class="site-footer">
+  <strong>Conselho Municipal de Saúde de Montes Claros — MG</strong><br>
+  Recomposição 2026–2029 · Secretaria Executiva · <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="84e7e9f7e9ebe7c4e1e9e5ede8aae7ebe9">[email&#160;protected]</a></strong>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ═══════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby-c5-wzCiSjFCmI-83paMkDiHfyy1u_Tk0BeT4WTyGYUPclBTUn_HFzDy-0YfhM4KJmg/exec';
+
+/* ═══════════════════════════════════════
+   ACCORDION
+═══════════════════════════════════════ */
+const SECTIONS = ['cls','ger','pres','resp'];
+
+function toggleAcc(id) {
+  const item = document.getElementById('acc-' + id);
+  const isOpen = item.classList.contains('open');
+  // Fechar todos
+  SECTIONS.forEach(s => document.getElementById('acc-' + s).classList.remove('open'));
+  // Abrir se estava fechado
+  if (!isOpen) item.classList.add('open');
+}
+
+/* Ao sair de um campo em seção aberta, valida a seção e atualiza status */
+document.addEventListener('focusout', function(e) {
+  const acc = e.target.closest('.acc-item');
+  if (!acc) return;
+  const sec = acc.dataset.section;
+  if (sec) setTimeout(() => updateSectionStatus(sec), 100);
+}, true);
+
+/* ═══════════════════════════════════════
+   STATUS DOS BLOCOS
+═══════════════════════════════════════ */
+// Campos obrigatórios por seção
+const REQUIRED = {
+  cls:  ['cls_nome','cls_endereco','cls_tel1'],
+  ger:  ['ger_nome','ger_tel1'],
+  pres: ['pres_nome','pres_tel1'],
+  resp: ['resp_nome','resp_email'],
+};
+
+const OPTIONAL_EMAILS = {
+  cls: ['cls_email'],
+  resp: ['resp_email2'],
+};
+
+function sectionIsFilled(sec) {
+  return REQUIRED[sec].every(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  });
+}
+
+function sectionHasError(sec) {
+  const item = document.getElementById('acc-' + sec);
+  return item.querySelectorAll('.field-error.show').length > 0;
+}
+
+function updateSectionStatus(sec) {
+  const item = document.getElementById('acc-' + sec);
+  const st   = document.getElementById('st-' + sec);
+  const sub  = document.getElementById('sub-' + sec);
+
+  if (sectionIsFilled(sec) && !sectionHasError(sec)) {
+    item.classList.add('complete');
+    item.classList.remove('has-error');
+    st.textContent = '✓';
+    // Mostrar resumo no subtítulo
+    const summaries = {
+      cls:  () => v('cls_nome'),
+      ger:  () => v('ger_nome'),
+      pres: () => v('pres_nome'),
+      resp: () => v('resp_nome'),
+    };
+    if (summaries[sec] && sub) sub.textContent = summaries[sec]();
+  } else if (sectionHasError(sec)) {
+    item.classList.remove('complete');
+    item.classList.add('has-error');
+    st.textContent = '!';
+  } else {
+    item.classList.remove('complete','has-error');
+    st.textContent = SECTIONS.indexOf(sec) + 1;
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = SECTIONS.filter(s => sectionIsFilled(s) && !sectionHasError(s)).length;
+  const pct  = (done / SECTIONS.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + SECTIONS.length;
+}
+
+/* ═══════════════════════════════════════
+   VALIDAÇÃO COMPLETA (no submit)
+═══════════════════════════════════════ */
+const ALL_FIELDS = [
+  { id: 'cls_nome',    req: true },
+  { id: 'cls_email',  req: false, type: 'email' },
+  { id: 'cls_endereco', req: true },
+  { id: 'cls_tel1',   req: true },
+  { id: 'ger_nome',   req: true },
+  { id: 'ger_tel1',   req: true },
+  { id: 'pres_nome',  req: true },
+  { id: 'pres_tel1',  req: true },
+  { id: 'resp_nome',  req: true },
+  { id: 'resp_email', req: true,  type: 'email' },
+  { id: 'resp_email2',req: false, type: 'email' },
+];
+
+function validateAll() {
+  let ok = true;
+  let firstErrorSec = null;
+
+  ALL_FIELDS.forEach(f => {
+    const el  = document.getElementById(f.id);
+    const err = document.getElementById('err_' + f.id);
+    const val = el ? el.value.trim() : '';
+    let fieldOk = true;
+
+    if (f.req && !val) fieldOk = false;
+    if (val && f.type === 'email' && !validEmail(val)) fieldOk = false;
+    if (val && f.type === 'cpf'   && !validCPF(val))   fieldOk = false;
+
+    if (el)  el.classList.toggle('error', !fieldOk);
+    if (err) err.classList.toggle('show',  !fieldOk);
+    if (!fieldOk) {
+      ok = false;
+      if (!firstErrorSec) {
+        const acc = el.closest('.acc-item');
+        if (acc) firstErrorSec = acc.dataset.section;
+      }
+    }
+  });
+
+  // Atualiza status de todos
+  SECTIONS.forEach(s => updateSectionStatus(s));
+
+  // Abre o primeiro bloco com erro
+  if (firstErrorSec) {
+    SECTIONS.forEach(s => document.getElementById('acc-' + s).classList.remove('open'));
+    document.getElementById('acc-' + firstErrorSec).classList.add('open');
+    setTimeout(() => {
+      document.getElementById('acc-' + firstErrorSec).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+
+  return ok;
+}
+
+/* ═══════════════════════════════════════
+   VALIDADORES
+═══════════════════════════════════════ */
+function validEmail(e) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) return false;
+  if (/\.co$/.test(e.split('@')[1]) && !/\.com/.test(e)) return false;
+  return true;
+}
+function validCPF(c) {
+  return c.replace(/\D/g,'').length === 11;
+}
+
+/* ═══════════════════════════════════════
+   MÁSCARA CPF
+═══════════════════════════════════════ */
+function maskCPF(el) {
+  let vv = el.value.replace(/\D/g,'').substring(0,11);
+  vv = vv.replace(/(\d{3})(\d)/,'$1.$2');
+  vv = vv.replace(/(\d{3})(\d)/,'$1.$2');
+  vv = vv.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  el.value = vv;
+}
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function v(id)      { return (document.getElementById(id)||{}).value||''; }
+function sv(id,val) { const el=document.getElementById(id); if(el) el.value=val; }
+
+function copyFromPresToResp() {
+  if (document.getElementById('chk_resp_pres').checked) { sv('resp_nome', v('pres_nome')); }
+  setTimeout(() => updateSectionStatus('resp'), 50);
+}
+function copyFromGerToResp() {
+  if (document.getElementById('chk_resp_ger').checked)  { sv('resp_nome', v('ger_nome')); }
+  setTimeout(() => updateSectionStatus('resp'), 50);
+}
+
+/* Atualizar nome na declaração */
+document.getElementById('resp_nome').addEventListener('input', function() {
+  document.getElementById('decl-nome').textContent = this.value || '[nome de quem preencheu]';
+});
+
+/* ═══════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════ */
+async function submitForm() {
+  const decl = document.getElementById('chk_declaracao');
+  const errDecl = document.getElementById('err_declaracao');
+
+  if (!validateAll()) {
+    errDecl.classList.remove('show');
+    return;
+  }
+  if (!decl.checked) {
+    errDecl.classList.add('show');
+    errDecl.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  errDecl.classList.remove('show');
+
+  const payload = {
+    cls_nome: v('cls_nome'), cls_email: v('cls_email'),
+    cls_endereco: v('cls_endereco'), cls_tel1: v('cls_tel1'), cls_tel2: v('cls_tel2'),
+    ger_nome: v('ger_nome'), ger_tel1: v('ger_tel1'), ger_tel2: v('ger_tel2'),
+    pres_nome: v('pres_nome'), pres_tel1: v('pres_tel1'), pres_tel2: v('pres_tel2'),
+    resp_nome: v('resp_nome'), resp_email: v('resp_email'), resp_email2: v('resp_email2'),
+    oficio_anexado: document.getElementById('oficio_file').files.length > 0 ? 'Sim' : 'Não',
+  };
+
+  const ofFile = document.getElementById('oficio_file').files[0];
+  if (ofFile) {
+    try {
+      payload.oficio_base64 = await fileToBase64(ofFile);
+      payload.oficio_nome   = ofFile.name;
+      payload.oficio_tipo   = ofFile.type;
+    } catch(e) {}
+  }
+
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('btnSubmit').disabled = true;
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors'
+    });
+    showSuccess(payload.cls_nome);
+  } catch(err) {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('btnSubmit').disabled = false;
+    alert('Erro ao enviar:\n' + err.message + '\n\nVerifique a URL do Web App e tente novamente.');
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result.split(',')[1]);
+    r.onerror = () => rej(new Error('Leitura falhou'));
+    r.readAsDataURL(file);
+  });
+}
+
+function showSuccess(cls_nome) {
+  document.getElementById('loadingOverlay').classList.remove('active');
+  document.getElementById('mainForm').style.display = 'none';
+  document.querySelector('.lgpd-box').style.display = 'none';
+  document.querySelector('.declaracao-box').style.display = 'none';
+  document.querySelector('.submit-area').style.display = 'none';
+
+  const proto = 'CLS-' + Date.now().toString(36).toUpperCase();
+  document.getElementById('succ-cls').textContent = cls_nome;
+  docum

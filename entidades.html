@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entidades — CMS Montes Claros · Recomposição</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D2E5A;--blue:#1B6CB5;--green:#1E8A4A;--yellow:#F5C400;
+  --white:#FFFFFF;--off:#F7F8FA;--ink:#111827;--muted:#6B7280;
+  --border:#E5E7EB;--text:#374151;--red:#DC2626;--orange:#D97706;--purple:#7C3AED;
+  --font-d:'Montserrat',sans-serif;--font-b:'Open Sans',sans-serif;
+  --r-sm:6px;--r-md:12px;--r-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--off);color:var(--text);font-family:var(--font-b);line-height:1.6;min-height:100vh}
+
+.stripe{height:4px;background:linear-gradient(to right,#F5C400 33.3%,#1E8A4A 33.3% 66.6%,#1B6CB5 66.6%)}
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(13,46,90,.3)}
+.brand{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:white;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-bar{width:3px;height:22px;background:var(--yellow);border-radius:2px}.brand span{color:var(--yellow)}
+.nav{display:flex;gap:2px}.nav a{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:6px 13px;border-radius:var(--r-sm);transition:all .18s}
+.nav a:hover{color:var(--yellow);background:rgba(245,196,0,.08)}.nav a.active{color:var(--yellow);background:rgba(245,196,0,.12)}
+
+.hero{background:var(--navy);padding:40px 48px 36px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-80px;right:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(245,196,0,.09) 0%,transparent 65%);pointer-events:none}
+.eyebrow{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:20px;height:2px;background:var(--yellow)}
+.hero h1{font-family:var(--font-d);font-size:clamp(26px,3vw,42px);font-weight:900;letter-spacing:-2px;line-height:.95;color:white;margin-bottom:8px;position:relative;z-index:1}
+.hero h1 em{color:var(--yellow);font-style:normal}
+.hero p{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1}
+main{max-width:1400px;margin:0 auto;padding:32px 48px}
+@media(max-width:768px){.topbar,.hero,main{padding-left:20px;padding-right:20px}}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:0;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:20px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.sb-item{flex:1;padding:14px 18px;border-right:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sb-item:last-child{border-right:none}
+.sb-color{width:4px;height:32px;border-radius:2px;flex-shrink:0}
+.sb-num{font-family:var(--font-d);font-size:1.7rem;font-weight:900;letter-spacing:-1px;line-height:1}
+.sb-lbl{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.sb-item.blue   .sb-num{color:var(--blue)}   .sb-item.blue   .sb-color{background:var(--blue)}
+.sb-item.green  .sb-num{color:var(--green)}  .sb-item.green  .sb-color{background:var(--green)}
+.sb-item.yellow .sb-num{color:#9A7D00}        .sb-item.yellow .sb-color{background:var(--yellow)}
+.sb-item.red    .sb-num{color:var(--red)}    .sb-item.red    .sb-color{background:var(--red)}
+.sb-item.gray   .sb-num{color:var(--muted)}  .sb-item.gray   .sb-color{background:var(--muted)}
+.sb-item.purple .sb-num{color:var(--purple)} .sb-item.purple .sb-color{background:var(--purple)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:14px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.fb{background:var(--off);border:1.5px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .15s}
+.fb:hover{border-color:var(--blue);color:var(--blue)}.fb.active{background:var(--navy);border-color:var(--navy);color:white}
+.search-w{position:relative}
+.search-w input{padding:7px 12px 7px 30px;width:240px;background:var(--off);border:1.5px solid var(--border);color:var(--ink);border-radius:var(--r-sm);font-size:13px;outline:none;transition:border-color .2s;font-family:var(--font-b)}
+.search-w input:focus{border-color:var(--blue)}
+.search-w::before{content:'🔍';position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.fc{margin-left:auto;font-family:var(--font-d);font-size:11px;color:var(--muted);font-weight:600}
+
+/* STATUS TAGS */
+.stag{display:inline-block;padding:3px 10px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+.stag.COMPLETO{background:#D1FAE5;color:#065F46}
+.stag.PENDENTE{background:#FEF3C7;color:#92400E}
+.stag.IMPEDIDO{background:#FEE2E2;color:#991B1B}
+.stag.SEM_RESPOSTA,.stag.NAO_RESPONDEU{background:#F3F4F6;color:var(--muted)}
+.stag.INCOMPLETO{background:#FEF3C7;color:#92400E}
+.stag.APTO{background:#D1FAE5;color:#065F46}
+.stag.manual-badge{background:rgba(124,58,237,.12);color:#5B21B6;border:1px solid rgba(124,58,237,.25);font-size:8px;padding:2px 7px}
+
+/* GRID */
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+
+/* CARD */
+.ent-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:0;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04);overflow:hidden;display:flex;flex-direction:column}
+.ent-card:hover{border-color:var(--blue);box-shadow:0 8px 24px rgba(27,108,181,.12);transform:translateY(-2px)}
+.ent-card.manual{border-left:3px solid var(--purple)}
+.ent-card.tem-impedido{border-left:3px solid var(--red)}
+.ent-card.ok{border-left:3px solid var(--green)}
+
+/* CARD — CABEÇALHO */
+.card-head{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.card-head-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ent-name{font-family:var(--font-d);font-size:.85rem;font-weight:700;line-height:1.3;flex:1;color:var(--navy)}
+.card-tags{display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0}
+.seg-tag{font-family:var(--font-d);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+
+/* CARD — RESPONSÁVEL */
+.card-resp{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12px}
+.card-resp-name{font-weight:600;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-resp-phone{color:var(--muted);font-size:11.5px;font-family:'Courier New',monospace;white-space:nowrap;flex-shrink:0}
+
+/* CARD — CONSELHEIROS */
+.card-cons{padding:10px 16px;border-bottom:1px solid var(--border)}
+.card-cons-label{font-family:var(--font-d);font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cons-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:12px}
+.cons-row:last-child{margin-bottom:0}
+.cons-cadeira{font-family:'Courier New',monospace;font-size:10px;color:var(--muted);background:var(--off);border:1px solid var(--border);padding:1px 5px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.cons-nome{flex:1;font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cons-imp{color:var(--red);font-size:10px;font-weight:700;font-family:var(--font-d);letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
+.cons-apto{color:var(--green);font-size:10px}
+
+/* CARD — NOVOS INDICADOS */
+.card-novos{padding:10px 16px;border-bottom:1px solid var(--border)}
+.novos-row{display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:3px}
+.novos-row:last-child{margin-bottom:0}
+.novos-pos{font-family:var(--font-d);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:white;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.novos-pos.T{background:var(--blue)}.novos-pos.S{background:var(--green)}
+.novos-nome{flex:1;color:var(--ink);font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* CARD — CHECKLIST */
+.card-check{padding:10px 16px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.chk-item{display:flex;align-items:center;gap:3px;font-size:11px;padding:3px 7px;border-radius:3px;border:1px solid var(--border)}
+.chk-item.ok{background:#F0FDF4;border-color:#BBF7D0;color:#166534}
+.chk-item.no{background:#FEF2F2;border-color:#FECACA;color:#991B1B}
+.chk-item.warn{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+.chk-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.chk-item.ok .chk-dot{background:var(--green)}
+.chk-item.no .chk-dot{background:var(--red)}
+.chk-item.warn .chk-dot{background:var(--orange)}
+
+/* CARD — RODAPÉ */
+.card-foot{padding:8px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--off);font-size:11px;color:var(--muted);margin-top:auto}
+.card-foot-hint{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+
+/* TOOLTIP de observação */
+.obs-wrap{position:relative;display:inline-block;vertical-align:middle;margin-left:4px}
+.obs-icon{cursor:help;font-size:.8rem;opacity:.55}
+.obs-tooltip{position:absolute;bottom:calc(100%+6px);left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-family:var(--font-b);font-size:11.5px;padding:8px 12px;border-radius:var(--r-sm);width:240px;white-space:normal;z-index:99;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 16px rgba(0,0,0,.25);line-height:1.4;text-align:left}
+.obs-wrap:hover .obs-tooltip{opacity:1}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(13,46,90,.6);backdrop-filter:blur(2px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.open{opacity:1;pointer-events:all}
+.mo-box{background:var(--white);border-radius:var(--r-lg);max-width:660px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.mo-stripe{height:4px;background:linear-gradient(to right,#F5C400 33%,#1E8A4A 33% 66%,#1B6CB5 66%);border-radius:var(--r-lg) var(--r-lg) 0 0}
+.mo-inner{padding:28px 32px}
+.mo-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.mo-hdr h2{font-family:var(--font-d);font-size:1.1rem;font-weight:900;letter-spacing:-.5px;color:var(--navy);line-height:1.2}
+.mo-close{background:var(--off);border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:var(--r-sm);width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:1rem;flex-shrink:0}
+.mo-close:hover{background:var(--border);color:var(--ink)}
+.mo-sec{margin-bottom:18px}
+.mo-sec-title{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--blue)}
+.mo-sec-title.red{color:var(--red);border-bottom-color:var(--red)}
+.mo-sec-title.green{color:var(--green);border-bottom-color:var(--green)}
+.mo-row{display:flex;gap:12px;margin-bottom:6px;font-size:13px}
+.mo-lbl{color:var(--muted);width:148px;flex-shrink:0;font-size:12.5px}.mo-val{color:var(--ink);word-break:break-word;font-weight:500}
+
+/* Bloco de conselheiro no modal */
+.mo-cons-card{background:var(--off);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;margin-bottom:7px}
+.mo-cons-card.impedido{border-color:#FECACA;background:#FFF5F5}
+.mo-cons-card.apto{border-color:#BBF7D0;background:#F0FDF4}
+
+/* Checklist modal */
+.mo-check-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r-sm);margin-bottom:5px;font-size:13px}
+.mo-check-item.ok{background:#F0FDF4;color:#166534}
+.mo-check-item.no{background:#FEF2F2;color:#991B1B}
+.mo-check-item.warn{background:#FFFBEB;color:#92400E}
+
+.empty{grid-column:1/-1;text-align:center;padding:48px;color:var(--muted);font-size:14px}
+.empty strong{display:block;font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--navy);margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<nav class="topbar">
+  <a class="brand" href="index.html"><div class="brand-bar"></div>CMS · <span>Montes Claros</span></a>
+  <div class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="entidades.html" class="active">Entidades</a>
+    <a href="conselheiros.html">Conselheiros</a>
+    <a href="inscricoes.html">Inscrições</a>
+    <a href="painel.html">Painel Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="eyebrow">Conselho Municipal de Saúde · Montes Claros</div>
+  <h1><em>Entidades</em></h1>
+  <p>Responsável, conselheiros atuais, novos indicados e checklist por entidade</p>
+</div>
+<main>
+  <div class="stats-bar">
+    <div class="sb-item blue">  <div class="sb-color"></div><div><div class="sb-num" id="s-tot">—</div><div class="sb-lbl">Total</div></div></div>
+    <div class="sb-item green"> <div class="sb-color"></div><div><div class="sb-num" id="s-comp">—</div><div class="sb-lbl">Completo</div></div></div>
+    <div class="sb-item yellow"><div class="sb-color"></div><div><div class="sb-num" id="s-pend">—</div><div class="sb-lbl">Pendente</div></div></div>
+    <div class="sb-item red">   <div class="sb-color"></div><div><div class="sb-num" id="s-imp">—</div><div class="sb-lbl">Impedido</div></div></div>
+    <div class="sb-item gray">  <div class="sb-color"></div><div><div class="sb-num" id="s-sem">—</div><div class="sb-lbl">Sem Resposta</div></div></div>
+    <div class="sb-item purple"><div class="sb-color"></div><div><div class="sb-num" id="s-man">—</div><div class="sb-lbl">Status Manual</div></div></div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="search-w"><input id="search" placeholder="Buscar entidade ou responsável..." oninput="filtrar()"></div>
+    <button class="fb active" onclick="setF(this,'TODOS')">Todos</button>
+    <button class="fb" onclick="setF(this,'COMPLETO')">✅ Completo</button>
+    <button class="fb" onclick="setF(this,'PENDENTE')">⏳ Pendente</button>
+    <button class="fb" onclick="setF(this,'IMPEDIDO')">🚫 Impedido</button>
+    <button class="fb" onclick="setF(this,'SEM_RESPOSTA')">📭 Sem Resposta</button>
+    <span class="fc" id="fc">—</span>
+  </div>
+
+  <div class="ent-grid" id="grid">
+    <div class="empty"><strong>Carregando...</strong>Buscando entidades</div>
+  </div>
+</main>
+
+<div class="mo" id="mo" onclick="closeMo(event)">
+  <div class="mo-box"><div class="mo-stripe"></div><div class="mo-inner" id="mo-inner"></div></div>
+</div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbwxbdUvBWGMYjQoRFHhkFQZ5NXqMPJ7vtqjWC0Naw-ZCiIMukMtroI4s-FoEEVABUM/exec";
+let todas=[], filtroStatus="TODOS";
+
+function t(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+
+async function load(){
+  try{
+    const d=await fetch(`${API_URL}?action=getEntidades`).then(r=>r.json());
+    if(!d.ok)throw new Error(d.erro||"Erro desconhecido");
+    todas=d.entidades||[];
+    t("s-tot",d.resumo.total); t("s-comp",d.resumo.completo);
+    t("s-pend",d.resumo.pendente); t("s-imp",d.resumo.impedido);
+    t("s-sem",d.resumo.semResposta); t("s-man",d.resumo.manuais||0);
+    filtrar();
+  }catch(err){
+    document.getElementById("grid").innerHTML=`<div class="empty"><strong>Erro ao carregar</strong>${err.message}</div>`;
+  }
+}
+
+function setF(btn,status){
+  document.querySelectorAll(".fb").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active"); filtroStatus=status; filtrar();
+}
+
+function filtrar(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  let l=todas;
+  if(filtroStatus!=="TODOS"){
+    l=l.filter(e=>filtroStatus==="SEM_RESPOSTA"
+      ?(e.status==="SEM_RESPOSTA"||e.status==="NAO_RESPONDEU")
+      :e.status===filtroStatus);
+  }
+  if(q) l=l.filter(e=>
+    e.nome.toLowerCase().includes(q)||
+    (e.diretor||"").toLowerCase().includes(q)
+  );
+  render(l);
+  t("fc",l.length+" de "+todas.length);
+}
+
+const SLBL={
+  COMPLETO:"✅ Completo",PENDENTE:"⏳ Pendente",IMPEDIDO:"🚫 Impedido",
+  SEM_RESPOSTA:"📭 Sem Resposta",NAO_RESPONDEU:"📭 Sem Resposta",INCOMPLETO:"⚠ Incompleto"
+};
+
+// ── RENDER CARDS ──
+function render(lista){
+  const g=document.getElementById("grid");
+  if(!lista.length){g.innerHTML=`<div class="empty"><strong>Nenhuma entidade encontrada</strong>Tente ajustar os filtros</div>`;return}
+  g.innerHTML=lista.map(e=>cardHtml(e)).join("");
+}
+
+function cardHtml(e){
+  const isManual  =e.statusFonte==="MANUAL";
+  const temImpedido=e.consAtuais&&e.consAtuais.some(c=>c.impedido);
+  const isCompleto =e.status==="COMPLETO";
+  let borderClass  =temImpedido?"tem-impedido":isCompleto?"ok":"";
+  if(isManual)borderClass="manual";
+
+  // Tooltip: observação ou lista de pendências
+  const tooltipTxt=e.observacao||"";
+  const obsHtml=tooltipTxt?`<span class="obs-wrap"><span class="obs-icon">ℹ️</span><span class="obs-tooltip">${tooltipTxt}</span></span>`:"";
+
+  // Responsável
+  const respHtml=e.diretor?`
+    <div class="card-resp">
+      <span style="font-size:.8rem">👤</span>
+      <span class="card-resp-name" title="${e.diretor}">${e.diretor}</span>
+      ${e.telefoneEnt?`<span class="card-resp-phone">${e.telefoneEnt}</span>`:""}
+    </div>`:"";
+
+  // Conselheiros atuais
+  const consAtuais=e.consAtuais||[];
+  const consHtml=consAtuais.length?`
+    <div class="card-cons">
+      <div class="card-cons-label">Conselheiros atuais</div>
+      ${consAtuais.map(c=>`
+        <div class="cons-row">
+          ${c.idCadeira?`<span class="cons-cadeira">${c.idCadeira}</span>`:""}
+          <span class="cons-nome" title="${c.nome}">${c.nome}</span>
+          ${c.impedido
+            ?`<span class="cons-imp">🚫 ${c.mandato}º mandato</span>`
+            :`<span class="cons-apto" title="Apto à recondução">✅</span>`}
+        </div>`).join("")}
+    </div>`:"";
+
+  // Novos indicados (da renovação)
+  const ren=e.renovacao;
+  let novosHtml="";
+  if(ren&&(ren.titular?.nome||ren.suplente?.nome)){
+    novosHtml=`<div class="card-novos">
+      <div class="card-cons-label">Indicados na renovação</div>
+      ${ren.titular?.nome?`<div class="novos-row"><span class="novos-pos T">Titular</span><span class="novos-nome" title="${ren.titular.nome}">${ren.titular.nome}</span></div>`:""}
+      ${ren.suplente?.nome?`<div class="novos-row"><span class="novos-pos S">Suplente</span><span class="novos-nome" title="${ren.suplente.nome}">${ren.suplente.nome}</span></div>`:""}
+    </div>`;
+  }
+
+  // Checklist
+  const checks=buildChecklist(e);
+  const checkHtml=`<div class="card-check">${checks.map(c=>`
+    <div class="chk-item ${c.cls}" title="${c.lbl}">
+      <span class="chk-dot"></span>${c.short}
+    </div>`).join("")}</div>`;
+
+  return `<div class="ent-card ${borderClass}" onclick='openMo(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
+    <div class="card-head">
+      <div class="card-head-top">
+        <div class="ent-name">${e.nome}${obsHtml}</div>
+        <div class="card-tags">
+          <span class="stag ${e.status}">${SLBL[e.status]||e.status}</span>
+          ${isManual?`<span class="stag manual-badge">✏️ Manual</span>`:""}
+        </div>
+      </div>
+      ${e.segmento?`<span class="seg-tag">${e.segmento}${e.subtipo&&e.subtipo!==e.segmento?" · "+e.subtipo:""}</span>`:""}
+    </div>
+    ${respHtml}
+    ${consHtml}
+    ${novosHtml}
+    ${checkHtml}
+    <div class="card-foot">
+      <span>${e.idCadeiras&&e.idCadeiras.length?e.idCadeiras.join(" · "):"—"}</span>
+      <span class="card-foot-hint">ver detalhes →</span>
+    </div>
+  </div>`;
+}
+
+function buildChecklist(e){
+  const items=[];
+  const ren=e.renovacao; const ins=e.inscricao;
+  // Conselheiros: impedimento
+  (e.consAtuais||[]).forEach(c=>{
+    if(c.impedido) items.push({cls:"no",  short:"🚫 Impedido", lbl:`${c.nome} — ${c.mandato}º mandato, não pode ser reconduzido`});
+    else           items.push({cls:"ok",  short:"✅ Apto",     lbl:`${c.nome} — apto à recondução`});
+  });
+  if(!e.consAtuais||!e.consAtuais.length){
+    items.push({cls:"warn",short:"Sem cons.", lbl:"Nenhum conselheiro vinculado via ID_CADEIRAS"});
+  }
+  // Renovação
+  if(ren){
+    items.push({cls:ren.titular?.nome  ?"ok":"no", short:"Titular",    lbl:ren.titular?.nome?`Titular: ${ren.titular.nome}`:"Titular não informado"});
+    items.push({cls:ren.suplente?.nome ?"ok":"no", short:"Suplente",   lbl:ren.suplente?.nome?`Suplente: ${ren.suplente.nome}`:"Suplente não informado"});
+    items.push({cls:ren.oficioOk       ?"ok":"no", short:"Ofício",     lbl:ren.oficioOk?"Ofício confirmado":"Ofício pendente"});
+    items.push({cls:ren.declaracao     ?"ok":"no", short:"Declaração", lbl:ren.declaracao?"Declaração enviada":"Declaração faltante"});
+  } else if(ins){
+    items.push({cls:ins.docsCompletos?"ok":"no", short:`Docs ${ins.docsOk}/${ins.totalDocs}`,
+      lbl:ins.docsFaltantes?.length?"Faltam: "+ins.docsFaltantes.join(", "):"Documentação completa"});
+    items.push({cls:ins.cnpjValido?"ok":"no", short:"CNPJ", lbl:ins.cnpjValido?"CNPJ válido":"CNPJ inválido"});
+  } else {
+    items.push({cls:"no", short:"Sem resposta", lbl:"Entidade não respondeu o formulário"});
+  }
+  return items;
+}
+
+// ── MODAL ──
+function openMo(e){
+  const ren=e.renovacao; const ins=e.inscricao;
+  let h=`<div class="mo-hdr">
+    <div>
+      <h2>${e.nome}</h2>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        <span class="stag ${e.status}">${SLBL[e.status]||e.status}</span>
+        ${e.statusFonte==="MANUAL"?`<span class="stag manual-badge">✏️ Status Manual</span>`:""}
+        ${e.segmento?`<span class="stag" style="background:var(--off);border:1px solid var(--border);color:var(--muted)">${e.segmento}</span>`:""}
+      </div>
+    </div>
+    <button class="mo-close" onclick="document.getElementById('mo').classList.remove('open')">✕</button>
+  </div>`;
+
+  // Observação / tooltip
+  if(e.observacao) h+=`<div style="background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:18px;font-size:13px">
+    <strong style="font-family:var(--font-d);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple)">
+      ${e.statusFonte==="MANUAL"?"Status Manual — ":""}Observação
+    </strong>
+    <div style="margin-top:4px;color:var(--ink)">${e.observacao}</div>
+  </div>`;
+
+  // Dados da entidade
+  h+=`<div class="mo-sec">
+    <div class="mo-sec-title">Entidade</div>
+    ${e.diretor?     `<div class="mo-row"><span class="mo-lbl">Responsável</span><span class="mo-val">${e.diretor}</span></div>`:""}
+    ${e.telefoneEnt? `<div class="mo-row"><span class="mo-lbl">Telefone</span><span class="mo-val">${e.telefoneEnt}</span></div>`:""}
+    ${e.emailEnt?    `<div class="mo-row"><span class="mo-lbl">E-mail</span><span class="mo-val">${e.emailEnt}</span></div>`:""}
+    ${e.cnpj?        `<div class="mo-row"><span class="mo-lbl">CNPJ</span><span class="mo-val">${e.cnpj}</span></div>`:""}
+    ${e.idCadeiras&&e.idCadeiras.length?`<div class="mo-row"><span class="mo-lbl">Cadeiras</span><span class="mo-val">${e.idCadeiras.join(", ")}</span></div>`:""}
+  </div>`;
+
+  // Conselheiros atuais
+  if(e.consAtuais&&e.consAtuais.length){
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title ${e.consAtuais.some(c=>c.impedido)?"red":""}">
+        Conselheiros Atuais ${e.consAtuais.some(c=>c.impedido)?"— ⚠ Há impedidos":"— ✅ Aptos"}
+      </div>`;
+    e.consAtuais.forEach(c=>{
+      h+=`<div class="mo-cons-card ${c.impedido?"impedido":"apto"}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">
+          <div>
+            <span style="font-weight:700;color:var(--ink)">${c.nome}</span>
+            ${c.idCadeira?`<span style="font-family:'Courier New',monospace;font-size:11px;color:var(--muted);margin-left:6px">${c.idCadeira}</span>`:""}
+            ${c.cadeira?`<span style="font-size:11px;color:var(--muted);margin-left:4px">· ${c.cadeira}</span>`:""}
+          </div>
+          <span class="stag ${c.status}">${c.impedido?"🚫 "+c.mandato+"º Mandato":"✅ Apto"}</span>
+        </div>
+        ${c.email?`<div style="font-size:12px;color:var(--muted)">${c.email}</div>`:""}
+        ${c.telefone?`<div style="font-size:12px;color:var(--muted)">${c.telefone}</div>`:""}
+        ${c.impedido?`<div style="font-size:12px;color:var(--red);margin-top:4px;font-weight:600">Não pode ser reconduzido — necessária substituição.</div>`:""}
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // Renovação
+  if(ren){
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title green">Novos Indicados (Renovação)</div>`;
+    if(ren.titular?.nome) h+=`<div class="mo-row"><span class="mo-lbl">Titular</span>
+      <span class="mo-val"><strong>${ren.titular.nome}</strong>
+        ${ren.titular.email?`<br><span style="font-size:12px;color:var(--muted)">${ren.titular.email}</span>`:""}
+        ${ren.titular.telefone?`<br><span style="font-size:12px;color:var(--muted)">${ren.titular.telefone}</span>`:""}
+        ${ren.titular.exerceDirecao==="SIM"||ren.titular.exerceDirecao==="S"
+          ?`<br><span style="font-size:11px;color:var(--orange);font-weight:700">⚠ Exerce direção na entidade</span>`:""}
+      </span></div>`;
+    else h+=`<div class="mo-row"><span class="mo-lbl">Titular</span><span class="mo-val" style="color:var(--red)">❌ Não informado</span></div>`;
+
+    if(ren.suplente?.nome) h+=`<div class="mo-row"><span class="mo-lbl">Suplente</span>
+      <span class="mo-val"><strong>${ren.suplente.nome}</strong>
+        ${ren.suplente.email?`<br><span style="font-size:12px;color:var(--muted)">${ren.suplente.email}</span>`:""}
+        ${ren.suplente.telefone?`<br><span style="font-size:12px;color:var(--muted)">${ren.suplente.telefone}</span>`:""}
+      </span></div>`;
+    else h+=`<div class="mo-row"><span class="mo-lbl">Suplente</span><span class="mo-val" style="color:var(--red)">❌ Não informado</span></div>`;
+    h+=`</div>`;
+
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title">Documentação da Renovação</div>`;
+    const moChks=[
+      {ok:ren.oficioOk,    lbl:ren.oficioOk?"Ofício confirmado":"Ofício pendente"},
+      {ok:!!ren.declaracao,lbl:ren.declaracao?"Declaração enviada":"Declaração faltante"},
+      {ok:!!ren.nomeDeclarante,lbl:ren.nomeDeclarante?"Declarante: "+ren.nomeDeclarante:"Nome do declarante faltante"},
+    ];
+    moChks.forEach(c=>{
+      h+=`<div class="mo-check-item ${c.ok?"ok":"no"}">${c.ok?"✅":"❌"} ${c.lbl}</div>`;
+    });
+    if(ren.oficio) h+=`<div style="margin-top:8px;font-size:13px"><a href="${ren.oficio}" target="_blank" style="color:var(--blue)">🔗 Abrir ofício</a></div>`;
+    h+=`</div>`;
+  }
+
+  // Inscrição (nova entidade)
+  if(ins){
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title">Documentação da Inscrição</div>
+      <div class="mo-row"><span class="mo-lbl">Documentos</span><span class="mo-val">${ins.docsOk}/${ins.totalDocs} enviados${ins.docsFaltantes?.length?" — faltam: "+ins.docsFaltantes.join(", "):" ✅"}</span></div>
+      <div class="mo-row"><span class="mo-lbl">CNPJ</span><span class="mo-val">${ins.cnpj||"—"} ${ins.cnpjValido?"✅":"❌"}</span></div>
+      ${ins.links?`<div class="mo-row"><span class="mo-lbl">Pasta docs</span><span class="mo-val"><a href="${ins.links}" target="_blank" style="color:var(--blue)">🔗 Abrir pasta</a></span></div>`:""}
+    </div>`;
+  }
+
+  // Pendências calculadas
+  if(e.pendencias&&e.pendencias.length){
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title red">Pendências Detectadas (${e.pendencias.length})</div>
+      ${e.pendencias.map(p=>{
+        const cls=p.tipo==="IMPEDIDO"?"no":p.tipo==="TITULAR_DIRECAO"?"warn":"no";
+        const icon=p.tipo==="IMPEDIDO"?"🚫":p.tipo==="TITULAR_DIRECAO"?"⚠️":"❌";
+        return `<div class="mo-check-item ${cls}">${icon} ${p.descricao}</div>`;
+      }).join("")}
+    </div>`;
+  } else if(e.renovacao||e.inscricao){
+    h+=`<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:#166534;margin-bottom:18px">✅ Nenhuma pendência detectada</div>`;
+  }
+
+  // Anotações
+  if(e.avaliacoes&&e.avaliacoes.length){
+    h+=`<div class="mo-sec">
+      <div class="mo-sec-title">Anotações da Comissão</div>
+      ${e.avaliacoes.map(a=>`<div style="background:var(--off);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;margin-bottom:7px;font-size:13px">
+        <div style="color:var(--muted);font-size:11px;margin-bottom:3px">${a.timestamp} · ${a.autor}</div>
+        ${a.nota?`<div style="color:var(--orange);font-weight:700;font-size:11px;margin-bottom:3px">${a.nota}</div>`:""}
+        <div>${a.anotacao}</div>
+      </div>`).join("")}
+    </div>`;
+  }
+
+  document.getElementById("mo-inner").innerHTML=h;
+  document.getElementById("mo").classList.add("open");
+}
+
+function closeMo(e){
+  if(e.target===document.getElementById("mo"))
+    document.getElementById("mo").classList.remove("open");
+}
+
+document.addEventListener("DOMContentLoaded",load);
+</script>
+</body>
+</html>

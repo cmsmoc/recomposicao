@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin — CMS Montes Claros</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2E5A;--blue:#1B6CB5;--green:#1E8A4A;--yellow:#F5C400;--white:#FFFFFF;--off:#F7F8FA;--ink:#111827;--muted:#6B7280;--border:#E5E7EB;--text:#374151;--red:#DC2626;--orange:#D97706;--purple:#7C3AED;--font-d:'Montserrat',sans-serif;--font-b:'Open Sans',sans-serif;--r-sm:6px;--r-md:12px;--r-lg:16px;--sidebar:220px}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--off);color:var(--text);font-family:var(--font-b);min-height:100vh}
+
+.login-page{min-height:100vh;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-page::before{content:'';position:absolute;top:-100px;right:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,196,0,.07) 0%,transparent 65%)}
+.login-page::after{content:'';position:absolute;bottom:-80px;left:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(27,108,181,.12) 0%,transparent 65%)}
+.login-box{background:var(--white);border-radius:var(--r-lg);padding:40px 44px;width:380px;position:relative;z-index:1;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+.login-stripe{height:4px;background:linear-gradient(to right,#F5C400 33%,#1E8A4A 33% 66%,#1B6CB5 66%);border-radius:var(--r-lg) var(--r-lg) 0 0;margin:-40px -44px 28px}
+.login-ey{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.login-box h1{font-family:var(--font-d);font-size:1.6rem;font-weight:900;letter-spacing:-1px;color:var(--navy);margin-bottom:6px}
+.login-box p{font-size:13px;color:var(--muted);margin-bottom:28px;font-weight:300}
+.fg label{display:block;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fg input{width:100%;background:var(--off);border:1.5px solid var(--border);color:var(--ink);padding:10px 14px;border-radius:var(--r-sm);font-family:var(--font-b);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:16px}
+.fg input:focus{border-color:var(--blue)}
+.btn-login{width:100%;background:var(--navy);color:white;border:none;padding:11px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-login:hover{opacity:.88}
+.login-err{font-size:12.5px;color:var(--red);margin-top:10px;text-align:center;font-weight:600}
+.login-hint{font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px}
+
+#app{display:none;flex-direction:column;min-height:100vh}
+#app.show{display:flex}
+.stripe{height:4px;background:linear-gradient(to right,#F5C400 33.3%,#1E8A4A 33.3% 66.6%,#1B6CB5 66.6%)}
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;position:sticky;top:4px;z-index:200;box-shadow:0 2px 12px rgba(13,46,90,.25)}
+.brand{font-family:var(--font-d);font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:white;text-decoration:none;display:flex;align-items:center;gap:8px}
+.brand-bar{width:3px;height:20px;background:var(--red);border-radius:2px}.brand span{color:var(--yellow)}
+.nav-r{display:flex;align-items:center;gap:10px}
+.badge-admin{background:rgba(220,38,38,.15);color:#FCA5A5;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid rgba(220,38,38,.25)}
+.btn-sm{background:var(--off);border:1px solid var(--border);color:var(--muted);padding:5px 13px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .15s}
+.btn-sm:hover{color:var(--ink);border-color:var(--ink)}
+.btn-upd{background:var(--yellow);color:var(--navy);border:none;padding:5px 13px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s}
+.btn-upd:hover{opacity:.88}
+
+.app-body{display:flex;flex:1;overflow:hidden}
+aside{width:var(--sidebar);border-right:1px solid var(--border);background:var(--white);padding:16px 0;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;box-shadow:2px 0 8px rgba(0,0,0,.04)}
+.aside-grp{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 18px 4px;margin-top:8px}
+.aside-grp:first-child{margin-top:0}
+.aside-item{display:flex;align-items:center;gap:8px;padding:8px 18px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;border-right:2px solid transparent;font-family:var(--font-b)}
+.aside-item:hover{background:var(--off);color:var(--ink)}
+.aside-item.active{background:#EFF6FF;color:var(--blue);border-right-color:var(--blue);font-weight:600}
+.aside-item .ic{font-size:.9rem;width:18px;text-align:center}
+
+.content{flex:1;overflow-y:auto;padding:28px 32px;background:var(--off)}
+.view{display:none}.view.active{display:block}
+.vh{margin-bottom:20px}
+.vh h2{font-family:var(--font-d);font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;color:var(--navy)}
+.vh p{font-size:13px;color:var(--muted);margin-top:3px;font-weight:300}
+
+.tw{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--white)}
+thead tr{background:var(--navy)}
+th{padding:10px 14px;text-align:left;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:middle}
+tbody tr:nth-child(even) td{background:var(--off)}
+tbody tr:hover td{background:#EFF6FF}
+.td-m{font-family:'Courier New',monospace;font-size:11.5px;color:var(--muted)}.td-n{font-weight:600;color:var(--ink)}
+.td-sens{font-family:'Courier New',monospace;font-size:11.5px;color:var(--orange);font-weight:600}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1.5px solid var(--border);padding-bottom:0}
+.tab-btn{background:none;border:none;color:var(--muted);padding:8px 16px;cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .18s}
+.tab-btn:hover{color:var(--blue)}.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-c{display:none}.tab-c.active{display:block}
+
+.stag{display:inline-block;padding:3px 10px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.stag.COMPLETO{background:#D1FAE5;color:#065F46}.stag.PENDENTE{background:#FEF3C7;color:#92400E}
+.stag.IMPEDIDO{background:#FEE2E2;color:#991B1B}.stag.SEM_RESPOSTA,.stag.NAO_RESPONDEU{background:#F3F4F6;color:var(--muted)}
+.stag.INCOMPLETO{background:#FEF3C7;color:#92400E}
+.stag.CRITICO{background:var(--red);color:white}.stag.ALERTA{background:var(--orange);color:white}
+.stag.INFO{background:var(--blue);color:white}.stag.APTO{background:#D1FAE5;color:#065F46}
+
+.inc-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:var(--r-sm);margin-bottom:8px;font-size:13px;background:var(--white);border:1px solid var(--border)}
+.inc-item.CRITICO{border-left:3px solid var(--red);background:#FFF5F5}
+.inc-item.ALERTA{border-left:3px solid var(--orange);background:#FFFBEB}
+.inc-item.INFO{border-left:3px solid var(--blue);background:#EFF6FF}
+.inc-text{color:var(--text);line-height:1.45;flex:1}
+.inc-tipo{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+.nota-form{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.nota-form h3{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.fg2{margin-bottom:10px}
+.fg2 label{display:block;font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fg2 select,.fg2 input,.fg2 textarea{width:100%;background:var(--off);border:1.5px solid var(--border);color:var(--ink);padding:8px 12px;border-radius:var(--r-sm);font-family:var(--font-b);font-size:13px;outline:none;transition:border-color .2s}
+.fg2 select:focus,.fg2 input:focus,.fg2 textarea:focus{border-color:var(--blue)}
+.fg2 textarea{min-height:80px;resize:vertical}
+.btn-save{background:var(--blue);color:white;border:none;padding:8px 22px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s}
+.btn-save:hover{opacity:.88}
+.nota-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;font-size:13px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.nota-meta{color:var(--muted);font-size:11px;margin-bottom:3px;font-family:'Courier New',monospace}
+.nota-tag{font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:3px}
+
+/* Regras de inconsistência */
+.regra-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:16px 18px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.regra-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.regra-nome{font-family:var(--font-d);font-size:.88rem;font-weight:700;color:var(--navy)}
+.regra-desc{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.45}
+.regra-params{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.toggle-wrap{display:flex;align-items:center;gap:8px}
+.toggle{width:38px;height:20px;background:var(--border);border-radius:99px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:white;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{left:21px}
+.toggle-lbl{font-family:var(--font-d);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.sev-sel{background:var(--off);border:1.5px solid var(--border);color:var(--ink);padding:4px 10px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;outline:none;cursor:pointer}
+.param-inp{background:var(--off);border:1.5px solid var(--border);color:var(--ink);padding:5px 10px;border-radius:var(--r-sm);font-family:var(--font-b);font-size:12px;outline:none;width:90px}
+.param-inp:focus{border-color:var(--blue)}
+.param-lbl{font-family:var(--font-d);font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.btn-regra{background:var(--navy);color:white;border:none;padding:5px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s}
+.btn-regra:hover{opacity:.85}
+
+/* Health check */
+.hc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;font-size:13px}
+.hc-card.ok{border-left:3px solid var(--green)}
+.hc-card.err{border-left:3px solid var(--red);background:#FFF5F5}
+.hc-card.warn{border-left:3px solid var(--orange);background:#FFFBEB}
+.hc-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.hc-txt{flex:1;line-height:1.4}
+.hc-detalhe{font-size:11.5px;color:var(--muted);margin-top:2px}
+.hc-tipo{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* Status manual form */
+.sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.sm-grid{grid-template-columns:1fr}}
+
+.exp-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:20px 22px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.exp-card h3{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.chk-group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);cursor:pointer}
+.chk input{accent-color:var(--blue);width:14px;height:14px}
+.btn-exp{background:var(--green);color:white;border:none;padding:10px 24px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:opacity .2s}
+.btn-exp:hover{opacity:.88}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:white;border-radius:var(--r-md);padding:11px 17px;font-size:13px;box-shadow:0 8px 32px rgba(13,46,90,.35);z-index:999;opacity:0;transform:translateY(10px);transition:all .25s;border-left:4px solid var(--yellow);max-width:300px}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="login-stripe"></div>
+    <div class="login-ey">Conselho Municipal de Saúde · Montes Claros</div>
+    <h1>Painel<br>Administrativo</h1>
+    <p>Acesso restrito à comissão de recomposição</p>
+    <div class="fg">
+      <label>Senha de acesso</label>
+      <input type="password" id="senhaInput" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')entrar()">
+      <button class="btn-login" onclick="entrar()">ACESSAR PAINEL</button>
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <p class="login-hint">Senha padrão: cms2024 · Altere na aba config</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="stripe"></div>
+  <nav class="topbar">
+    <a class="brand" href="index.html"><div class="brand-bar"></div>CMS · <span>Admin</span></a>
+    <div class="nav-r">
+      <span class="badge-admin">ACESSO ADMIN</span>
+      <button class="btn-upd" onclick="carregarTudo()">↻ ATUALIZAR</button>
+      <button class="btn-sm" onclick="sair()">SAIR</button>
+    </div>
+  </nav>
+  <div class="app-body">
+    <aside>
+      <div class="aside-grp">Processo</div>
+      <button class="aside-item active" onclick="showView('renovacoes',this)"><span class="ic">📋</span>Renovações</button>
+      <button class="aside-item" onclick="showView('inconsistencias',this)"><span class="ic">⚠️</span>Inconsistências</button>
+
+      <div class="aside-grp">Dados Completos</div>
+      <button class="aside-item" onclick="showView('cons-admin',this)"><span class="ic">👥</span>Conselheiros</button>
+      <button class="aside-item" onclick="showView('inscr-admin',this)"><span class="ic">📂</span>Inscrições</button>
+
+      <div class="aside-grp">Configuração</div>
+      <button class="aside-item" onclick="showView('regras',this)"><span class="ic">⚙️</span>Regras de Inconsistência</button>
+      <button class="aside-item" onclick="showView('status-manual',this)"><span class="ic">✏️</span>Status Manual</button>
+      <button class="aside-item" onclick="showView('health',this)"><span class="ic">🩺</span>Health Check</button>
+
+      <div class="aside-grp">Ferramentas</div>
+      <button class="aside-item" onclick="showView('anotacoes',this)"><span class="ic">📝</span>Anotações</button>
+      <button class="aside-item" onclick="showView('exportar',this)"><span class="ic">📤</span>Exportar PDF</button>
+    </aside>
+
+    <div class="content">
+
+      <!-- RENOVAÇÕES -->
+      <div class="view active" id="view-renovacoes">
+        <div class="vh"><h2>Renovações</h2><p>Todas as respostas recebidas com dados completos</p></div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="setTab(this,'tr-lista')">Lista Geral</button>
+          <button class="tab-btn" onclick="setTab(this,'tr-sens')">Dados Sensíveis</button>
+        </div>
+        <div class="tab-c active" id="tr-lista">
+          <div class="tw"><table><thead><tr>
+            <th>Entidade</th><th>Status</th><th>Ofício</th><th>Titular</th><th>Suplente</th><th>Substituição</th><th>Declarante</th>
+          </tr></thead><tbody id="tb-ren"></tbody></table></div>
+        </div>
+        <div class="tab-c" id="tr-sens">
+          <p style="font-size:12px;color:var(--orange);font-weight:600;margin-bottom:12px;padding:8px 12px;background:#FFFBEB;border-radius:var(--r-sm);border:1px solid #FEF3C7">⚠ Dados sensíveis — acesso restrito</p>
+          <div class="tw"><table><thead><tr>
+            <th>Entidade</th><th>Titular</th><th>CPF Titular</th><th>RG Titular</th><th>Nasc. Titular</th><th>Suplente</th><th>CPF Suplente</th><th>Nasc. Suplente</th>
+          </tr></thead><tbody id="tb-ren-s"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- INCONSISTÊNCIAS -->
+      <div class="view" id="view-inconsistencias">
+        <div class="vh"><h2>Inconsistências</h2><p>Problemas detectados automaticamente — configure as regras no menu Regras</p></div>
+        <div id="inc-list"><p style="color:var(--muted);font-size:13px">Carregando...</p></div>
+      </div>
+
+      <!-- CONSELHEIROS ADMIN -->
+      <div class="view" id="view-cons-admin">
+        <div class="vh"><h2>Conselheiros — Dados Completos</h2><p>Inclui CPF, RG e endereço (visível apenas neste painel)</p></div>
+        <div class="tw"><table><thead><tr>
+          <th>Nome</th><th>Entidade</th><th>Segmento</th><th>Subtipo</th><th>CPF</th><th>RG</th><th>Endereço</th><th>Mandato</th><th>Situação</th>
+        </tr></thead><tbody id="tb-cons"></tbody></table></div>
+      </div>
+
+      <!-- INSCRIÇÕES ADMIN -->
+      <div class="view" id="view-inscr-admin">
+        <div class="vh"><h2>Inscrições — Dados Completos</h2><p>Com acesso direto a links de documentos</p></div>
+        <div class="tw"><table><thead><tr>
+          <th>Instituição</th><th>CNPJ</th><th>Segmento</th><th>Diretor</th><th>Docs</th><th>Status</th><th>Links</th>
+        </tr></thead><tbody id="tb-inscr"></tbody></table></div>
+      </div>
+
+      <!-- REGRAS DE INCONSISTÊNCIA -->
+      <div class="view" id="view-regras">
+        <div class="vh"><h2>Regras de Inconsistência</h2><p>Ative, desative e configure os parâmetros de cada regra. Alterações são salvas na aba <code>regras_inconsistencias</code> da planilha.</p></div>
+        <div id="regras-list"><p style="color:var(--muted);font-size:13px">Carregando...</p></div>
+      </div>
+
+      <!-- STATUS MANUAL -->
+      <div class="view" id="view-status-manual">
+        <div class="vh"><h2>Status Manual de Entidades</h2><p>Sobrescreva o status automático de qualquer entidade e adicione uma observação que aparece como tooltip nos cards.</p></div>
+        <div class="nota-form">
+          <h3>Definir / Atualizar Status Manual</h3>
+          <div class="sm-grid">
+            <div class="fg2"><label>Entidade</label><select id="sm-ent"><option value="">Selecione a entidade...</option></select></div>
+            <div class="fg2"><label>Status Manual</label>
+              <select id="sm-status">
+                <option value="">-- Remover status manual --</option>
+                <option value="COMPLETO">✅ Completo</option>
+                <option value="PENDENTE">⏳ Pendente</option>
+                <option value="IMPEDIDO">🚫 Impedido</option>
+                <option value="SEM_RESPOSTA">📭 Sem Resposta</option>
+                <option value="INCOMPLETO">⚠ Incompleto</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg2"><label>Observação (aparece como tooltip)</label><textarea id="sm-obs" placeholder="Ex: Documentação entregue fisicamente em 15/01 — aguarda digitalização..."></textarea></div>
+          <button class="btn-save" onclick="salvarStatusManual()">💾 SALVAR STATUS</button>
+        </div>
+        <div id="sm-lista"></div>
+      </div>
+
+      <!-- HEALTH CHECK -->
+      <div class="view" id="view-health">
+        <div class="vh"><h2>🩺 Health Check</h2><p>Diagnóstico completo do sistema — abas, colunas, configurações e contagens</p></div>
+        <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+          <button class="btn-save" onclick="rodarHealthCheck()">▶ Rodar Diagnóstico</button>
+          <div id="hc-resumo" style="font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:8px"></div>
+        </div>
+        <div id="hc-list"><p style="color:var(--muted);font-size:13px">Clique em "Rodar Diagnóstico" para verificar o sistema.</p></div>
+      </div>
+
+      <!-- ANOTAÇÕES -->
+      <div class="view" id="view-anotacoes">
+        <div class="vh"><h2>Anotações da Comissão</h2><p>Registre observações por entidade — salvo na planilha</p></div>
+        <div class="nota-form">
+          <h3>Nova Anotação</h3>
+          <div class="fg2"><label>Entidade</label><select id="nota-ent"><option value="">Selecione a entidade...</option></select></div>
+          <div class="fg2"><label>Classificação</label><input type="text" id="nota-tag" placeholder="ex: APROVADA · PENDÊNCIA · ANÁLISE · REPROVADA"></div>
+          <div class="fg2"><label>Observação</label><textarea id="nota-txt" placeholder="Descreva a situação, decisão ou pendência..."></textarea></div>
+          <button class="btn-save" onclick="salvarNota()">💾 SALVAR ANOTAÇÃO</button>
+        </div>
+        <div id="notas-list"></div>
+      </div>
+
+      <!-- EXPORTAR PDF -->
+      <div class="view" id="view-exportar">
+        <div class="vh"><h2>Exportar Relatório PDF</h2><p>Gerar relatório institucional para impressão ou arquivo</p></div>
+        <div class="exp-card">
+          <h3>Conteúdo do Relatório</h3>
+          <div class="chk-group">
+            <label class="chk"><input type="checkbox" id="ex-comp" checked> Entidades com documentação completa</label>
+            <label class="chk"><input type="checkbox" id="ex-pend" checked> Entidades com documentação pendente</label>
+            <label class="chk"><input type="checkbox" id="ex-imp" checked> Conselheiros impedidos de recondução</label>
+            <label class="chk"><input type="checkbox" id="ex-inc"> Inconsistências detectadas</label>
+            <label class="chk"><input type="checkbox" id="ex-notas"> Anotações da comissão</label>
+            <label class="chk"><input type="checkbox" id="ex-sens"> Dados sensíveis (CPF/RG)</label>
+          </div>
+          <div id="exp-preview" style="background:var(--off);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;margin-bottom:16px;font-size:13px;color:var(--muted)">Carregando preview...</div>
+          <button class="btn-exp" onclick="exportarPDF()">📄 GERAR PDF</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbwxbdUvBWGMYjQoRFHhkFQZ5NXqMPJ7vtqjWC0Naw-ZCiIMukMtroI4s-FoEEVABUM/exec";
+let dados={};
+
+// ── AUTH ──
+async function entrar(){
+  const s=document.getElementById("senhaInput").value;
+  const r=await fetch(`${API_URL}?action=validarSenha&senha=${encodeURIComponent(s)}`).then(r=>r.json());
+  if(r.valido){
+    sessionStorage.setItem("cms_auth","1");
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("app").classList.add("show");
+    carregarTudo();
+  } else { document.getElementById("loginErr").textContent="Senha incorreta. Tente novamente."; }
+}
+function sair(){ sessionStorage.removeItem("cms_auth"); location.reload(); }
+if(sessionStorage.getItem("cms_auth")==="1"){
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("app").classList.add("show");
+  setTimeout(carregarTudo,80);
+}
+
+function toast(m,d=3000){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),d)}
+
+// ── NAV ──
+function showView(v,btn){
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".aside-item").forEach(b=>b.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  btn.classList.add("active");
+}
+function setTab(btn,id){
+  const p=btn.closest(".view");
+  p.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  p.querySelectorAll(".tab-c").forEach(t=>t.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(id).classList.add("active");
+}
+
+// ── CARREGAR ──
+async function carregarTudo(){
+  toast("Carregando dados...",2000);
+  const [rens,cons,incs,inscr,avals,ents,regras] = await Promise.all([
+    fetch(`${API_URL}?action=getRenovacoes`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getConselheiros`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getInconsistencias`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getInscricoes`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getAvaliacoes`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getEntidades`).then(r=>r.json()),
+    fetch(`${API_URL}?action=getRegrasInconsistencias`).then(r=>r.json()),
+  ]);
+  dados={rens,cons,incs,inscr,avals,ents,regras};
+  renderRen(rens.renovacoes||[]);
+  renderCons(cons.conselheiros||[]);
+  renderInscr(inscr.inscricoes||[]);
+  renderIncs(incs.inconsistencias||[]);
+  renderNotas(avals.avaliacoes||[]);
+  preencherSelect(ents.entidades||[], rens.renovacoes||[]);
+  renderRegras(regras.regras||[]);
+  renderExpPreview(rens,cons,incs);
+  renderSmLista(ents.entidades||[]);
+  toast("Dados carregados");
+}
+
+const SLBL={COMPLETO:"✅ Completo",PENDENTE:"⏳ Pendente",IMPEDIDO:"🚫 Impedido",SEM_RESPOSTA:"📭 S/ Resposta",NAO_RESPONDEU:"📭 S/ Resposta",INCOMPLETO:"⚠ Incompleto"};
+
+// ── RENOVAÇÕES ──
+function renderRen(l){
+  document.getElementById("tb-ren").innerHTML=l.map(r=>`<tr>
+    <td class="td-n">${r.entidade}</td>
+    <td><span class="stag ${r.status}">${SLBL[r.status]||r.status}</span></td>
+    <td>${r.oficioOk?"✅":"❌"}</td>
+    <td>${r.titular?.nome||"—"}</td><td>${r.suplente?.nome||"—"}</td>
+    <td style="font-size:11px;color:var(--muted)">${r.substituicao}</td>
+    <td class="td-m">${r.nomeDeclarante||"—"}</td>
+  </tr>`).join("")||`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Nenhuma renovação encontrada</td></tr>`;
+  document.getElementById("tb-ren-s").innerHTML=l.map(r=>`<tr>
+    <td class="td-n">${r.entidade}</td><td>${r.titular?.nome||"—"}</td>
+    <td class="td-sens">${r.titular?.cpf||"—"}</td><td class="td-m">${r.titular?.rg||"—"}</td>
+    <td class="td-m">${r.titular?.nascimento||"—"}</td><td>${r.suplente?.nome||"—"}</td>
+    <td class="td-sens">${r.suplente?.cpf||"—"}</td><td class="td-m">${r.suplente?.nascimento||"—"}</td>
+  </tr>`).join("")||"";
+}
+
+// ── CONSELHEIROS ──
+function renderCons(l){
+  document.getElementById("tb-cons").innerHTML=l.map(c=>`<tr>
+    <td class="td-n">${c.nome}</td>
+    <td style="color:var(--muted)">${c.entidade}</td>
+    <td><span style="background:var(--off);border:1px solid var(--border);padding:2px 7px;border-radius:3px;font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase">${c.segmento}</span></td>
+    <td>${c.subtipo?`<span style="font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${c.subtipo==="PRESTADOR"?"#7C3AED":"#D97706"}">${c.subtipo}</span>`:"—"}</td>
+    <td class="td-sens">${c.cpf||"—"}</td><td class="td-m">${c.rg||"—"}</td>
+    <td style="font-size:12px">${c.endereco||"—"}</td>
+    <td class="td-m">${c.mandato}º</td>
+    <td><span class="stag ${c.status}">${c.status==="APTO"?"✅ Apto":"🚫 Impedido"}</span></td>
+  </tr>`).join("")||`<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">Sem dados</td></tr>`;
+}
+
+// ── INSCRIÇÕES ──
+function renderInscr(l){
+  document.getElementById("tb-inscr").innerHTML=l.map(i=>`<tr>
+    <td class="td-n">${i.nomeInstituicao}</td>
+    <td class="td-m">${i.cnpj||"—"} ${i.cnpjValido?"✅":"❌"}</td>
+    <td style="color:var(--muted)">${i.segmento||"—"}</td>
+    <td style="color:var(--muted)">${i.diretor||"—"}</td>
+    <td class="td-m">${i.docsOk}/${i.totalDocs}</td>
+    <td><span class="stag ${i.statusGeral}">${i.statusGeral}</span></td>
+    <td>${i.links?`<a href="${i.links}" target="_blank" style="color:var(--blue);font-size:12px">🔗 Pasta</a>`:"—"}</td>
+  </tr>`).join("")||`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Sem inscrições</td></tr>`;
+}
+
+// ── INCONSISTÊNCIAS ──
+function renderIncs(l){
+  const el=document.getElementById("inc-list");
+  if(!l.length){el.innerHTML=`<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--r-md);padding:16px 18px;font-size:13px;color:var(--green);font-weight:600">✓ Nenhuma inconsistência detectada</div>`;return}
+  el.innerHTML=l.map(i=>`<div class="inc-item ${i.severidade}">
+    <span class="stag ${i.severidade}">${i.severidade}</span>
+    <div><div class="inc-text">${i.descricao}</div><div class="inc-tipo">${i.tipo}</div></div>
+  </div>`).join("");
+}
+
+// ── REGRAS ──
+function renderRegras(regras){
+  const el=document.getElementById("regras-list");
+  if(!regras.length){el.innerHTML=`<p style="color:var(--muted);font-size:13px">Nenhuma regra encontrada. Execute <code>setupConfig2()</code> no GAS.</p>`;return}
+  el.innerHTML=regras.map(r=>`
+    <div class="regra-card" id="regra-${r.id}">
+      <div class="regra-hdr">
+        <div>
+          <div class="regra-nome">${r.nome}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="toggle-lbl">${r.ativa?"Ativa":"Inativa"}</span>
+          <button class="toggle ${r.ativa?"on":""}" id="tog-${r.id}" onclick="toggleRegra('${r.id}',this)" title="${r.ativa?"Clique para desativar":"Clique para ativar"}"></button>
+          <select class="sev-sel" id="sev-${r.id}" title="Severidade">
+            ${["CRITICO","ALERTA","INFO"].map(s=>`<option value="${s}" ${r.severidade===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="regra-desc">${r.descricao}</div>
+      ${(r.param1Nome||r.param2Nome)?`<div class="regra-params">
+        ${r.param1Nome?`<span class="param-lbl">${r.param1Nome}:</span><input class="param-inp" id="p1-${r.id}" value="${r.param1Valor||""}" placeholder="valor">`:``}
+        ${r.param2Nome?`<span class="param-lbl">${r.param2Nome}:</span><input class="param-inp" id="p2-${r.id}" value="${r.param2Valor||""}" placeholder="valor">`:``}
+      </div>`:""}
+      <div style="margin-top:10px">
+        <button class="btn-regra" onclick="salvarRegra('${r.id}','${r.param1Nome||''}','${r.param2Nome||''}')">💾 Salvar Regra</button>
+      </div>
+    </div>`).join("");
+}
+
+async function toggleRegra(id, btn){
+  btn.classList.toggle("on");
+  const ativa=btn.classList.contains("on");
+  const lbl=btn.previousElementSibling;
+  if(lbl) lbl.textContent=ativa?"Ativa":"Inativa";
+  await salvarRegraAPI(id,{ativa});
+}
+
+async function salvarRegra(id,p1n,p2n){
+  const sev=document.getElementById("sev-"+id)?.value;
+  const p1v=p1n?document.getElementById("p1-"+id)?.value:undefined;
+  const p2v=p2n?document.getElementById("p2-"+id)?.value:undefined;
+  const ativa=document.getElementById("tog-"+id)?.classList.contains("on");
+  await salvarRegraAPI(id,{severidade:sev,param1Valor:p1v,param2Valor:p2v,ativa});
+  toast("Regra salva ✓");
+}
+
+async function salvarRegraAPI(id,payload){
+  const r=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveRegraInconsistencia",id,...payload})}).then(x=>x.json());
+  if(!r.ok) toast("Erro: "+(r.erro||"?"));
+  return r;
+}
+
+// ── STATUS MANUAL ──
+function renderSmLista(ents){
+  // Preencher select
+  const nomes=[...new Set(ents.map(e=>e.nome))].filter(Boolean).sort();
+  document.getElementById("sm-ent").innerHTML=`<option value="">Selecione a entidade...</option>`+nomes.map(n=>`<option value="${n}">${n}</option>`).join("");
+  // Mostrar entidades com status manual
+  const manual=ents.filter(e=>e.statusFonte==="MANUAL");
+  const el=document.getElementById("sm-lista");
+  if(!manual.length){el.innerHTML=`<p style="color:var(--muted);font-size:13px">Nenhum status manual configurado.</p>`;return}
+  el.innerHTML=`<div style="font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Entidades com status manual</div>`+
+  manual.map(e=>`<div style="background:var(--white);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;font-size:13px">
+    <div style="font-weight:600;color:var(--navy)">${e.nome}</div>
+    <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;align-items:center">
+      <span class="stag ${e.status}">${SLBL[e.status]||e.status}</span>
+      ${e.observacao?`<span style="font-size:12px;color:var(--muted)">📝 ${e.observacao}</span>`:""}
+    </div>
+  </div>`).join("");
+}
+
+async function salvarStatusManual(){
+  const ent=document.getElementById("sm-ent").value;
+  const status=document.getElementById("sm-status").value;
+  const obs=document.getElementById("sm-obs").value;
+  if(!ent){toast("Selecione uma entidade");return}
+  const r=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveStatusManual",entidade:ent,statusManual:status,observacao:obs,autor:"Comissão"})}).then(x=>x.json());
+  if(r.ok){
+    toast("Status manual salvo ✓");
+    document.getElementById("sm-obs").value="";
+    // Recarregar entidades
+    const ents=await fetch(`${API_URL}?action=getEntidades`).then(r=>r.json());
+    if(ents.ok) renderSmLista(ents.entidades||[]);
+  } else { toast("Erro: "+(r.erro||"?")); }
+}
+
+// ── HEALTH CHECK ──
+async function rodarHealthCheck(){
+  document.getElementById("hc-resumo").textContent="Verificando...";
+  document.getElementById("hc-list").innerHTML=`<p style="color:var(--muted);font-size:13px">⏳ Rodando diagnóstico...</p>`;
+  const r=await fetch(`${API_URL}?action=healthCheck`).then(x=>x.json());
+  const resumo=r.resumo||{};
+  const cor=resumo.erros>0?"var(--red)":resumo.avisos>0?"var(--orange)":"var(--green)";
+  document.getElementById("hc-resumo").innerHTML=`<span style="color:${cor};font-size:1.1rem">${resumo.erros===0&&resumo.avisos===0?"✅":"❌"}</span> <span style="color:var(--ink)">${resumo.ok||0} OK</span> · <span style="color:var(--red)">${resumo.erros||0} Erros</span> · <span style="color:var(--orange)">${resumo.avisos||0} Avisos</span>`;
+  const checks=r.checks||[];
+  document.getElementById("hc-list").innerHTML=checks.map(c=>{
+    const cls=c.ok?"ok":c.tipo.includes("V2")?"warn":"err";
+    const icon=c.ok?"✅":c.tipo.includes("V2")?"⚠️":"❌";
+    return `<div class="hc-card ${cls}">
+      <span class="hc-icon">${icon}</span>
+      <div class="hc-txt">
+        <div>${c.descricao}</div>
+        ${c.detalhe?`<div class="hc-detalhe">${c.detalhe}</div>`:""}
+        <div class="hc-tipo">${c.tipo} · ${c.item}</div>
+      </div>
+    </div>`;
+  }).join("")||`<p style="color:var(--muted)">Sem resultados</p>`;
+}
+
+// ── SELECT ENTIDADES ──
+function preencherSelect(ents,rens){
+  const nomes=[...new Set([...ents.map(e=>e.nome),...rens.map(r=>r.entidade)])].filter(Boolean).sort();
+  document.getElementById("nota-ent").innerHTML=`<option value="">Selecione...</option>`+nomes.map(n=>`<option value="${n}">${n}</option>`).join("");
+}
+
+// ── SALVAR NOTA ──
+async function salvarNota(){
+  const ent=document.getElementById("nota-ent").value;
+  const tag=document.getElementById("nota-tag").value;
+  const txt=document.getElementById("nota-txt").value;
+  if(!ent||!txt){toast("Preencha entidade e observação");return}
+  const r=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveAnotacao",entidade:ent,nota:tag,anotacao:txt,autor:"Comissão"})}).then(x=>x.json());
+  if(r.ok){
+    toast("Anotação salva com sucesso");
+    document.getElementById("nota-tag").value="";
+    document.getElementById("nota-txt").value="";
+    const av=await fetch(`${API_URL}?action=getAvaliacoes`).then(r=>r.json());
+    renderNotas(av.avaliacoes||[]);
+  } else { toast("Erro ao salvar: "+(r.erro||"?")); }
+}
+
+// ── NOTAS ──
+function renderNotas(l){
+  const el=document.getElementById("notas-list");
+  if(!l.length){el.innerHTML=`<p style="color:var(--muted);font-size:13px">Nenhuma anotação registrada</p>`;return}
+  const grupos={};
+  l.forEach(n=>{if(!grupos[n.entidade])grupos[n.entidade]=[];grupos[n.entidade].push(n)});
+  el.innerHTML=Object.entries(grupos).map(([ent,notas])=>`<div style="margin-bottom:16px">
+    <div style="font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:7px">${ent}</div>
+    ${notas.map(n=>`<div class="nota-card">
+      <div class="nota-meta">${n.timestamp?new Date(n.timestamp).toLocaleString("pt-BR",{}):"—"} · ${n.autor||"—"}</div>
+      ${n.nota?`<div class="nota-tag">${n.nota}</div>`:""}
+      <div>${n.anotacao}</div>
+    </div>`).join("")}
+  </div>`).join("");
+}
+
+// ── EXPORT PREVIEW ──
+function renderExpPreview(rens,cons,incs){
+  const el=document.getElementById("exp-preview");
+  if(!el)return;
+  const r=rens.renovacoes||[]; const c=cons.conselheiros||[]; const i=incs.inconsistencias||[];
+  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div><strong style="font-family:var(--font-d);color:var(--navy)">${r.length}</strong> renovações</div>
+    <div><strong style="font-family:var(--font-d);color:var(--navy)">${c.length}</strong> conselheiros</div>
+    <div><strong style="font-family:var(--font-d);color:var(--navy)">${i.length}</strong> inconsistências</div>
+    <div><strong style="font-family:var(--font-d);color:var(--green)">${r.filter(x=>x.status==="COMPLETO").length}</strong> completas</div>
+    <div><strong style="font-family:var(--font-d);color:var(--red)">${c.filter(x=>x.impedido).length}</strong> impedidos</div>
+    <div><strong style="font-family:var(--font-d);color:var(--red)">${i.filter(x=>x.severidade==="CRITICO").length}</strong> críticas</div>
+  </div>`;
+}
+
+// ── EXPORTAR PDF ──
+function exportarPDF(){
+  const exComp=document.getElementById("ex-comp").checked;
+  const exPend=document.getElementById("ex-pend").checked;
+  const exImp=document.getElementById("ex-imp").checked;
+  const exInc=document.getElementById("ex-inc").checked;
+  const exNota=document.getElementById("ex-notas").checked;
+  const exSens=document.getElementById("ex-sens").checked;
+  let rens=(dados.rens?.renovacoes||[]);
+  if(!exComp) rens=rens.filter(r=>r.status!=="COMPLETO");
+  if(!exPend) rens=rens.filter(r=>r.status!=="PENDENTE"&&r.status!=="INCOMPLETO");
+  if(!exImp) rens=rens.filter(r=>r.status!=="IMPEDIDO");
+  const incs=dados.incs?.inconsistencias||[];
+  const avals=dados.avals?.avaliacoes||[];
+  const cons=dados.cons?.conselheiros||[];
+  const css=`body{font-family:'Open Sans',sans-serif;font-size:12px;color:#111;margin:2cm;line-height:1.55}h1{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;letter-spacing:-1px;color:#0D2E5A;margin-bottom:4px}.sub{font-size:12px;color:#6B7280;margin-bottom:20px}.stripe{height:4px;background:linear-gradient(to right,#F5C400 33%,#1E8A4A 33% 66%,#1B6CB5 66%);margin-bottom:20px;border-radius:2px}h2{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#0D2E5A;margin:20px 0 8px;border-bottom:2px solid #1B6CB5;padding-bottom:4px}table{width:100%;border-collapse:collapse;margin-bottom:12px}thead tr{background:#0D2E5A;color:white}th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}td{padding:7px 10px;border-top:1px solid #E5E7EB;font-size:11.5px}tr:nth-child(even) td{background:#F7F8FA}.COMPLETO{background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:3px;font-weight:700;font-size:10px}.PENDENTE{background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:3px;font-weight:700;font-size:10px}.IMPEDIDO{background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:3px;font-weight:700;font-size:10px}.SEM_RESPOSTA{background:#F3F4F6;color:#6B7280;padding:2px 7px;border-radius:3px;font-weight:700;font-size:10px}.inc{padding:7px 10px;margin:4px 0;border-radius:4px;font-size:11.5px}.CRITICO{background:#FEE2E2;border-left:3px solid #DC2626}.ALERTA{background:#FEF3C7;border-left:3px solid #D97706}.nota-blk{background:#F7F8FA;padding:8px 12px;margin:4px 0;border-radius:4px;font-size:11.5px;border-left:3px solid #1B6CB5}footer{margin-top:32px;font-size:10px;color:#9CA3AF;text-align:center;border-top:1px solid #E5E7EB;padding-top:10px}@media print{body{margin:1.5cm}}`;
+  let body=`<div class="stripe"></div><h1>Conselho Municipal de Saúde — Montes Claros/MG</h1><div class="sub">Relatório de Recomposição · Gerado em ${new Date().toLocaleString("pt-BR")} · Comissão Administrativa</div><h2>Renovações (${rens.length} registros)</h2><table><tr><th>Entidade</th><th>Status</th><th>Ofício</th><th>Titular</th><th>Suplente</th><th>Substituição</th></tr>${rens.map(r=>`<tr><td>${r.entidade}</td><td><span class="${r.status}">${r.status}</span></td><td>${r.oficioOk?"Sim":"Não"}</td><td>${r.titular?.nome||"—"}</td><td>${r.suplente?.nome||"—"}</td><td>${r.substituicao}</td></tr>`).join("")}</table>`;
+  if(exImp){const imps=cons.filter(c=>c.impedido);if(imps.length)body+=`<h2>Conselheiros Impedidos (${imps.length})</h2><table><tr><th>Nome</th><th>Entidade</th><th>Segmento</th><th>Subtipo</th><th>Mandato</th></tr>${imps.map(c=>`<tr><td>${c.nome}</td><td>${c.entidade}</td><td>${c.segmento}</td><td>${c.subtipo||"—"}</td><td>${c.mandato}º</td></tr>`).join("")}</table>`;}
+  if(exInc&&incs.length){body+=`<h2>Inconsistências (${incs.length})</h2>`;incs.forEach(i=>{body+=`<div class="inc ${i.severidade}"><strong>${i.severidade}:</strong> ${i.descricao}</div>`});}
+  if(exNota&&avals.length){body+=`<h2>Anotações da Comissão</h2>`;avals.forEach(a=>{body+=`<div class="nota-blk"><strong>${a.entidade}</strong>${a.nota?" — "+a.nota:""}<br><span style="color:#6B7280;font-size:10.5px">${a.timestamp||"—"} · ${a.autor||"—"}</span><br>${a.anotacao}</div>`});}
+  body+=`<footer>CMS Montes Claros — MG · Relatório gerado pelo sistema de gestão de recomposição · ${new Date().getFullYear()}</footer>`;
+  const w=window.open("","_blank");
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"><style>${css}</style></head><body>${body}</body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),800);
+}
+</script>
+</body>
+</html>

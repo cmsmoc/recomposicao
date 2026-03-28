@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — CMS Montes Claros · Recomposição</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0D2E5A;--blue:#1B6CB5;--green:#1E8A4A;--yellow:#F5C400;
+  --white:#FFFFFF;--off:#F7F8FA;--ink:#111827;--muted:#6B7280;
+  --border:#E5E7EB;--text:#374151;--red:#DC2626;--orange:#D97706;
+  --font-d:'Montserrat',sans-serif;--font-b:'Open Sans',sans-serif;
+  --r-sm:6px;--r-md:12px;--r-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--off);color:var(--text);font-family:var(--font-b);line-height:1.6;min-height:100vh}
+
+.stripe{height:4px;background:linear-gradient(to right,#F5C400 33.3%,#1E8A4A 33.3% 66.6%,#1B6CB5 66.6%)}
+
+.topbar{
+  background:var(--navy);display:flex;align-items:center;
+  justify-content:space-between;padding:0 48px;height:56px;
+  position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(13,46,90,.3);
+}
+.brand{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:2px;
+  text-transform:uppercase;color:white;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-bar{width:3px;height:22px;background:var(--yellow);border-radius:2px}
+.brand span{color:var(--yellow)}
+.nav{display:flex;gap:2px}
+.nav a{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;
+  padding:6px 13px;border-radius:var(--r-sm);transition:all .18s}
+.nav a:hover{color:var(--yellow);background:rgba(245,196,0,.08)}
+.nav a.active{color:var(--yellow);background:rgba(245,196,0,.12)}
+.nav-r{display:flex;align-items:center;gap:12px}
+#ts{font-family:var(--font-b);font-size:11px;color:rgba(255,255,255,.35);font-weight:300}
+.btn-upd{background:var(--yellow);color:var(--navy);border:none;padding:6px 16px;
+  border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;
+  font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s}
+.btn-upd:hover{opacity:.88}
+
+.hero{background:var(--navy);padding:44px 48px 40px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-100px;right:-100px;width:480px;height:480px;
+  border-radius:50%;background:radial-gradient(circle,rgba(245,196,0,.09) 0%,transparent 65%);pointer-events:none}
+.eyebrow{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--yellow);margin-bottom:14px;
+  display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:20px;height:2px;background:var(--yellow)}
+.hero h1{font-family:var(--font-d);font-size:clamp(28px,3.5vw,48px);font-weight:900;
+  letter-spacing:-2px;line-height:.95;color:white;margin-bottom:10px;position:relative;z-index:1}
+.hero h1 em{color:var(--yellow);font-style:normal}
+.hero p{font-size:13.5px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1}
+
+main{max-width:1360px;margin:0 auto;padding:36px 48px}
+@media(max-width:768px){.topbar,.hero,main{padding-left:20px;padding-right:20px}}
+
+/* COMPOSIÇÃO PARITÁRIA */
+.parity{
+  background:var(--navy);border-radius:var(--r-md);padding:18px 24px;
+  margin-bottom:24px;display:flex;gap:0;flex-wrap:wrap;
+}
+.par-item{padding:0 24px;border-right:1px solid rgba(255,255,255,.1);flex:1;min-width:140px}
+.par-item:first-child{padding-left:0}
+.par-item:last-child{border-right:none}
+.par-label{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:5px}
+.par-val{font-family:var(--font-d);font-size:1.05rem;font-weight:700;color:white}
+.par-item.yellow .par-val{color:var(--yellow)}
+.par-item.green  .par-val{color:#4ADE80}
+.par-item.blue   .par-val{color:#7CB9F4}
+
+/* PROGRESSO */
+.prog{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:22px 26px;margin-bottom:24px;display:flex;align-items:center;gap:28px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.prog-info{flex:1}
+.prog-lbl{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.prog-track{height:8px;background:var(--off);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.prog-sub{font-size:12px;color:var(--muted);margin-top:6px;font-weight:300}
+.prog-pct{font-family:var(--font-d);font-size:3rem;font-weight:900;letter-spacing:-3px;
+  color:var(--navy);white-space:nowrap;line-height:1}
+
+/* STAT CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin-bottom:24px}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.03);
+  transition:box-shadow .2s}
+.sc:hover{box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc-navy::before{background:var(--navy)} .sc-green::before{background:var(--green)}
+.sc-yellow::before{background:var(--yellow)} .sc-red::before{background:var(--red)}
+.sc-muted::before{background:var(--muted)} .sc-blue::before{background:var(--blue)}
+.sc-orange::before{background:var(--orange)}
+.sc-ey{font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.sc-val{font-family:var(--font-d);font-size:2.4rem;font-weight:900;
+  letter-spacing:-2px;line-height:1;margin-bottom:3px}
+.sc-navy  .sc-val{color:var(--navy)} .sc-green .sc-val{color:var(--green)}
+.sc-yellow .sc-val{color:#9A7D00} .sc-red .sc-val{color:var(--red)}
+.sc-muted .sc-val{color:var(--muted)} .sc-blue .sc-val{color:var(--blue)}
+.sc-orange .sc-val{color:var(--orange)}
+.sc-desc{font-size:11.5px;color:var(--muted);font-weight:300}
+
+/* CHARTS */
+.charts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:1100px){.charts{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.charts{grid-template-columns:1fr}}
+.cc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:20px 22px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.cc-title{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px}
+.cc-title::before{content:'';width:14px;height:2px;background:var(--blue)}
+.cw{position:relative;height:188px}
+
+/* BOTTOM */
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.bottom{grid-template-columns:1fr}}
+
+/* ALERTAS */
+.al{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;
+  border-radius:var(--r-sm);margin-bottom:7px;font-size:12.5px;border:1px solid var(--border)}
+.al.CRITICO{border-left:3px solid var(--red);background:#FFF5F5}
+.al.ALERTA{border-left:3px solid var(--orange);background:#FFFBEB}
+.al.INFO{border-left:3px solid var(--blue);background:#EFF6FF}
+.al-tag{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;padding:2px 7px;border-radius:3px;white-space:nowrap;
+  flex-shrink:0;margin-top:1px}
+.al-tag.CRITICO{background:var(--red);color:white}
+.al-tag.ALERTA{background:var(--orange);color:white}
+.al-tag.INFO{background:var(--blue);color:white}
+.al-text{color:var(--text);line-height:1.45}
+
+/* TIMELINE */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:6px;top:18px;bottom:-4px;
+  width:2px;background:var(--border);z-index:0}
+.tl-dot-w{position:relative;z-index:1;padding-top:3px;flex-shrink:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:var(--white)}
+.tl-dot.CONCLUIDO{background:var(--green);border-color:var(--green)}
+.tl-dot.EM_ANDAMENTO{background:var(--yellow);border-color:var(--yellow);box-shadow:0 0 0 4px rgba(245,196,0,.2)}
+.tl-body{padding-bottom:18px;flex:1}
+.tl-body h4{font-family:var(--font-d);font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.tl-body p{font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:300}
+.tl-badge{display:inline-block;font-family:var(--font-d);font-size:9px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+.tl-badge.CONCLUIDO{background:#D1FAE5;color:#065F46}
+.tl-badge.EM_ANDAMENTO{background:#FEF3C7;color:#92400E}
+.tl-badge.PENDENTE{background:#F3F4F6;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:white;
+  border-radius:var(--r-md);padding:12px 18px;font-size:13px;
+  box-shadow:0 8px 32px rgba(13,46,90,.35);z-index:999;opacity:0;
+  transform:translateY(10px);transition:all .25s;border-left:4px solid var(--yellow)}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="stripe"></div>
+
+<nav class="topbar">
+  <a class="brand" href="index.html">
+    <div class="brand-bar"></div>
+    CMS · <span>Montes Claros</span>
+  </a>
+  <div class="nav">
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="entidades.html">Entidades</a>
+    <a href="conselheiros.html">Conselheiros</a>
+    <a href="inscricoes.html">Inscrições</a>
+    <a href="painel.html">Painel Admin</a>
+  </div>
+  <div class="nav-r">
+    <span id="ts">—</span>
+    <button class="btn-upd" onclick="load()">↻ ATUALIZAR</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Conselho Municipal de Saúde · Montes Claros – MG</div>
+  <h1>Painel de<br><em>Recomposição</em></h1>
+  <p id="sub">Processo de renovação — mandato em curso</p>
+</div>
+
+<main>
+
+  <!-- COMPOSIÇÃO PARITÁRIA -->
+  <div class="parity">
+    <div class="par-item">
+      <div class="par-label">Composição Total</div>
+      <div class="par-val">32 Cadeiras · 64 Pessoas</div>
+    </div>
+    <div class="par-item yellow">
+      <div class="par-label">Usuários (50%)</div>
+      <div class="par-val">16 cadeiras</div>
+    </div>
+    <div class="par-item green">
+      <div class="par-label">Trabalhadores (25%)</div>
+      <div class="par-val">8 cadeiras</div>
+    </div>
+    <div class="par-item blue">
+      <div class="par-label">Gestores / Prestadores (25%)</div>
+      <div class="par-val">8 cadeiras</div>
+    </div>
+    <div class="par-item">
+      <div class="par-label">Mandato</div>
+      <div class="par-val" id="mandato-val">—</div>
+    </div>
+  </div>
+
+  <!-- PROGRESSO -->
+  <div class="prog">
+    <div class="prog-info">
+      <div class="prog-lbl">Progresso Geral da Recomposição</div>
+      <div class="prog-track">
+        <div class="prog-fill" id="pFill" style="width:0%"></div>
+      </div>
+      <div class="prog-sub" id="pSub">Aguardando dados...</div>
+    </div>
+    <div class="prog-pct" id="pPct">0%</div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="cards">
+    <div class="sc sc-navy">
+      <div class="sc-ey">Cadeiras</div>
+      <div class="sc-val">32</div>
+      <div class="sc-desc">Total do conselho</div>
+    </div>
+    <div class="sc sc-green">
+      <div class="sc-ey">Completo</div>
+      <div class="sc-val" id="c-comp">—</div>
+      <div class="sc-desc">Documentação OK</div>
+    </div>
+    <div class="sc sc-yellow">
+      <div class="sc-ey">Pendente</div>
+      <div class="sc-val" id="c-pend">—</div>
+      <div class="sc-desc">Aguardando retorno</div>
+    </div>
+    <div class="sc sc-red">
+      <div class="sc-ey">Impedidos</div>
+      <div class="sc-val" id="c-imp">—</div>
+      <div class="sc-desc">2º mandato (vedado)</div>
+    </div>
+    <div class="sc sc-muted">
+      <div class="sc-ey">Sem Resposta</div>
+      <div class="sc-val" id="c-sem">—</div>
+      <div class="sc-desc">Não responderam</div>
+    </div>
+    <div class="sc sc-blue">
+      <div class="sc-ey">Inscrições</div>
+      <div class="sc-val" id="c-inscr">—</div>
+      <div class="sc-desc">Novas candidaturas</div>
+    </div>
+    <div class="sc sc-orange">
+      <div class="sc-ey">Inconsistências</div>
+      <div class="sc-val" id="c-inc">—</div>
+      <div class="sc-desc">Requerem análise</div>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="charts">
+    <div class="cc">
+      <div class="cc-title">Status das Entidades</div>
+      <div class="cw"><canvas id="cStatus"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Distribuição Segmento</div>
+      <div class="cw"><canvas id="cSeg"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Substituições</div>
+      <div class="cw"><canvas id="cSub"></canvas></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom">
+    <div class="cc">
+      <div class="cc-title">Alertas Recentes</div>
+      <div id="alerts"><p style="font-size:13px;color:var(--muted)">Carregando...</p></div>
+      <div id="alerts-link" style="margin-top:8px"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Fases do Processo</div>
+      <div class="tl" id="timeline"><p style="font-size:13px;color:var(--muted)">Carregando...</p></div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwxbdUvBWGMYjQoRFHhkFQZ5NXqMPJ7vtqjWC0Naw-ZCiIMukMtroI4s-FoEEVABUM/exec";
+
+let cS, cG, cSb;
+const LOPTS = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{ position:"bottom", labels:{ color:"#6B7280", font:{ size:11, family:"'Open Sans'" }, boxWidth:10, padding:12 } } }
+};
+
+async function api(action) {
+  const r = await fetch(`${API_URL}?action=${action}`);
+  if (!r.ok) throw new Error("HTTP "+r.status);
+  return r.json();
+}
+function t(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+function toast(msg,dur=3000){
+  const e=document.getElementById("toast");
+  e.textContent=msg; e.classList.add("show");
+  setTimeout(()=>e.classList.remove("show"),dur);
+}
+
+async function load() {
+  toast("Atualizando dados...",2000);
+  try {
+    const d = await api("getDashboard");
+    if (!d.ok) { toast("Erro: "+(d.erro||"?")); return; }
+    render(d);
+    toast("Dados atualizados");
+  } catch(e) {
+    toast("Falha ao conectar com a API");
+    console.error(e);
+  }
+}
+
+function render(d) {
+  // Timestamp
+  const dt = new Date(d.dataAtualizacao);
+  document.getElementById("ts").textContent =
+    dt.toLocaleDateString("pt-BR")+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+
+  t("sub", `Processo de renovação — mandato ${d.anoMandato||""}`);
+  t("mandato-val", d.anoMandato||"—");
+
+  // Progresso
+  const pct = d.progresso||0;
+  document.getElementById("pFill").style.width = pct+"%";
+  t("pPct", pct+"%");
+  t("pSub", `${d.totais.completos} de ${d.totais.cadeiras||32} entidades com documentação completa`);
+
+  // Cards
+  t("c-comp",  d.totais.completos);
+  t("c-pend",  d.totais.pendentes);
+  t("c-imp",   d.totais.impedidos);
+  t("c-sem",   d.totais.semResposta);
+  t("c-inscr", d.totais.inscricoes);
+  t("c-inc",   d.totais.inconsistencias);
+
+  // Gráficos
+  if(cS) cS.destroy();
+  cS = new Chart(document.getElementById("cStatus"),{
+    type:"doughnut",
+    data:{ labels:["Completo","Pendente","Impedido","Sem Resposta"],
+      datasets:[{ data:[d.totais.completos||0,d.totais.pendentes||0,d.totais.impedidos||0,d.totais.semResposta||0],
+        backgroundColor:["#1E8A4A","#F5C400","#DC2626","#9CA3AF"],
+        borderWidth:2,borderColor:"#F7F8FA",hoverOffset:6 }] },
+    options:{...LOPTS,cutout:"62%"}
+  });
+
+  const segs = d.segmentos||{};
+  if(cG) cG.destroy();
+  cG = new Chart(document.getElementById("cSeg"),{
+    type:"bar",
+    data:{ labels:Object.keys(segs),
+      datasets:[{ data:Object.values(segs),
+        backgroundColor:["#0D2E5A","#1B6CB5","#1E8A4A","#F5C400","#D97706","#6B7280"],
+        borderRadius:4,borderSkipped:false }] },
+    options:{...LOPTS,plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:"#9CA3AF",font:{size:10}},grid:{display:false}},
+        y:{ticks:{color:"#9CA3AF",font:{size:10}},grid:{color:"#F3F4F6"}}
+      }}
+  });
+
+  const sub = d.substituicoes||{};
+  if(cSb) cSb.destroy();
+  cSb = new Chart(document.getElementById("cSub"),{
+    type:"doughnut",
+    data:{ labels:["Nenhuma","Parcial","Total"],
+      datasets:[{ data:[sub.nenhuma||0,sub.parcial||0,sub.total||0],
+        backgroundColor:["#1E8A4A","#F5C400","#DC2626"],
+        borderWidth:2,borderColor:"#F7F8FA",hoverOffset:6 }] },
+    options:{...LOPTS,cutout:"62%"}
+  });
+
+  // Alertas
+  const alEl = document.getElementById("alerts");
+  const alLk = document.getElementById("alerts-link");
+  if (!d.alertas?.itens?.length) {
+    alEl.innerHTML = `<p style="color:var(--green);font-size:13px;font-weight:600">✓ Nenhum alerta crítico</p>`;
+  } else {
+    alEl.innerHTML = d.alertas.itens.map(a=>`
+      <div class="al ${a.severidade}">
+        <span class="al-tag ${a.severidade}">${a.severidade}</span>
+        <span class="al-text">${a.descricao}</span>
+      </div>`).join("");
+    alLk.innerHTML = `<a href="painel.html" style="font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);text-decoration:none">Ver todas no painel →</a>`;
+  }
+
+  // Timeline
+  const tlEl = document.getElementById("timeline");
+  if (!d.fases?.length) { tlEl.innerHTML=""; return; }
+  tlEl.innerHTML = d.fases.map(f=>`
+    <div class="tl-item">
+      <div class="tl-dot-w"><div class="tl-dot ${f.status}"></div></div>
+      <div class="tl-body">
+        <h4>${f.fase}</h4>
+        ${f.data?`<p>${f.data}</p>`:""}
+        <span class="tl-badge ${f.status}">${f.status.replace("_"," ")}</span>
+      </div>
+    </div>`).join("");
+}
+
+document.addEventListener("DOMContentLoaded", load);
+</script>
+</body>
+</html>

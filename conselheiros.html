@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conselheiros — CMS Montes Claros</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2E5A;--blue:#1B6CB5;--green:#1E8A4A;--yellow:#F5C400;--white:#FFFFFF;--off:#F7F8FA;--ink:#111827;--muted:#6B7280;--border:#E5E7EB;--text:#374151;--red:#DC2626;--orange:#D97706;--font-d:'Montserrat',sans-serif;--font-b:'Open Sans',sans-serif;--r-sm:6px;--r-md:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--off);color:var(--text);font-family:var(--font-b);min-height:100vh}
+.stripe{height:4px;background:linear-gradient(to right,#F5C400 33.3%,#1E8A4A 33.3% 66.6%,#1B6CB5 66.6%)}
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(13,46,90,.3)}
+.brand{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:white;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-bar{width:3px;height:22px;background:var(--yellow);border-radius:2px}.brand span{color:var(--yellow)}
+.nav{display:flex;gap:2px}.nav a{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:6px 13px;border-radius:var(--r-sm);transition:all .18s}
+.nav a:hover{color:var(--yellow);background:rgba(245,196,0,.08)}.nav a.active{color:var(--yellow);background:rgba(245,196,0,.12)}
+.hero{background:var(--navy);padding:40px 48px 36px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-80px;right:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(245,196,0,.09) 0%,transparent 65%);pointer-events:none}
+.ey{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ey::before{content:'';width:20px;height:2px;background:var(--yellow)}
+.hero h1{font-family:var(--font-d);font-size:clamp(26px,3vw,42px);font-weight:900;letter-spacing:-2px;line-height:.95;color:white;margin-bottom:8px;position:relative;z-index:1}
+.hero h1 em{color:var(--yellow);font-style:normal}.hero p{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1}
+main{max-width:1360px;margin:0 auto;padding:32px 48px}
+@media(max-width:768px){.topbar,.hero,main{padding-left:20px;padding-right:20px}}
+
+.pills{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.pill{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.pill-num{font-family:var(--font-d);font-size:1.7rem;font-weight:900;letter-spacing:-1px;line-height:1}
+.pill-lbl{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.pill.blue .pill-num{color:var(--blue)}.pill.green .pill-num{color:var(--green)}.pill.red .pill-num{color:var(--red)}
+
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;padding:14px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.filter-bar-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding:10px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.fb-grp-lbl{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding-right:4px;white-space:nowrap}
+.fb{background:var(--off);border:1.5px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .15s}
+.fb:hover{border-color:var(--blue);color:var(--blue)}.fb.active{background:var(--navy);border-color:var(--navy);color:white}
+.fb.sub-g.active{background:#D97706;border-color:#D97706;color:white}
+.fb.sub-p.active{background:#7C3AED;border-color:#7C3AED;color:white}
+.search-i{padding:7px 12px;background:var(--off);border:1.5px solid var(--border);color:var(--ink);border-radius:var(--r-sm);font-size:13px;outline:none;transition:border-color .2s;font-family:var(--font-b);width:240px}
+.search-i:focus{border-color:var(--blue)}
+
+.tw{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--white)}
+thead tr{background:var(--navy)}
+th{padding:11px 16px;text-align:left;font-family:var(--font-d);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.75);white-space:nowrap}
+td{padding:11px 16px;border-top:1px solid var(--border);vertical-align:middle}
+tbody tr:nth-child(even) td{background:var(--off)}tbody tr:hover td{background:#EFF6FF}
+.td-m{font-family:'Courier New',monospace;font-size:12px;color:var(--muted)}.td-n{font-weight:600;color:var(--ink)}
+
+.stag{display:inline-block;padding:3px 10px;border-radius:var(--r-sm);font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.stag.APTO{background:#D1FAE5;color:#065F46}.stag.IMPEDIDO{background:#FEE2E2;color:#991B1B}
+.stag.m1{background:#EFF6FF;color:#1E40AF}.stag.m2{background:#FEE2E2;color:#991B1B}
+.seg-usu{background:rgba(27,108,181,.1);color:var(--blue)}
+.seg-trab{background:rgba(30,138,74,.1);color:var(--green)}
+.seg-gest{background:rgba(217,119,6,.1);color:var(--orange)}
+.seg-prest{background:rgba(124,58,237,.1);color:#7C3AED}
+.seg-other{background:var(--off);color:var(--muted)}
+.sub-gest{background:rgba(217,119,6,.12);color:#92400E;border:1px solid rgba(217,119,6,.25)}
+.sub-prest{background:rgba(124,58,237,.12);color:#5B21B6;border:1px solid rgba(124,58,237,.25)}
+
+/* tooltip de observação */
+.obs-wrap{position:relative;display:inline-block}
+.obs-icon{cursor:help;font-size:.85rem;opacity:.6;margin-left:4px}
+.obs-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-family:var(--font-b);font-size:11.5px;font-weight:400;padding:7px 11px;border-radius:var(--r-sm);white-space:nowrap;max-width:240px;white-space:normal;z-index:99;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 16px rgba(0,0,0,.2);line-height:1.4}
+.obs-wrap:hover .obs-tooltip{opacity:1}
+
+.seg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.seg-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.seg-hdr{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--off)}
+.seg-hdr h3{font-family:var(--font-d);font-size:11px;font-weight:700;color:var(--navy)}
+.seg-cnt{font-family:var(--font-d);font-size:10px;font-weight:700;color:var(--muted)}
+.seg-row{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);font-size:13px}
+.seg-row:last-child{border-bottom:none}
+.seg-name{font-weight:600;color:var(--ink)}.seg-ent{font-size:11.5px;color:var(--muted);margin-top:1px}
+
+.empty{text-align:center;padding:48px;color:var(--muted);font-size:14px}
+.empty strong{display:block;font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--navy);margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<nav class="topbar">
+  <a class="brand" href="index.html"><div class="brand-bar"></div>CMS · <span>Montes Claros</span></a>
+  <div class="nav">
+    <a href="index.html">Dashboard</a><a href="entidades.html">Entidades</a>
+    <a href="conselheiros.html" class="active">Conselheiros</a>
+    <a href="inscricoes.html">Inscrições</a><a href="painel.html">Painel Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="ey">Conselho Municipal de Saúde · Montes Claros</div>
+  <h1><em>Conselheiros</em></h1>
+  <p>Lista completa com mandatos, segmentos, subtipo (gestor/prestador) e situação para recondução</p>
+</div>
+<main>
+  <div class="pills">
+    <div class="pill blue"><div class="pill-num" id="p-tot">—</div><div class="pill-lbl">Total</div></div>
+    <div class="pill green"><div class="pill-num" id="p-apt">—</div><div class="pill-lbl">Aptos</div></div>
+    <div class="pill red"><div class="pill-num" id="p-imp">—</div><div class="pill-lbl">Impedidos</div></div>
+  </div>
+
+  <!-- Filtros linha 1: busca + impedidos + visualização -->
+  <div class="filter-bar">
+    <input class="search-i" id="search" placeholder="🔍 Buscar nome ou entidade..." oninput="filtrar()">
+    <button class="fb active" id="btn-view-table" onclick="setV(this,'table')">📋 Tabela</button>
+    <button class="fb" id="btn-view-seg" onclick="setV(this,'seg')">🏷 Por Segmento</button>
+    <button class="fb" id="btn-imp" onclick="toggleImp(this)">🚫 Só Impedidos</button>
+  </div>
+
+  <!-- Filtros linha 2: segmento -->
+  <div class="filter-bar-row">
+    <span class="fb-grp-lbl">Segmento:</span>
+    <button class="fb active" onclick="setFiltroSeg(this,'TODOS')">Todos</button>
+    <button class="fb" onclick="setFiltroSeg(this,'USUARIO')">👥 Usuário</button>
+    <button class="fb" onclick="setFiltroSeg(this,'TRABALHADOR')">⚕️ Trabalhador</button>
+    <button class="fb" onclick="setFiltroSeg(this,'GESTOR/PRESTADOR')">🏛 Gestor/Prestador</button>
+  </div>
+
+  <!-- Filtros linha 3: subtipo (gestor/prestador) -->
+  <div class="filter-bar-row" id="filtro-subtipo-row" style="display:none">
+    <span class="fb-grp-lbl">Subtipo:</span>
+    <button class="fb active" onclick="setFiltroSub(this,'TODOS')">Todos</button>
+    <button class="fb sub-g" onclick="setFiltroSub(this,'GESTOR')">🏛 Gestor</button>
+    <button class="fb sub-p" onclick="setFiltroSub(this,'PRESTADOR')">🏥 Prestador</button>
+  </div>
+
+  <div id="view-table">
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>Segmento</th><th>Subtipo</th><th>Cadeira</th>
+          <th>Nome</th><th>Entidade</th><th>Mandato</th><th>Situação</th>
+          <th>E-mail</th><th>Telefone</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="view-seg" style="display:none">
+    <div class="seg-grid" id="seggrid"></div>
+  </div>
+</main>
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbwxbdUvBWGMYjQoRFHhkFQZ5NXqMPJ7vtqjWC0Naw-ZCiIMukMtroI4s-FoEEVABUM/exec";
+let todos=[]; let soImp=false; let view="table";
+let filtroSeg="TODOS"; let filtroSub="TODOS";
+
+async function load(){
+  try {
+    const d=await fetch(`${API_URL}?action=getConselheiros`).then(r=>r.json());
+    if(!d.ok)return;
+    todos=d.conselheiros||[];
+    document.getElementById("p-tot").textContent=d.total;
+    document.getElementById("p-apt").textContent=d.aptos;
+    document.getElementById("p-imp").textContent=d.impedidos;
+    filtrar();
+  } catch(e) {
+    document.getElementById("tbody").innerHTML=`<tr><td colspan="9"><div class="empty"><strong>Erro ao carregar</strong>${e.message}</div></td></tr>`;
+  }
+}
+
+function filtrar(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  let l=todos;
+  if(soImp) l=l.filter(c=>c.impedido);
+  if(filtroSeg!=="TODOS") l=l.filter(c=>c.segmento.toUpperCase().includes(filtroSeg));
+  if(filtroSub!=="TODOS") l=l.filter(c=>(c.subtipo||"").toUpperCase()===filtroSub);
+  if(q) l=l.filter(c=>c.nome.toLowerCase().includes(q)||c.entidade.toLowerCase().includes(q));
+  renderTable(l); renderSeg(l);
+}
+
+function toggleImp(btn){soImp=!soImp;btn.classList.toggle("active",soImp);filtrar()}
+
+function setV(btn,v){
+  view=v;
+  document.getElementById("btn-view-table").classList.toggle("active",v==="table");
+  document.getElementById("btn-view-seg").classList.toggle("active",v==="seg");
+  document.getElementById("view-table").style.display=v==="table"?"":"none";
+  document.getElementById("view-seg").style.display=v==="seg"?"":"none";
+}
+
+function setFiltroSeg(btn,seg){
+  document.querySelectorAll(".filter-bar-row:first-of-type .fb, .filter-bar-row .fb").forEach(()=>{});
+  // Resetar botões da linha de segmento
+  btn.closest(".filter-bar-row").querySelectorAll(".fb").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  filtroSeg=seg;
+  filtroSub="TODOS";
+  // Mostrar filtro de subtipo apenas se selecionou Gestor/Prestador
+  const subRow=document.getElementById("filtro-subtipo-row");
+  if(seg==="GESTOR/PRESTADOR"){
+    subRow.style.display="flex";
+    subRow.querySelectorAll(".fb").forEach(b=>b.classList.remove("active"));
+    subRow.querySelector(".fb").classList.add("active");
+  } else {
+    subRow.style.display="none";
+  }
+  filtrar();
+}
+
+function setFiltroSub(btn,sub){
+  btn.closest(".filter-bar-row").querySelectorAll(".fb").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  filtroSub=sub;
+  filtrar();
+}
+
+function segClass(s){
+  const k=(s||"").toLowerCase();
+  if(k.includes("usu"))   return"stag seg-usu";
+  if(k.includes("trab"))  return"stag seg-trab";
+  if(k.includes("gest"))  return"stag seg-gest";
+  if(k.includes("prest")) return"stag seg-prest";
+  return"stag seg-other";
+}
+
+function subBadge(subtipo){
+  if(!subtipo) return"";
+  if(subtipo==="GESTOR")    return`<span class="stag sub-gest">Gestor</span>`;
+  if(subtipo==="PRESTADOR") return`<span class="stag sub-prest">Prestador</span>`;
+  return`<span class="stag seg-other">${subtipo}</span>`;
+}
+
+function obsBadge(c){
+  if(!c.observacao) return"";
+  return`<span class="obs-wrap"><span class="obs-icon">ℹ️</span><span class="obs-tooltip">${c.observacao}</span></span>`;
+}
+
+function renderTable(l){
+  const tb=document.getElementById("tbody");
+  if(!l.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty"><strong>Nenhum resultado</strong>Ajuste os filtros</div></td></tr>`;return}
+  tb.innerHTML=l.map(c=>`<tr>
+    <td><span class="${segClass(c.segmento)}">${c.segmento||"—"}</span></td>
+    <td>${subBadge(c.subtipo)}</td>
+    <td class="td-m">${c.cadeira||"—"}</td>
+    <td class="td-n">${c.nome}${obsBadge(c)}</td>
+    <td style="color:var(--muted)">${c.entidade}</td>
+    <td><span class="stag ${c.mandato>=2?"m2":"m1"}">${c.mandato}º Mandato</span></td>
+    <td><span class="stag ${c.status}">${c.status==="APTO"?"✅ Apto":"🚫 Impedido"}</span></td>
+    <td class="td-m">${c.email||"—"}</td>
+    <td class="td-m">${c.telefone||"—"}</td>
+  </tr>`).join("");
+}
+
+function renderSeg(l){
+  const grupos={};
+  l.forEach(c=>{const s=c.segmento||"Sem segmento";if(!grupos[s])grupos[s]=[];grupos[s].push(c)});
+  document.getElementById("seggrid").innerHTML=Object.entries(grupos).map(([seg,cons])=>`
+    <div class="seg-card">
+      <div class="seg-hdr"><h3>${seg}</h3><span class="seg-cnt">${cons.length} conselheiros</span></div>
+      ${cons.map(c=>`<div class="seg-row">
+        <div>
+          <div class="seg-name">${c.nome}${obsBadge(c)}</div>
+          <div class="seg-ent">${c.entidade}${c.subtipo?` · <em style="color:${c.subtipo==="PRESTADOR"?"#7C3AED":"#D97706"}">${c.subtipo.toLowerCase()}</em>`:""}</div>
+        </div>
+        <span class="stag ${c.status}">${c.status==="APTO"?"✅":"🚫"} ${c.mandato}º</span>
+      </div>`).join("")}
+    </div>`).join("");
+}
+
+document.addEventListener("DOMContentLoaded",load);
+</script>
+</body>
+</html>
