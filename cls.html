@@ -9,15 +9,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --navy:   #0D2E5A;
-  --blue:   #1B6CB5;
-  --green:  #1E8A4A;
+  --navy:    #0D2E5A;
+  --blue:    #1B6CB5;
+  --green:   #1E8A4A;
   --yellow: #F5C400;
-  --off:    #F7F8FA;
-  --ink:    #111827;
-  --muted:  #6B7280;
+  --off:     #F7F8FA;
+  --ink:     #111827;
+  --muted:   #6B7280;
   --border: #E5E7EB;
-  --error:  #DC2626;
+  --error:   #DC2626;
   --radius: 10px;
   --shadow: 0 2px 14px rgba(13,46,90,0.08);
 }
@@ -337,7 +337,6 @@ body {
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <div class="header-stripe"></div>
   <div class="header-inner">
@@ -349,25 +348,21 @@ body {
   </div>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Recomposição 2026–2029</div>
   <h1>Inscrição dos<br><em>Conselhos Locais</em><br>de Saúde</h1>
   <p>Preencha todas as seções abaixo e envie ao final da página.</p>
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <p>Registrando inscrição…</p>
 </div>
 
-<!-- FORM -->
 <div class="form-container">
 <form id="mainForm" novalidate>
 <div class="sections">
 
-  <!-- ══ 1. DADOS DO CLS ══ -->
   <div class="sec-card" id="sec-cls">
     <div class="sec-head">
       <div class="sec-icon">🏛️</div>
@@ -415,7 +410,6 @@ body {
     </div>
   </div>
 
-  <!-- ══ 2. GERENTE ══ -->
   <div class="sec-card" id="sec-ger">
     <div class="sec-head">
       <div class="sec-icon">👩‍⚕️</div>
@@ -447,7 +441,6 @@ body {
     </div>
   </div>
 
-  <!-- ══ 3. PRESIDENTE ══ -->
   <div class="sec-card" id="sec-pres">
     <div class="sec-head">
       <div class="sec-icon">🤝</div>
@@ -479,7 +472,6 @@ body {
     </div>
   </div>
 
-  <!-- ══ 4. OFÍCIO + RESPONSÁVEL ══ -->
   <div class="sec-card" id="sec-resp">
     <div class="sec-head">
       <div class="sec-icon">✍️</div>
@@ -533,15 +525,11 @@ body {
     </div>
   </div>
 
-</div><!-- /sections -->
-
-<!-- LGPD -->
-<div class="lgpd-box">
+</div><div class="lgpd-box">
   <h4>🔒 Aviso de Privacidade — LGPD</h4>
   <p>Os dados pessoais coletados são tratados exclusivamente para fins do processo de recomposição do CMSMOC, com base na Lei nº 13.709/2018. O titular pode solicitar acesso, correção ou exclusão pelo e-mail <strong>cmsmoc@email.com</strong>. Os dados não serão compartilhados para finalidades alheias ao processo.</p>
 </div>
 
-<!-- DECLARAÇÃO -->
 <div class="declaracao-box">
   <div class="declaracao-text">
     Eu, <strong class="declaracao-name" id="decl-nome">[nome de quem preencheu]</strong>, declaro, para os devidos fins, que as informações prestadas neste formulário são verdadeiras e de minha inteira responsabilidade, estando ciente de que informações falsas poderão acarretar a desclassificação do Conselho Local de Saúde do processo de recomposição do CMSMOC 2026–2029 e as sanções previstas na legislação vigente.
@@ -559,7 +547,6 @@ body {
 
 </form>
 
-<!-- SUCCESS -->
 <div class="success-screen" id="successScreen">
   <div class="success-icon">✅</div>
   <h2>Inscrição Registrada!</h2>
@@ -567,21 +554,57 @@ body {
   <div class="success-id" id="succ-id">Protocolo: —</div>
 </div>
 
-</div><!-- /form-container -->
-
-<footer class="site-footer">
+</div><footer class="site-footer">
   <strong>Conselho Municipal de Saúde de Montes Claros — MG</strong><br>
   Recomposição 2026–2029 · Secretaria Executiva · <strong>cmsmoc@email.com</strong>
 </footer>
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycby-c5-wzCiSjFCmI-83paMkDiHfyy1u_Tk0BeT4WTyGYUPclBTUn_HFzDy-0YfhM4KJmg/exec';
+const STORAGE_KEY = 'cls_inscricao_draft';
 
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
 function v(id)      { return (document.getElementById(id) || {}).value || ''; }
 function sv(id,val) { const el = document.getElementById(id); if (el) el.value = val; }
+
+/* ═══════════════════════════════════════
+   LOCAL STORAGE (NOVIDADE)
+═══════════════════════════════════════ */
+function saveProgress() {
+  const data = {};
+  // Pega todos os inputs de texto, email e tel
+  const inputs = document.querySelectorAll('input:not([type="file"]):not([type="checkbox"])');
+  inputs.forEach(input => {
+    data[input.id] = input.value;
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadProgress() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return;
+  
+  try {
+    const data = JSON.parse(saved);
+    for (const id in data) {
+      const el = document.getElementById(id);
+      if (el) el.value = data[id];
+    }
+    
+    // Atualiza o nome na declaração e os status visuais
+    document.getElementById('decl-nome').textContent = v('resp_nome') || '[nome de quem preencheu]';
+    SECTIONS.forEach(s => updateSectionStatus(s));
+  } catch (e) {
+    console.error("Erro ao carregar rascunho", e);
+  }
+}
+
+/* Escuta mudanças em qualquer campo para salvar */
+document.getElementById('mainForm').addEventListener('input', () => {
+  saveProgress();
+});
 
 /* ═══════════════════════════════════════
    STATUS VISUAL DAS SEÇÕES
@@ -595,12 +618,14 @@ const REQUIRED = {
 };
 
 function sectionIsFilled(sec) {
-  return REQUIRED[sec].every(id => v(id) !== '');
+  return REQUIRED[sec].every(id => v(id).trim() !== '');
 }
 
 function updateSectionStatus(sec) {
   const card = document.getElementById('sec-' + sec);
   const st   = document.getElementById('st-' + sec);
+  if(!card || !st) return;
+  
   const hasErr = card.querySelectorAll('.field-error.show').length > 0;
 
   if (sectionIsFilled(sec) && !hasErr) {
@@ -617,7 +642,6 @@ function updateSectionStatus(sec) {
   }
 }
 
-/* Atualiza status ao sair de qualquer campo */
 document.addEventListener('focusout', function(e) {
   const card = e.target.closest('.sec-card');
   if (!card) return;
@@ -636,12 +660,19 @@ document.getElementById('resp_nome').addEventListener('input', function() {
    COPY HELPERS
 ═══════════════════════════════════════ */
 function copyFromPresToResp() {
-  if (document.getElementById('chk_resp_pres').checked) sv('resp_nome', v('pres_nome'));
+  if (document.getElementById('chk_resp_pres').checked) {
+      sv('resp_nome', v('pres_nome'));
+      saveProgress(); // Salva após copiar
+  }
   document.getElementById('decl-nome').textContent = v('resp_nome') || '[nome de quem preencheu]';
   setTimeout(() => updateSectionStatus('resp'), 80);
 }
+
 function copyFromGerToResp() {
-  if (document.getElementById('chk_resp_ger').checked) sv('resp_nome', v('ger_nome'));
+  if (document.getElementById('chk_resp_ger').checked) {
+      sv('resp_nome', v('ger_nome'));
+      saveProgress(); // Salva após copiar
+  }
   document.getElementById('decl-nome').textContent = v('resp_nome') || '[nome de quem preencheu]';
   setTimeout(() => updateSectionStatus('resp'), 80);
 }
@@ -650,16 +681,16 @@ function copyFromGerToResp() {
    VALIDAÇÃO
 ═══════════════════════════════════════ */
 const ALL_FIELDS = [
-  { id: 'cls_nome',     req: true },
-  { id: 'cls_email',   req: false, type: 'email' },
+  { id: 'cls_nome',      req: true },
+  { id: 'cls_email',    req: false, type: 'email' },
   { id: 'cls_endereco',req: true },
   { id: 'cls_tel1',    req: true },
   { id: 'ger_nome',    req: true },
   { id: 'ger_tel1',    req: true },
-  { id: 'pres_nome',   req: true },
-  { id: 'pres_tel1',   req: true },
-  { id: 'resp_nome',   req: true },
-  { id: 'resp_email',  req: true,  type: 'email' },
+  { id: 'pres_nome',    req: true },
+  { id: 'pres_tel1',    req: true },
+  { id: 'resp_nome',    req: true },
+  { id: 'resp_email',    req: true,  type: 'email' },
   { id: 'resp_email2', req: false, type: 'email' },
 ];
 
@@ -716,20 +747,20 @@ async function submitForm() {
   errDecl.classList.remove('show');
 
   const payload = {
-    cls_nome:     v('cls_nome'),
-    cls_email:    v('cls_email'),
+    cls_nome:      v('cls_nome'),
+    cls_email:     v('cls_email'),
     cls_endereco: v('cls_endereco'),
-    cls_tel1:     v('cls_tel1'),
-    cls_tel2:     v('cls_tel2'),
-    ger_nome:     v('ger_nome'),
-    ger_tel1:     v('ger_tel1'),
-    ger_tel2:     v('ger_tel2'),
-    pres_nome:    v('pres_nome'),
-    pres_tel1:    v('pres_tel1'),
-    pres_tel2:    v('pres_tel2'),
-    resp_nome:    v('resp_nome'),
-    resp_email:   v('resp_email'),
-    resp_email2:  v('resp_email2'),
+    cls_tel1:      v('cls_tel1'),
+    cls_tel2:      v('cls_tel2'),
+    ger_nome:      v('ger_nome'),
+    ger_tel1:      v('ger_tel1'),
+    ger_tel2:      v('ger_tel2'),
+    pres_nome:     v('pres_nome'),
+    pres_tel1:     v('pres_tel1'),
+    pres_tel2:     v('pres_tel2'),
+    resp_nome:     v('resp_nome'),
+    resp_email:    v('resp_email'),
+    resp_email2:   v('resp_email2'),
     oficio_anexado: document.getElementById('oficio_file').files.length > 0 ? 'Sim' : 'Não',
   };
 
@@ -752,6 +783,10 @@ async function submitForm() {
       body: JSON.stringify(payload),
       mode: 'no-cors'
     });
+    
+    // Limpa o localStorage após o sucesso
+    localStorage.removeItem(STORAGE_KEY);
+    
     showSuccess(payload.cls_nome);
   } catch(err) {
     document.getElementById('loadingOverlay').classList.remove('active');
@@ -782,6 +817,9 @@ function showSuccess(cls_nome) {
   document.getElementById('successScreen').classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+/* CARREGA DADOS AO ABRIR */
+window.addEventListener('load', loadProgress);
 </script>
 </body>
 </html>
