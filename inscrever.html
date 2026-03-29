@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscrição Documental — Recomposição CMSMOC 2026–2029</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:#0D2E5A; --blue:#1B6CB5; --green:#1E8A4A; --yellow:#F5C400;
+  --off:#F7F8FA; --ink:#111827; --muted:#6B7280; --border:#E5E7EB;
+  --error:#DC2626; --radius:10px; --shadow:0 2px 14px rgba(13,46,90,0.08);
+}
+body { font-family:'Open Sans',sans-serif; background:var(--off); color:var(--ink); min-height:100vh; }
+.site-header { background:var(--navy); position:sticky; top:0; z-index:100; box-shadow:0 2px 16px rgba(0,0,0,.25); }
+.header-stripe { height:4px; background:linear-gradient(to right,var(--yellow) 33.3%,var(--green) 33.3% 66.6%,var(--blue) 66.6%); }
+.header-inner { display:flex; align-items:center; gap:16px; padding:13px 40px; }
+.header-logo { width:38px; height:38px; object-fit:contain; }
+.header-brand { font-family:'Montserrat',sans-serif; font-weight:700; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,.85); line-height:1.4; }
+.header-brand span { color:var(--yellow); display:block; font-size:9px; letter-spacing:1.5px; font-weight:600; margin-top:1px; }
+.hero { background:var(--navy); color:white; padding:52px 40px 60px; position:relative; overflow:hidden; }
+.hero::after { content:''; position:absolute; bottom:-80px; right:-80px; width:380px; height:380px; border-radius:50%; background:radial-gradient(circle,rgba(245,196,0,.09) 0%,transparent 65%); pointer-events:none; }
+.hero-eyebrow { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:12px; }
+.hero h1 { font-family:'Montserrat',sans-serif; font-size:clamp(24px,3.8vw,42px); font-weight:900; letter-spacing:-1px; line-height:1.05; margin-bottom:14px; }
+.hero h1 em { color:var(--yellow); font-style:normal; }
+.hero p { font-size:14px; color:rgba(255,255,255,.55); max-width:520px; font-weight:300; line-height:1.7; }
+.form-container { max-width:760px; margin:0 auto; padding:40px 24px 80px; }
+.sections { display:flex; flex-direction:column; gap:20px; margin-bottom:28px; }
+.sec-card { background:white; border-radius:var(--radius); border:1.5px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+.sec-card.has-error { border-color:var(--error); }
+.sec-card.complete  { border-color:rgba(30,138,74,.45); }
+.sec-head { display:flex; align-items:center; gap:14px; padding:18px 24px; background:var(--navy); }
+.sec-card.complete .sec-head { background:#0a2545; }
+.sec-icon { width:34px; height:34px; background:rgba(245,196,0,.15); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.sec-card.complete .sec-icon { background:rgba(30,138,74,.28); }
+.sec-title { font-family:'Montserrat',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:white; flex:1; }
+.sec-status { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; background:rgba(255,255,255,.12); color:rgba(255,255,255,.4); transition:all .2s; flex-shrink:0; }
+.sec-card.complete .sec-status { background:var(--green); color:white; }
+.sec-card.has-error .sec-status { background:var(--error); color:white; }
+.sec-body { padding:28px; }
+.field-row { display:grid; gap:16px; margin-bottom:20px; }
+.field-row:last-child { margin-bottom:0; }
+.field-row.cols-2 { grid-template-columns:1fr 1fr; }
+.field-row.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+.field-row.cols-1 { grid-template-columns:1fr; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--navy); }
+.field label .req { color:var(--error); margin-left:3px; }
+.field label .opt { color:var(--muted); font-weight:400; font-size:9px; letter-spacing:0; text-transform:none; margin-left:4px; }
+.field input, .field select {
+  width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:7px;
+  font-family:'Open Sans',sans-serif; font-size:14px; color:var(--ink); background:var(--off);
+  transition:border-color .2s,box-shadow .2s; outline:none; -webkit-appearance:none;
+}
+.field input[type="file"] { padding:9px 14px; cursor:pointer; font-size:13px; }
+.field input:focus, .field select:focus { border-color:var(--blue); background:white; box-shadow:0 0 0 3px rgba(27,108,181,.12); }
+.field input.error { border-color:var(--error); box-shadow:0 0 0 3px rgba(220,38,38,.10); }
+.field-hint { font-size:11px; color:var(--muted); line-height:1.4; }
+.field-error { font-size:11px; color:var(--error); font-weight:600; display:none; }
+.field-error.show { display:block; }
+.subsec-label { font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--blue); margin:24px 0 16px; display:flex; align-items:center; gap:10px; }
+.subsec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* DOC UPLOAD GRID */
+.docs-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.doc-item {
+  border:1.5px solid var(--border); border-radius:8px;
+  padding:16px; background:var(--off);
+  transition:border-color .2s;
+  position:relative;
+}
+.doc-item.has-file { border-color:rgba(30,138,74,.5); background:rgba(30,138,74,.04); }
+.doc-item.required-missing { border-color:var(--error); }
+.doc-num {
+  font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px;
+}
+.doc-title {
+  font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700;
+  color:var(--navy); margin-bottom:10px; line-height:1.3;
+}
+.doc-req { color:var(--error); margin-left:3px; }
+.doc-item input[type="file"] {
+  width:100%; padding:8px 10px; border:1px dashed var(--border); border-radius:6px;
+  font-family:'Open Sans',sans-serif; font-size:12px; color:var(--muted);
+  background:white; cursor:pointer; outline:none;
+}
+.doc-item.has-file input[type="file"] { border-color:var(--green); }
+.doc-status { position:absolute; top:12px; right:12px; font-size:16px; opacity:0; transition:opacity .2s; }
+.doc-item.has-file .doc-status { opacity:1; }
+.doc-hint { font-size:10px; color:var(--muted); margin-top:6px; }
+.doc-error { font-size:11px; color:var(--error); font-weight:600; display:none; margin-top:4px; }
+.doc-error.show { display:block; }
+
+/* COPY CHECK */
+.copy-check { display:flex; align-items:center; gap:10px; padding:11px 15px; background:rgba(27,108,181,.05); border:1.5px dashed rgba(27,108,181,.25); border-radius:7px; margin-bottom:16px; cursor:pointer; }
+.copy-check input[type="checkbox"] { width:17px; height:17px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; }
+.copy-check-label { font-size:13px; color:var(--blue); font-weight:600; cursor:pointer; }
+
+/* LGPD / DECLARAÇÃO */
+.lgpd-box { background:rgba(245,196,0,.06); border:1.5px solid rgba(245,196,0,.35); border-radius:var(--radius); padding:18px 22px; margin-bottom:20px; }
+.lgpd-box h4 { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--navy); margin-bottom:8px; }
+.lgpd-box p { font-size:12.5px; color:var(--muted); line-height:1.7; }
+.declaracao-box { background:var(--off); border:1.5px solid var(--border); border-radius:var(--radius); padding:20px 24px; margin-bottom:24px; }
+.declaracao-text { font-size:13px; line-height:1.8; color:var(--ink); }
+.declaracao-name { font-weight:700; color:var(--blue); }
+.declaracao-check { display:flex; align-items:flex-start; gap:12px; margin-top:16px; }
+.declaracao-check input[type="checkbox"] { width:20px; height:20px; accent-color:var(--navy); cursor:pointer; flex-shrink:0; margin-top:1px; }
+.declaracao-check label { font-size:13px; font-weight:600; color:var(--navy); cursor:pointer; line-height:1.5; }
+
+/* SUBMIT */
+.btn-submit { font-family:'Montserrat',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:15px 32px; border-radius:8px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--green); color:white; transition:all .2s; width:100%; }
+.btn-submit:hover:not(:disabled) { background:#176e3a; transform:translateY(-1px); box-shadow:0 6px 20px rgba(30,138,74,.3); }
+.btn-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.overlay { display:none; position:fixed; inset:0; background:rgba(13,46,90,.72); z-index:500; align-items:center; justify-content:center; flex-direction:column; gap:20px; }
+.overlay.active { display:flex; }
+.spinner { width:48px; height:48px; border:4px solid rgba(255,255,255,.2); border-top-color:var(--yellow); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.overlay p { color:white; font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.success-screen { display:none; text-align:center; padding:72px 24px; }
+.success-screen.active { display:block; }
+.success-icon { width:80px; height:80px; background:var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 24px; }
+.success-screen h2 { font-family:'Montserrat',sans-serif; font-size:26px; font-weight:900; color:var(--navy); margin-bottom:12px; }
+.success-screen p { color:var(--muted); max-width:420px; margin:0 auto; line-height:1.7; }
+.success-id { display:inline-block; margin-top:24px; background:var(--navy); color:var(--yellow); font-family:'Montserrat',sans-serif; font-size:14px; font-weight:700; letter-spacing:2px; padding:12px 28px; border-radius:7px; }
+.site-footer { background:var(--navy); color:rgba(255,255,255,.4); text-align:center; padding:22px 40px; font-size:12px; line-height:1.7; }
+.site-footer strong { color:rgba(255,255,255,.7); }
+
+/* PROGRESS BAR UPLOAD */
+.upload-progress { height:3px; background:var(--border); border-radius:2px; margin-top:8px; overflow:hidden; display:none; }
+.upload-progress.active { display:block; }
+.upload-bar { height:100%; background:var(--green); width:0%; transition:width .3s; }
+
+@media (max-width:620px) {
+  .field-row.cols-2,.field-row.cols-3 { grid-template-columns:1fr; }
+  .docs-grid { grid-template-columns:1fr; }
+  .header-inner { padding:11px 18px; }
+  .hero { padding:36px 18px 48px; }
+  .form-container { padding:28px 14px 60px; }
+  .sec-body { padding:20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <img src="https://i.ibb.co/qM8MN3zx/Logotipo-CMSMOC-2025-ICONE-A.png" alt="CMSMOC" class="header-logo">
+    <div class="header-brand">Conselho Municipal de Saúde<span>Montes Claros — MG</span></div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Recomposição 2026–2029</div>
+  <h1>Inscrição<br><em>Documental</em></h1>
+  <p>Envie os dados cadastrais e a documentação obrigatória da entidade. Todos os documentos marcados com <strong style="color:var(--yellow)">*</strong> são obrigatórios.</p>
+</div>
+
+<div class="overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p id="overlayMsg">Enviando documentos…</p>
+</div>
+
+<div class="form-container">
+<form id="mainForm" novalidate>
+<div class="sections">
+
+  <!-- 1. DADOS CADASTRAIS -->
+  <div class="sec-card" id="sec-cad">
+    <div class="sec-head">
+      <div class="sec-icon">🏢</div>
+      <div class="sec-title">Dados Cadastrais da Instituição</div>
+      <div class="sec-status" id="st-cad">1</div>
+    </div>
+    <div class="sec-body">
+      <div class="field-row cols-1">
+        <div class="field">
+          <label for="cad_nome">Nome da instituição <span class="req">*</span></label>
+          <input type="text" id="cad_nome" name="cad_nome" placeholder="Nome completo conforme CNPJ" required>
+          <div class="field-error" id="err_cad_nome">Campo obrigatório.</div>
+        </div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field">
+          <label for="cad_cnpj">CNPJ <span class="req">*</span></label>
+          <input type="text" id="cad_cnpj" name="cad_cnpj" placeholder="00.000.000/0001-00" maxlength="18" required>
+          <div class="field-error" id="err_cad_cnpj">CNPJ inválido (14 dígitos).</div>
+        </div>
+        <div class="field">
+          <label for="cad_fundacao">Data de fundação <span class="req">*</span></label>
+          <input type="date" id="cad_fundacao" name="cad_fundacao" required>
+          <div class="field-error" id="err_cad_fundacao">Campo obrigatório.</div>
+        </div>
+      </div>
+      <div class="field-row cols-1">
+        <div class="field">
+          <label for="cad_endereco">Endereço <span class="req">*</span></label>
+          <input type="text" id="cad_endereco" name="cad_endereco" placeholder="Rua, nº, Bairro, Cidade/UF" required>
+          <div class="field-error" id="err_cad_endereco">Campo obrigatório.</div>
+        </div>
+      </div>
+      <div class="field-row cols-3">
+        <div class="field">
+          <label for="cad_cep">CEP <span class="opt">(opcional)</span></label>
+          <input type="text" id="cad_cep" name="cad_cep" placeholder="39400-000" maxlength="9">
+        </div>
+        <div class="field">
+          <label for="cad_tel">Telefone <span class="req">*</span></label>
+          <input type="tel" id="cad_tel" name="cad_tel" placeholder="(38) 9 9999-9999" required>
+          <div class="field-error" id="err_cad_tel">Campo obrigatório.</div>
+        </div>
+        <div class="field">
+          <label for="cad_email">E-mail <span class="req">*</span></label>
+          <input type="email" id="cad_email" name="cad_email" placeholder="contato@entidade.org.br" required>
+          <div class="field-error" id="err_cad_email">E-mail inválido.</div>
+        </div>
+      </div>
+      <div class="field-row cols-1">
+        <div class="field">
+          <label for="cad_segmento">Segmento / Área de atuação <span class="req">*</span></label>
+          <input type="text" id="cad_segmento" name="cad_segmento" placeholder="Ex: Saúde, Assistência Social, Odontologia…" required>
+          <div class="field-error" id="err_cad_segmento">Campo obrigatório.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. DIRETOR -->
+  <div class="sec-card" id="sec-dir">
+    <div class="sec-head">
+      <div class="sec-icon">👤</div>
+      <div class="sec-title">Diretor / Representante Legal</div>
+      <div class="sec-status" id="st-dir">2</div>
+    </div>
+    <div class="sec-body">
+      <div class="field-row cols-1">
+        <div class="field">
+          <label for="dir_nome">Nome completo <span class="req">*</span></label>
+          <input type="text" id="dir_nome" name="dir_nome" placeholder="Nome completo" required>
+          <div class="field-error" id="err_dir_nome">Campo obrigatório.</div>
+        </div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field">
+          <label for="dir_tel">Telefone <span class="req">*</span></label>
+          <input type="tel" id="dir_tel" name="dir_tel" placeholder="(38) 9 9999-9999" required>
+          <div class="field-error" id="err_dir_tel">Campo obrigatório.</div>
+        </div>
+        <div class="field">
+          <label for="dir_email">E-mail <span class="req">*</span></label>
+          <input type="email" id="dir_email" name="dir_email" placeholder="diretor@entidade.org.br" required>
+          <div class="field-error" id="err_dir_email">E-mail inválido.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. DOCUMENTOS -->
+  <div class="sec-card" id="sec-docs">
+    <div class="sec-head">
+      <div class="sec-icon">📄</div>
+      <div class="sec-title">Documentação Obrigatória</div>
+      <div class="sec-status" id="st-docs">3</div>
+    </div>
+    <div class="sec-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Anexe os documentos abaixo. Formatos aceitos: <strong>PDF, JPG, PNG</strong>. Cada arquivo até <strong>5 MB</strong>. Documentos marcados com <span style="color:var(--error);font-weight:700">*</span> são obrigatórios.</p>
+
+      <div class="docs-grid">
+
+        <div class="doc-item" id="doc-estatuto">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 01</div>
+          <div class="doc-title">Estatuto Social <span class="doc-req">*</span></div>
+          <input type="file" id="file_estatuto" name="file_estatuto" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('estatuto')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB</div>
+          <div class="doc-error" id="err_doc_estatuto">Documento obrigatório.</div>
+        </div>
+
+        <div class="doc-item" id="doc-ata_fundacao">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 02</div>
+          <div class="doc-title">Ata de Fundação <span class="doc-req">*</span></div>
+          <input type="file" id="file_ata_fundacao" name="file_ata_fundacao" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('ata_fundacao')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB</div>
+          <div class="doc-error" id="err_doc_ata_fundacao">Documento obrigatório.</div>
+        </div>
+
+        <div class="doc-item" id="doc-ata_eleicao">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 03</div>
+          <div class="doc-title">Ata de Eleição da Última Diretoria <span class="doc-req">*</span></div>
+          <input type="file" id="file_ata_eleicao" name="file_ata_eleicao" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('ata_eleicao')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB</div>
+          <div class="doc-error" id="err_doc_ata_eleicao">Documento obrigatório.</div>
+        </div>
+
+        <div class="doc-item" id="doc-cnpj">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 04</div>
+          <div class="doc-title">Comprovante de CNPJ <span class="doc-req">*</span></div>
+          <input type="file" id="file_cnpj" name="file_cnpj" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('cnpj')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB</div>
+          <div class="doc-error" id="err_doc_cnpj">Documento obrigatório.</div>
+        </div>
+
+        <div class="doc-item" id="doc-utilidade">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 05</div>
+          <div class="doc-title">Registro de Utilidade Pública <span class="doc-req">*</span></div>
+          <input type="file" id="file_utilidade" name="file_utilidade" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('utilidade')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB</div>
+          <div class="doc-error" id="err_doc_utilidade">Documento obrigatório.</div>
+        </div>
+
+        <div class="doc-item" id="doc-pres_docs">
+          <div class="doc-status">✅</div>
+          <div class="doc-num">Doc 06</div>
+          <div class="doc-title">Comprovante de Endereço, Identidade e CPF do Presidente <span class="doc-req">*</span></div>
+          <input type="file" id="file_pres_docs" name="file_pres_docs" accept=".pdf,.jpg,.jpeg,.png" onchange="onDocChange('pres_docs')">
+          <div class="doc-hint">PDF ou imagem · máx. 5 MB · Pode ser arquivo único composto</div>
+          <div class="doc-error" id="err_doc_pres_docs">Documento obrigatório.</div>
+        </div>
+
+      </div>
+
+      <div class="upload-progress" id="uploadProgress">
+        <div class="upload-bar" id="uploadBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. RESPONSÁVEL -->
+  <div class="sec-card" id="sec-resp">
+    <div class="sec-head">
+      <div class="sec-icon">✍️</div>
+      <div class="sec-title">Responsável pela Inscrição</div>
+      <div class="sec-status" id="st-resp">4</div>
+    </div>
+    <div class="sec-body">
+      <label class="copy-check">
+        <input type="checkbox" id="chk_resp_dir" onchange="copyDirToResp()">
+        <span class="copy-check-label">⚡ Sou o/a Diretor/Representante Legal indicado acima</span>
+      </label>
+
+      <div class="field-row cols-1">
+        <div class="field">
+          <label for="resp_nome">Nome completo <span class="req">*</span></label>
+          <input type="text" id="resp_nome" name="resp_nome" placeholder="Nome completo" required>
+          <div class="field-error" id="err_resp_nome">Campo obrigatório.</div>
+        </div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field">
+          <label for="resp_cargo">Cargo na entidade <span class="req">*</span></label>
+          <input type="text" id="resp_cargo" name="resp_cargo" placeholder="Ex: Presidente, Assistente Social…" required>
+          <div class="field-error" id="err_resp_cargo">Campo obrigatório.</div>
+        </div>
+        <div class="field">
+          <label for="resp_email">E-mail para comprovante <span class="req">*</span></label>
+          <input type="email" id="resp_email" name="resp_email" placeholder="seu@email.com" required>
+          <div class="field-error" id="err_resp_email">E-mail inválido ou obrigatório.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sections -->
+
+<div class="lgpd-box">
+  <h4>🔒 Aviso de Privacidade — LGPD</h4>
+  <p>Os dados e documentos enviados são tratados exclusivamente para o processo de recomposição do CMSMOC, conforme a Lei nº 13.709/2018. Contato: <strong>cmsmoc@email.com</strong>.</p>
+</div>
+
+<div class="declaracao-box">
+  <div class="declaracao-text">
+    Eu, <strong class="declaracao-name" id="decl-nome">[nome de quem preencheu]</strong>, declaro que as informações prestadas são verdadeiras, assumindo inteira responsabilidade por seu conteúdo, que possuo autorização da entidade para efetuar esta inscrição e que estou ciente das disposições do <strong>Edital Nº 01/2026</strong> e do Regimento Interno do Conselho Municipal de Saúde de Montes Claros.
+  </div>
+  <div class="declaracao-check">
+    <input type="checkbox" id="chk_declaracao">
+    <label for="chk_declaracao">Li e concordo com a declaração acima e com o aviso de privacidade (LGPD).</label>
+  </div>
+  <div class="field-error" id="err_declaracao" style="margin-top:8px">Confirme a declaração para enviar.</div>
+</div>
+
+<button type="button" class="btn-submit" id="btnSubmit" onclick="submitForm()">✅ Enviar Inscrição Documental</button>
+</form>
+
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <h2>Inscrição Documental Registrada!</h2>
+  <p>Os dados e documentos de <strong id="succ-inst"></strong> foram recebidos com sucesso. Um comprovante foi enviado para o e-mail informado.</p>
+  <div class="success-id" id="succ-id">Protocolo: —</div>
+</div>
+</div>
+
+<footer class="site-footer">
+  <strong>Conselho Municipal de Saúde de Montes Claros — MG</strong><br>
+  Recomposição 2026–2029 · Secretaria Executiva · <strong>cmsmoc@email.com</strong>
+</footer>
+
+<script>
+const GAS_URL = 'COLE_AQUI_A_URL_DO_WEB_APP_GAS';
+const FORM_TYPE = 'inscricao_documental';
+const DOCS_REQUIRED = ['estatuto','ata_fundacao','ata_eleicao','cnpj','utilidade','pres_docs'];
+
+/* ── HELPERS ── */
+function v(id) { return (document.getElementById(id)||{}).value||''; }
+function sv(id,val) { const el=document.getElementById(id); if(el) el.value=val; }
+
+/* ── MÁSCARAS ── */
+function maskCNPJ(el){
+  let x=el.value.replace(/\D/g,'').substring(0,14);
+  x=x.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');
+  el.value=x;
+}
+function maskCEP(el){
+  let x=el.value.replace(/\D/g,'').substring(0,8);
+  x=x.replace(/(\d{5})(\d)/,'$1-$2');
+  el.value=x;
+}
+document.getElementById('cad_cnpj').addEventListener('input',()=>maskCNPJ(document.getElementById('cad_cnpj')));
+document.getElementById('cad_cep').addEventListener('input',()=>maskCEP(document.getElementById('cad_cep')));
+
+/* ── DOC CHANGE ── */
+function onDocChange(docId) {
+  const input = document.getElementById('file_'+docId);
+  const item  = document.getElementById('doc-'+docId);
+  const err   = document.getElementById('err_doc_'+docId);
+  if(input.files.length > 0) {
+    item.classList.add('has-file');
+    item.classList.remove('required-missing');
+    err.classList.remove('show');
+  } else {
+    item.classList.remove('has-file');
+  }
+  updateSec('docs');
+}
+
+/* ── STATUS VISUAL ── */
+const SECTIONS_DOC = ['cad','dir','docs','resp'];
+const REQUIRED_DOC = {
+  cad:  ['cad_nome','cad_cnpj','cad_fundacao','cad_endereco','cad_tel','cad_email','cad_segmento'],
+  dir:  ['dir_nome','dir_tel','dir_email'],
+  docs: [], // verificado separadamente
+  resp: ['resp_nome','resp_cargo','resp_email'],
+};
+
+function docsSectionFilled() {
+  return DOCS_REQUIRED.every(d => document.getElementById('file_'+d).files.length > 0);
+}
+
+function updateSec(sec) {
+  const card=document.getElementById('sec-'+sec);
+  const st=document.getElementById('st-'+sec);
+  const hasErr=card.querySelectorAll('.field-error.show, .doc-error.show').length>0;
+  let filled;
+  if(sec==='docs') filled=docsSectionFilled();
+  else filled=REQUIRED_DOC[sec].every(id=>v(id)!=='');
+  if(filled&&!hasErr){ card.classList.add('complete'); card.classList.remove('has-error'); st.textContent='✓'; }
+  else if(hasErr){ card.classList.remove('complete'); card.classList.add('has-error'); st.textContent='!'; }
+  else{ card.classList.remove('complete','has-error'); st.textContent=SECTIONS_DOC.indexOf(sec)+1; }
+}
+
+document.addEventListener('focusout',function(e){
+  const card=e.target.closest('.sec-card'); if(!card) return;
+  const sec=card.id.replace('sec-','');
+  setTimeout(()=>updateSec(sec),80);
+},true);
+
+/* ── COPY ── */
+function copyDirToResp() {
+  if(document.getElementById('chk_resp_dir').checked){ sv('resp_nome',v('dir_nome')); }
+  document.getElementById('decl-nome').textContent=v('resp_nome')||'[nome de quem preencheu]';
+  setTimeout(()=>updateSec('resp'),80);
+}
+document.getElementById('resp_nome').addEventListener('input',function(){
+  document.getElementById('decl-nome').textContent=this.value||'[nome de quem preencheu]';
+});
+
+/* ── VALIDAÇÃO ── */
+const ALL_FIELDS_DOC = [
+  {id:'cad_nome',req:true},{id:'cad_cnpj',req:true,type:'cnpj'},{id:'cad_fundacao',req:true},
+  {id:'cad_endereco',req:true},{id:'cad_tel',req:true},{id:'cad_email',req:true,type:'email'},{id:'cad_segmento',req:true},
+  {id:'dir_nome',req:true},{id:'dir_tel',req:true},{id:'dir_email',req:true,type:'email'},
+  {id:'resp_nome',req:true},{id:'resp_cargo',req:true},{id:'resp_email',req:true,type:'email'},
+];
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)&&!(/\.co$/.test(e.split('@')[1])&&!/\.com/.test(e));}
+function validCNPJ(c){return c.replace(/\D/g,'').length===14;}
+
+function validateAll() {
+  let ok=true, firstErr=null;
+  ALL_FIELDS_DOC.forEach(f=>{
+    const el=document.getElementById(f.id);
+    const err=document.getElementById('err_'+f.id);
+    const val=el?el.value.trim():'';
+    let fOk=true;
+    if(f.req&&!val) fOk=false;
+    if(val&&f.type==='email'&&!validEmail(val)) fOk=false;
+    if(val&&f.type==='cnpj'&&!validCNPJ(val)) fOk=false;
+    if(el) el.classList.toggle('error',!fOk);
+    if(err) err.classList.toggle('show',!fOk);
+    if(!fOk&&!firstErr) firstErr=el;
+    if(!fOk) ok=false;
+  });
+  // Documentos obrigatórios
+  DOCS_REQUIRED.forEach(d=>{
+    const input=document.getElementById('file_'+d);
+    const item=document.getElementById('doc-'+d);
+    const err=document.getElementById('err_doc_'+d);
+    if(input.files.length===0){
+      item.classList.add('required-missing');
+      err.classList.add('show');
+      ok=false;
+      if(!firstErr) firstErr=item;
+    } else {
+      item.classList.remove('required-missing');
+      err.classList.remove('show');
+    }
+  });
+  SECTIONS_DOC.forEach(s=>updateSec(s));
+  if(firstErr){ firstErr.scrollIntoView({behavior:'smooth',block:'center'}); try{firstErr.focus();}catch(e){} }
+  return ok;
+}
+
+/* ── SUBMIT ── */
+async function submitForm() {
+  const errDecl=document.getElementById('err_declaracao');
+  if(!validateAll()){ errDecl.classList.remove('show'); return; }
+  if(!document.getElementById('chk_declaracao').checked){ errDecl.classList.add('show'); errDecl.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  errDecl.classList.remove('show');
+
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('btnSubmit').disabled=true;
+
+  const payload = {
+    form_type: FORM_TYPE,
+    cad_nome:v('cad_nome'), cad_cnpj:v('cad_cnpj'), cad_fundacao:v('cad_fundacao'),
+    cad_endereco:v('cad_endereco'), cad_cep:v('cad_cep'), cad_tel:v('cad_tel'),
+    cad_email:v('cad_email'), cad_segmento:v('cad_segmento'),
+    dir_nome:v('dir_nome'), dir_tel:v('dir_tel'), dir_email:v('dir_email'),
+    resp_nome:v('resp_nome'), resp_cargo:v('resp_cargo'), resp_email:v('resp_email'),
+    docs: {},
+  };
+
+  // Converter todos os documentos para base64
+  const docKeys = ['estatuto','ata_fundacao','ata_eleicao','cnpj','utilidade','pres_docs'];
+  const progress = document.getElementById('uploadProgress');
+  const bar = document.getElementById('uploadBar');
+  progress.classList.add('active');
+  document.getElementById('overlayMsg').textContent = 'Preparando documentos…';
+
+  for(let i=0; i<docKeys.length; i++) {
+    const key = docKeys[i];
+    const file = document.getElementById('file_'+key).files[0];
+    bar.style.width = Math.round((i/docKeys.length)*80) + '%';
+    if(file) {
+      try {
+        payload.docs[key] = { base64: await fileToB64(file), nome: file.name, tipo: file.type };
+      } catch(e) {
+        payload.docs[key] = { erro: 'falha na leitura' };
+      }
+    }
+  }
+  bar.style.width = '90%';
+  document.getElementById('overlayMsg').textContent = 'Enviando inscrição…';
+
+  try {
+    await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload),mode:'no-cors'});
+    bar.style.width='100%';
+    showSuccess(payload.cad_nome);
+  } catch(err) {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('btnSubmit').disabled=false;
+    alert('Erro ao enviar:\n'+err.message);
+  }
+}
+
+function fileToB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('falhou'));r.readAsDataURL(file);});}
+
+function showSuccess(nome){
+  document.getElementById('loadingOverlay').classList.remove('active');
+  document.getElementById('mainForm').style.display='none';
+  document.querySelector('.lgpd-box').style.display='none';
+  document.querySelector('.declaracao-box').style.display='none';
+  document.getElementById('btnSubmit').style.display='none';
+  document.getElementById('succ-inst').textContent=nome;
+  document.getElementById('succ-id').textContent='Protocolo: INSC-'+Date.now().toString(36).toUpperCase();
+  document.getElementById('successScreen').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
