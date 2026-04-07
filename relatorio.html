@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CMS-MOC 2026 · Recomposição — Relatório Vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ══════════════════════════════════════════
+   DESIGN SYSTEM — CMS-MOC 2026
+   Aesthetic: "Institutional Urgency"
+   Syne display + DM Sans body
+   Navy/Blue/Teal with sharp yellow accent
+   ══════════════════════════════════════════ */
+:root {
+  --navy:    #0B2545;
+  --blue:    #1A5EA8;
+  --teal:    #1A8A7A;
+  --yellow:  #F5C400;
+  --green:   #16A34A;
+  --orange:  #EA580C;
+  --red:     #DC2626;
+  --ink:     #0F172A;
+  --muted:   #64748B;
+  --border:  #E2E8F0;
+  --off:     #F8FAFC;
+  --white:   #FFFFFF;
+  --card-sh: 0 1px 3px rgba(11,37,69,.08), 0 4px 16px rgba(11,37,69,.06);
+  --card-sh2:0 4px 24px rgba(11,37,69,.14);
+  --FD: 'Syne', sans-serif;
+  --FB: 'DM Sans', sans-serif;
+  --r: 12px;
+  /* Segment colors */
+  --c-usuario:    #0369A1;
+  --c-trabalhador:#15803D;
+  --c-gestor:     #9333EA;
+  --c-cls:        #C2410C;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body { font-family: var(--FB); background: var(--off); color: var(--ink); line-height: 1.6; }
+a { color: var(--blue); }
+
+/* ──── LOADING SCREEN ──── */
+#loading {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+}
+.load-logo {
+  font-family: var(--FD); font-size: 13px; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); margin-bottom: 4px;
+}
+.load-title {
+  font-family: var(--FD); font-size: clamp(22px,4vw,36px); font-weight: 800;
+  color: #fff; text-align: center; line-height: 1.15;
+}
+.load-title em { color: var(--yellow); font-style: normal; }
+.load-bar-wrap {
+  width: 280px; height: 3px; background: rgba(255,255,255,.15);
+  border-radius: 4px; overflow: hidden;
+}
+.load-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--yellow), var(--teal));
+  border-radius: 4px;
+  transition: width .3s ease;
+}
+.load-status { font-size: 12px; color: rgba(255,255,255,.4); font-family: var(--FB); }
+#loading.hide { opacity: 0; pointer-events: none; transition: opacity .4s ease .1s; }
+
+/* ──── HEADER ──── */
+#header {
+  background: var(--navy);
+  position: relative; overflow: hidden;
+}
+#header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(26,94,168,.35) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 30%, rgba(26,138,122,.2) 0%, transparent 45%);
+  pointer-events: none;
+}
+#header::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--yellow) 0%, var(--teal) 40%, var(--blue) 100%);
+}
+.hdr-inner {
+  max-width: 1280px; margin: 0 auto; padding: 52px 28px 56px;
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end;
+}
+@media(max-width:700px){ .hdr-inner { grid-template-columns: 1fr; } }
+.hdr-eyebrow {
+  font-family: var(--FD); font-size: 11px; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--yellow); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hdr-eyebrow::before {
+  content: ''; width: 24px; height: 2px;
+  background: var(--yellow); display: inline-block; flex-shrink: 0;
+}
+.hdr-h1 {
+  font-family: var(--FD); font-size: clamp(26px, 4.5vw, 46px);
+  font-weight: 800; color: #fff; line-height: 1.1;
+  margin-bottom: 12px; letter-spacing: -.5px;
+}
+.hdr-h1 span { color: var(--yellow); }
+.hdr-desc { font-size: 15px; color: rgba(255,255,255,.55); max-width: 520px; font-weight: 300; }
+.hdr-meta {
+  font-size: 12px; color: rgba(255,255,255,.35);
+  margin-top: 18px; display: flex; gap: 20px; flex-wrap: wrap;
+}
+.hdr-meta strong { color: rgba(255,255,255,.65); }
+.hdr-stats {
+  display: flex; flex-direction: column; gap: 10px;
+  align-self: center;
+}
+@media(max-width:700px){ .hdr-stats { flex-direction: row; flex-wrap: wrap; } }
+.hstat {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px; padding: 14px 18px;
+  text-align: center; min-width: 100px;
+}
+.hstat b { font-family: var(--FD); font-size: 28px; font-weight: 800; color: #fff; display: block; line-height: 1; }
+.hstat s { font-size: 10px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em; text-decoration: none; display: block; margin-top: 3px; }
+
+/* ──── NAV ──── */
+#nav {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 500;
+  box-shadow: 0 1px 8px rgba(0,0,0,.06);
+}
+.nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nb {
+  padding: 13px 16px; cursor: pointer; background: none;
+  border: none; border-bottom: 3px solid transparent;
+  font-family: var(--FD); font-size: 11px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: var(--muted); white-space: nowrap;
+  transition: color .18s, border-color .18s;
+}
+.nb:hover, .nb.on { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* ──── LAYOUT ──── */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+.sec { padding: 60px 0; }
+.sec-alt { background: var(--white); }
+
+.sec-eyebrow {
+  font-family: var(--FD); font-size: 11px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sec-h2 {
+  font-family: var(--FD); font-size: clamp(22px,3vw,30px);
+  font-weight: 800; color: var(--navy); margin-bottom: 8px;
+  letter-spacing: -.3px;
+}
+.sec-desc { font-size: 14px; color: var(--muted); max-width: 700px; margin-bottom: 36px; }
+
+/* ──── SUMMARY CARDS ──── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) 1.5fr;
+  gap: 20px; margin-bottom: 32px;
+}
+@media(max-width:900px){ .summary-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:540px){ .summary-grid { grid-template-columns: 1fr; } }
+.sum-card {
+  border-radius: var(--r); padding: 22px 24px;
+  display: flex; flex-direction: column; gap: 4px;
+  position: relative; overflow: hidden;
+}
+.sum-card::before { content: ''; position: absolute; inset: 0; opacity: .05; }
+.sum-card.c-navy { background: var(--navy); }
+.sum-card.c-blue { background: var(--blue); }
+.sum-card.c-teal { background: var(--teal); }
+.sum-card.c-green { background: var(--green); }
+.sum-card.c-orange { background: var(--orange); }
+.sum-card.c-red { background: var(--red); }
+.sum-card.c-yellow { background: #92400E; }
+.sum-num {
+  font-family: var(--FD); font-size: 48px; font-weight: 800;
+  color: #fff; line-height: 1; display: block;
+}
+.sum-lbl { font-size: 13px; color: rgba(255,255,255,.7); font-weight: 500; }
+.sum-sub { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
+
+/* ──── CHARTS ROW ──── */
+.charts-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px; margin-bottom: 20px;
+}
+@media(max-width:900px){ .charts-row { grid-template-columns: 1fr 1fr; } }
+@media(max-width:540px){ .charts-row { grid-template-columns: 1fr; } }
+.charts-row.two { grid-template-columns: 1.4fr 1fr; }
+.ch-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px; box-shadow: var(--card-sh);
+}
+.ch-card.span2 { grid-column: span 2; }
+@media(max-width:900px){ .ch-card.span2 { grid-column: span 1; } }
+.ch-title {
+  font-family: var(--FD); font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em;
+  color: var(--navy); margin-bottom: 3px;
+}
+.ch-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+.ch-wrap { position: relative; height: 200px; }
+.ch-wrap.tall { height: 280px; }
+
+/* ──── ENTITY CARDS ──── */
+.filters-bar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 24px; align-items: center;
+}
+#search-ent {
+  padding: 9px 16px; border: 1px solid var(--border);
+  border-radius: 8px; font-family: var(--FB); font-size: 14px;
+  background: var(--white); color: var(--ink); outline: none;
+  min-width: 240px; flex: 1;
+}
+#search-ent:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,94,168,.08); }
+.filter-pill {
+  padding: 8px 16px; border-radius: 100px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-family: var(--FD); font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer; transition: all .18s;
+  white-space: nowrap;
+}
+.filter-pill:hover { border-color: var(--blue); color: var(--blue); }
+.filter-pill.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.filter-pill.seg-usuario.on { background: var(--c-usuario); border-color: var(--c-usuario); }
+.filter-pill.seg-trabalhador.on { background: var(--c-trabalhador); border-color: var(--c-trabalhador); }
+.filter-pill.seg-gestor.on { background: var(--c-gestor); border-color: var(--c-gestor); }
+.filter-pill.seg-cls.on { background: var(--c-cls); border-color: var(--c-cls); }
+
+/* sort + count bar */
+.sort-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+}
+.sort-bar label { font-size: 12px; color: var(--muted); }
+.sort-bar select {
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: var(--FB); font-size: 12px; background: var(--white);
+  color: var(--ink); outline: none; cursor: pointer;
+}
+#ent-count { font-family: var(--FD); font-size: 12px; font-weight: 700; color: var(--muted); }
+
+/* Entity grid */
+#ent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+}
+@media(max-width:540px){ #ent-grid { grid-template-columns: 1fr; } }
+
+/* ── THE ENTITY CARD ── */
+.ent-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--card-sh);
+  transition: transform .18s, box-shadow .18s;
+  cursor: pointer;
+}
+.ent-card:hover { transform: translateY(-2px); box-shadow: var(--card-sh2); }
+
+.ent-card-hd {
+  padding: 14px 18px;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ent-card-id {
+  font-family: var(--FD); font-size: 10px; font-weight: 700;
+  letter-spacing: .09em; padding: 3px 9px; border-radius: 6px;
+  background: var(--off); color: var(--muted); flex-shrink: 0;
+}
+.ent-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.badge {
+  font-family: var(--FD); font-size: 9px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 5px;
+}
+.badge-seg-usuario    { background: #DBEAFE; color: var(--c-usuario); }
+.badge-seg-trabalhador{ background: #DCFCE7; color: var(--c-trabalhador); }
+.badge-seg-gestor     { background: #F3E8FF; color: var(--c-gestor); }
+.badge-seg-cls        { background: #FFEDD5; color: var(--c-cls); }
+.badge-ambas   { background: #F0FDF4; color: var(--green); }
+.badge-so-uma  { background: #FFF7ED; color: var(--orange); }
+.badge-ok      { background: #DCFCE7; color: var(--green); }
+.badge-warn    { background: #FFF7ED; color: var(--orange); }
+.badge-err     { background: #FEE2E2; color: var(--red); }
+.badge-m2      { background: #FEE2E2; color: var(--red); animation: pulse-m2 2s infinite; }
+@keyframes pulse-m2 { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+.ent-card-name {
+  padding: 14px 18px 10px;
+  font-family: var(--FD); font-size: 14px; font-weight: 700;
+  color: var(--navy); line-height: 1.25;
+}
+.ent-card-sigla { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+
+/* conselheiro comparison rows */
+.conselheiros {
+  padding: 0 18px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.cons-row {
+  border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+}
+.cons-row-hd {
+  padding: 6px 10px;
+  font-family: var(--FD); font-size: 9px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cons-row-hd.tit { background: var(--navy); color: rgba(255,255,255,.8); }
+.cons-row-hd.sup { background: #374151; color: rgba(255,255,255,.7); }
+.cons-row-hd.vaga { background: var(--red); color: rgba(255,255,255,.8); }
+.cons-cols {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+.cons-col {
+  padding: 9px 12px; position: relative;
+}
+.cons-col:first-child { border-right: 1px solid var(--border); }
+.cons-col-lbl {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted); margin-bottom: 3px; display: flex; align-items: center; gap: 4px;
+}
+.cons-col-lbl .dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  display: inline-block;
+}
+.dot-atual { background: #94A3B8; }
+.dot-novo  { background: var(--teal); }
+.cons-nome {
+  font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3;
+}
+.cons-nome.same { color: var(--ink); }
+.cons-nome.changed { color: var(--teal); font-weight: 700; }
+.cons-nome.vaga { color: var(--red); font-style: italic; }
+.cons-nome.empty { color: #CBD5E1; font-style: italic; font-weight: 400; font-size: 11px; }
+.cons-email { font-size: 10px; color: var(--muted); margin-top: 2px; word-break: break-all; }
+.cons-phone { font-size: 10px; color: var(--muted); }
+
+.change-arrow {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--teal); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  pointer-events: none;
+}
+/* same indicator */
+.same-indicator {
+  padding: 8px 12px;
+  font-size: 11px; color: var(--green); font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  background: #F0FDF4;
+}
+.same-indicator::before { content: '✓'; }
+
+/* card footer */
+.ent-card-footer {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--off);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 6px;
+}
+.footer-item { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.footer-item strong { color: var(--ink); }
+.oficio-ok { color: var(--green); font-weight: 700; }
+.oficio-no { color: var(--orange); font-weight: 700; }
+.oficio-link {
+  font-size: 10px; padding: 3px 8px; border-radius: 5px;
+  background: var(--blue); color: #fff; font-weight: 700;
+  text-decoration: none; font-family: var(--FD);
+  letter-spacing: .05em;
+}
+.oficio-link:hover { background: var(--navy); }
+
+/* sem inscrição */
+.no-sub-banner {
+  margin: 0 18px 14px;
+  padding: 10px 14px; border-radius: 8px;
+  background: #FFFBEB; border: 1px solid #FDE68A;
+  font-size: 12px; color: #92400E; font-weight: 600;
+  display: flex; align-items: center; gap: 7px;
+}
+
+/* m2 banner */
+.m2-banner {
+  margin: 0 18px 12px;
+  padding: 9px 14px; border-radius: 8px;
+  background: #FEF2F2; border: 1px solid #FECACA;
+  font-size: 11px; color: var(--red); font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+
+/* ──── DETAIL MODAL ──── */
+#modal-overlay {
+  position: fixed; inset: 0; z-index: 800;
+  background: rgba(11,37,69,.65); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+#modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+#modal {
+  background: var(--white); border-radius: 16px;
+  max-width: 760px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,.3);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+#modal::-webkit-scrollbar { width: 4px; }
+#modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.modal-hd {
+  padding: 24px 28px 20px;
+  background: var(--navy); color: #fff;
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+}
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,.12); border: none; color: #fff;
+  cursor: pointer; font-size: 18px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; transition: background .15s;
+}
+.modal-close:hover { background: rgba(255,255,255,.22); }
+.modal-body { padding: 24px 28px; }
+.modal-sec { margin-bottom: 24px; }
+.modal-sec-title {
+  font-family: var(--FD); font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--blue); border-bottom: 2px solid var(--blue);
+  padding-bottom: 7px; margin-bottom: 14px;
+}
+.modal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+}
+@media(max-width:500px){ .modal-grid { grid-template-columns: 1fr; } }
+.mg-item {
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.mg-item:nth-child(even) { border-right: none; }
+.mg-item:last-child, .mg-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+.mg-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 2px; }
+.mg-val { font-size: 13px; font-weight: 600; color: var(--ink); word-break: break-word; }
+
+/* full conselheiro compare */
+.full-compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--border); border-radius: 10px; overflow: hidden;
+  margin-bottom: 12px;
+}
+@media(max-width:500px){ .full-compare { grid-template-columns: 1fr; } }
+.fc-col {
+  background: var(--white); padding: 16px;
+}
+.fc-col:first-child { background: #F8FAFC; }
+.fc-col-lbl {
+  font-family: var(--FD); font-size: 10px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.fc-col-lbl.atual { color: var(--muted); }
+.fc-col-lbl.novo { color: var(--teal); }
+.fc-nome { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.fc-nome.changed-name { color: var(--teal); }
+.fc-info { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.fc-change-badge {
+  grid-column: 1 / -1; background: #F0FDF4;
+  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: var(--green);
+}
+.fc-same-badge {
+  grid-column: 1 / -1; background: #F0FDF4;
+  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; color: var(--green);
+}
+.fc-nosub-badge {
+  grid-column: 1 / -1; background: #FFFBEB;
+  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: #92400E;
+}
+
+/* ──── TABLE VIEW ──── */
+.tbl-wrap {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: auto; box-shadow: var(--card-sh);
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--navy); color: #fff; }
+th {
+  padding: 12px 14px; text-align: left;
+  font-family: var(--FD); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  cursor: pointer; white-space: nowrap; user-select: none;
+}
+th:hover { background: #163f7a; }
+th.asc::after { content: ' ↑'; } th.desc::after { content: ' ↓'; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+tbody tr:hover { background: var(--off); }
+tbody tr.no-sub-row { background: #FFFBEB; }
+td { padding: 11px 14px; vertical-align: middle; }
+.tbl-name { font-weight: 600; color: var(--navy); max-width: 200px; font-size: 12px; }
+.tbl-footer { padding: 10px 14px; text-align: right; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); background: var(--off); }
+
+/* ──── EMPTY STATE ──── */
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+  grid-column: 1 / -1;
+}
+.empty-state h3 { font-family: var(--FD); font-size: 18px; color: var(--navy); margin-bottom: 8px; }
+
+/* ──── ALERT BLOCKS ──── */
+.alert { border-radius: var(--r); padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+.alert-ico { font-size: 20px; flex-shrink: 0; }
+.alert-txt { font-size: 13.5px; line-height: 1.65; }
+.alert-txt strong { font-weight: 700; }
+.alert.warn { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+.alert.err  { background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; }
+.alert.info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A5F; }
+.alert.ok   { background: #F0FDF4; border: 1px solid #A7F3D0; color: #064E3B; }
+
+/* ──── LEGEND ──── */
+.legend {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  margin-bottom: 20px; padding: 14px 18px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); align-items: center;
+}
+.leg-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink); }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.leg-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ──── ANIMATIONS ──── */
+@keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.ent-card { animation: fadeSlide .3s ease both; }
+
+/* ──── PROGRESS ──── */
+.prog-item { margin-bottom: 14px; }
+.prog-hd { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12.5px; color: var(--ink); }
+.prog-hd span { color: var(--muted); font-size: 11px; }
+.prog-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 4px; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
+
+/* ──── VIEW TOGGLE ──── */
+.view-toggle { display: flex; gap: 6px; }
+.vbtn {
+  width: 34px; height: 34px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--muted); transition: all .15s;
+}
+.vbtn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* Table view hidden by default */
+#tbl-view { display: none; }
+body.table-mode #ent-grid { display: none; }
+body.table-mode #tbl-view { display: block; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="load-logo">CMS-MOC · Montes Claros</div>
+  <div class="load-title">Recomposição <em>2026</em></div>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+  <div class="load-status" id="load-status">Conectando à planilha...</div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="hdr-inner">
+    <div>
+      <div class="hdr-eyebrow">Conselho Municipal de Saúde · Montes Claros/MG</div>
+      <h1 class="hdr-h1">Relatório de<br><span>Recomposição 2026</span></h1>
+      <p class="hdr-desc">Composição atual × novas indicações. Dados carregados em tempo real da planilha oficial.</p>
+      <div class="hdr-meta">
+        <span>Gerado em: <strong id="gen-date"></strong></span>
+        <span>Fonte: <strong>Planilha CMS-MOC (Google Sheets)</strong></span>
+        <span id="last-update"></span>
+      </div>
+    </div>
+    <div class="hdr-stats" id="hdr-stats"></div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <button class="nb on" onclick="goSec('sec-dash',this)">📊 Painel</button>
+    <button class="nb" onclick="goSec('sec-cards',this)">🏛 Entidades</button>
+    <button class="nb" onclick="goSec('sec-criticos',this)">⚠ Críticos</button>
+    <button class="nb" onclick="goSec('sec-mudancas',this)">🔄 Mudanças</button>
+    <button class="nb" onclick="goSec('sec-tabela',this)">📑 Tabela</button>
+  </div>
+</nav>
+
+<!-- SEC: DASHBOARD -->
+<section id="sec-dash" class="sec">
+<div class="wrap">
+  <div class="sec-eyebrow">Painel Executivo</div>
+  <h2 class="sec-h2">Visão Geral do Processo</h2>
+  <p class="sec-desc">Consolidado completo das inscrições, status de documentação e comparativo de conselheiros.</p>
+
+  <div class="summary-grid" id="sum-cards"></div>
+
+  <div class="charts-row">
+    <div class="ch-card">
+      <div class="ch-title">Status de Inscrição</div>
+      <div class="ch-sub">Entidades com e sem submissão</div>
+      <div class="ch-wrap"><canvas id="ch-status"></canvas></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">Distribuição por Segmento</div>
+      <div class="ch-sub">Vagas por categoria tripartite</div>
+      <div class="ch-wrap"><canvas id="ch-seg"></canvas></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">Tipo de Vaga</div>
+      <div class="ch-sub">Ambas as cadeiras vs. só uma</div>
+      <div class="ch-wrap"><canvas id="ch-ambas"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row two">
+    <div class="ch-card">
+      <div class="ch-title">Conselheiros: Mantidos vs. Substituídos</div>
+      <div class="ch-sub">Titular e suplente separados</div>
+      <div class="ch-wrap tall"><canvas id="ch-changes"></canvas></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">Cobertura Documental</div>
+      <div class="ch-sub">Indicadores do processo</div>
+      <div id="ch-progs" style="margin-top:8px"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SEC: ENTITY CARDS -->
+<section id="sec-cards" class="sec sec-alt">
+<div class="wrap">
+  <div class="sec-eyebrow">Entidades</div>
+  <h2 class="sec-h2">Navegador de Entidades</h2>
+  <p class="sec-desc">Cada card mostra a composição atual vs. nova indicação. Clique para ver ficha completa.</p>
+
+  <div class="legend">
+    <strong style="font-family:var(--FD);font-size:11px;color:var(--navy)">Legenda:</strong>
+    <div class="leg-item"><span class="leg-dot" style="background:#94A3B8"></span> Conselheiro atual</div>
+    <div class="leg-item"><span class="leg-dot" style="background:var(--teal)"></span> Nova indicação</div>
+    <div class="leg-item"><span class="leg-badge badge-ok">Manteve</span> Mesma pessoa</div>
+    <div class="leg-item"><span class="leg-badge" style="background:#F0FDF4;color:var(--teal)">Mudou</span> Novo indicado</div>
+    <div class="leg-item"><span class="leg-badge badge-err">M2 ⚠</span> 2º mandato</div>
+    <div class="leg-item"><span class="leg-badge badge-warn">Sem ins.</span> Sem formulário</div>
+  </div>
+
+  <div class="filters-bar">
+    <input type="text" id="search-ent" placeholder="🔍 Buscar entidade ou conselheiro..." oninput="applyFilters()"/>
+    <button class="filter-pill on" onclick="setFilter('all',this)" data-f="all">Todas</button>
+    <button class="filter-pill seg-usuario" onclick="setFilter('USUARIO',this)" data-f="USUARIO">Usuário</button>
+    <button class="filter-pill seg-trabalhador" onclick="setFilter('TRABALHADOR',this)" data-f="TRABALHADOR">Trabalhador</button>
+    <button class="filter-pill seg-gestor" onclick="setFilter('GESTOR/PRESTADOR',this)" data-f="GESTOR/PRESTADOR">Gestor/Prestador</button>
+    <button class="filter-pill seg-cls" onclick="setFilter('CLS',this)" data-f="CLS">CLS</button>
+    <button class="filter-pill" onclick="setFilter('mudanca',this)" data-f="mudanca">Com Mudança</button>
+    <button class="filter-pill" onclick="setFilter('semins',this)" data-f="semins">Sem Inscrição</button>
+  </div>
+
+  <div class="sort-bar">
+    <span id="ent-count">—</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <label>Ordenar: <select id="sort-sel" onchange="applyFilters()">
+        <option value="seg">Segmento</option>
+        <option value="nome">Nome A–Z</option>
+        <option value="status">Status</option>
+      </select></label>
+      <div class="view-toggle">
+        <button class="vbtn on" id="btn-cards" onclick="setView('cards')" title="Cards">⊞</button>
+        <button class="vbtn" id="btn-table" onclick="setView('table')" title="Tabela">≡</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ent-grid"></div>
+  <div id="tbl-view">
+    <div class="tbl-wrap">
+      <table id="main-tbl">
+        <thead><tr>
+          <th onclick="sortMainTbl(0)">Entidade</th>
+          <th onclick="sortMainTbl(1)">Segmento</th>
+          <th onclick="sortMainTbl(2)">Cadeira</th>
+          <th onclick="sortMainTbl(3)">Titular Atual</th>
+          <th onclick="sortMainTbl(4)">Novo Titular</th>
+          <th onclick="sortMainTbl(5)">Suplente Atual</th>
+          <th onclick="sortMainTbl(6)">Novo Suplente</th>
+          <th onclick="sortMainTbl(7)">Status</th>
+        </tr></thead>
+        <tbody id="main-tbl-body"></tbody>
+      </table>
+      <div class="tbl-footer" id="main-tbl-footer"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SEC: CRÍTICOS -->
+<section id="sec-criticos" class="sec">
+<div class="wrap">
+  <div class="sec-eyebrow">Casos Críticos</div>
+  <h2 class="sec-h2">Situações que Requerem Atenção</h2>
+  <p class="sec-desc">Pendências, mandatos máximos e dados incompletos identificados no processo.</p>
+  <div id="criticos-content"></div>
+</div>
+</section>
+
+<!-- SEC: MUDANÇAS -->
+<section id="sec-mudancas" class="sec sec-alt">
+<div class="wrap">
+  <div class="sec-eyebrow">Mudanças de Representação</div>
+  <h2 class="sec-h2">Conselheiros Substituídos</h2>
+  <p class="sec-desc">Todas as entidades em que há divergência entre o conselheiro atual e a nova indicação.</p>
+  <div id="mudancas-content"></div>
+</div>
+</section>
+
+<!-- SEC: TABELA COMPLETA -->
+<section id="sec-tabela" class="sec">
+<div class="wrap">
+  <div class="sec-eyebrow">Tabela Completa</div>
+  <h2 class="sec-h2">Todas as Vagas</h2>
+  <p class="sec-desc">Visão linha-a-linha de todas as entidades com dados completos.</p>
+  <div id="full-table-content"></div>
+</div>
+</section>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <div class="modal-hd" id="modal-hd">
+      <div style="flex:1">
+        <div id="modal-eyebrow" style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:5px;font-family:var(--FD);letter-spacing:.1em;text-transform:uppercase"></div>
+        <h2 id="modal-title" style="font-family:var(--FD);font-size:18px;font-weight:800;line-height:1.2"></h2>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer style="background:var(--navy);color:rgba(255,255,255,.4);padding:36px 28px;font-size:12px;text-align:center">
+  <div style="max-width:1280px;margin:0 auto">
+    <div style="height:3px;background:linear-gradient(90deg,var(--yellow),var(--teal),var(--blue));border-radius:2px;margin-bottom:24px"></div>
+    <strong style="color:rgba(255,255,255,.7)">Conselho Municipal de Saúde de Montes Claros — CMS-MOC · Recomposição 2026</strong><br>
+    <span style="margin-top:6px;display:block">Dados carregados em tempo real. Documento de uso interno e auxiliar.</span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLxTO2gZdYLs5LMfONE-5M-dQ2xnPKGkiA1j35aR8B2aYPeKnYRBjGt49N5fJOMBVouzr-_AsQXQrZ/pub?gid=467330833&single=true&output=csv';
+
+/* ── mandato 2 from composicao atual (external knowledge) ── */
+const M2_IDS = new Set([
+  'ID-P3-S','ID-P2-S','G2-T','G2-S','TR6B-T','U9-S','U6-T','U4-S','U10-T','U10-S','U1-T','U1-S'
+]);
+
+/* ── seat IDs per entity row (to check M2) ── */
+const ROW_SEAT_IDS = {
+  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 1': ['U1-T','U1-S'],
+  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 2': ['U9-T','U9-S'],
+  'ASSOCIAÇÃO PRESENTE DE APOIO A PACIENTES COM CÂNCER': ['U6-T','U6-S'],
+  'ASSOCIAÇÃO DOS DEFICIENTES DE MONTES CLAROS (ADEMOC)': ['U4-T','U4-S'],
+  'FUNDAÇÃO SARA ALBUQUERQUE COSTA (FUNDAÇÃO SARA)': ['U10-T','U10-S'],
+  'SUPERINTENDÊNCIA REGIONAL DE SAÚDE DE MONTES CLAROS (SR': ['G2-T','G2-S'],
+  'FUNDAÇÃO CLARICE ALBUQUERQUE (VOVÓ CLARICE)': ['ID-P3-S'],
+  'ASSOCIAÇÃO SOCIEDADE EDUCACIONAL MENDONÇA E SILVA (CAPE': ['ID-P2-S'],
+  'SINDICATO ÚNICO DOS SERVIORES DE SAÚDE DO ESTADO DE MIN': ['TR6B-T','TR6A-T'], // both rows
+};
+
+/* ============================================================
+   CSV PARSER
+   ============================================================ */
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (vals[i] || '').trim(); });
+    return obj;
+  }).filter(r => r['ENTIDADE'] && r['ENTIDADE'].trim());
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+/* ============================================================
+   DATA HELPERS
+   ============================================================ */
+function hasSubmission(row) {
+  return !!(row['Carimbo de data/hora'] && row['Carimbo de data/hora'].trim() &&
+    row['Carimbo de data/hora'].trim().toLowerCase() !== 'nan' &&
+    row['Carimbo de data/hora'].trim().toLowerCase() !== 'none' &&
+    row['Carimbo de data/hora'].trim() !== '');
+}
+
+function nameNorm(n) {
+  if (!n || n === '[sem_dados]' || n === '[VAGO]' || n.toLowerCase() === 'nan') return '';
+  return n.trim().toUpperCase().replace(/\s+/g,' ');
+}
+
+function namesMatch(a, b) {
+  const na = nameNorm(a), nb = nameNorm(b);
+  if (!na || !nb) return null; // unknown
+  // Allow minor differences (accents, extra titles)
+  const clean = s => s.replace(/[^A-Z\s]/g,'').replace(/\s+/g,' ').trim();
+  return clean(na) === clean(nb);
+}
+
+function hasOficio(row) {
+  const o = row['Ofício'] || '';
+  return o.startsWith('http') || o.startsWith('SIM') || o.toUpperCase() === 'SIM';
+}
+
+function getOficioURL(row) {
+  const o = row['Ofício'] || '';
+  return o.startsWith('http') ? o : null;
+}
+
+function rowM2(row) {
+  const ent = row['ENTIDADE'] || '';
+  for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
+    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,30))) {
+      return ids.some(id => M2_IDS.has(id));
+    }
+  }
+  return false;
+}
+
+function segClass(seg) {
+  if (seg.includes('USUARIO')) return 'seg-usuario';
+  if (seg.includes('TRABALHADOR')) return 'seg-trabalhador';
+  if (seg.includes('GESTOR') || seg.includes('PRESTADOR')) return 'seg-gestor';
+  if (seg.includes('CLS') || (seg==='USUARIO' && false)) return 'seg-cls';
+  return 'seg-usuario';
+}
+
+function getSegLabel(seg) {
+  if (seg.includes('GESTOR') || seg.includes('PRESTADOR')) return 'Gestor/Prestador';
+  if (seg.includes('TRABALHADOR')) return 'Trabalhador';
+  if (seg.includes('USUARIO')) return 'Usuário';
+  return seg;
+}
+
+function isCLS(row) {
+  const ent = row['ENTIDADE'] || '';
+  return ent.toUpperCase().includes('CLS') || ent.toUpperCase().includes('CONSELHO LOCAL');
+}
+
+function getSegDisplay(row) {
+  if (isCLS(row)) return 'CLS';
+  const s = row['SEGMENTO'] || '';
+  if (s.includes('GESTOR') || s.includes('PRESTADOR')) return 'GESTOR/PRESTADOR';
+  return s || 'USUARIO';
+}
+
+function initials(name) {
+  if (!name || !nameNorm(name)) return '?';
+  return nameNorm(name).split(' ').slice(0,2).map(w=>w[0]).join('');
+}
+
+/* ============================================================
+   RENDER ENTITY CARD
+   ============================================================ */
+function buildCard(row, idx) {
+  const hasSub = hasSubmission(row);
+  const seg = getSegDisplay(row);
+  const segCls = isCLS(row) ? 'seg-cls' : 
+    seg.includes('GESTOR') ? 'seg-gestor' :
+    seg.includes('TRABALHADOR') ? 'seg-trabalhador' : 'seg-usuario';
+  const segLabel = isCLS(row) ? 'CLS' : getSegLabel(row['SEGMENTO'] || '');
+  const isM2 = rowM2(row);
+  const ofOk = hasOficio(row);
+  const ofURL = getOficioURL(row);
+  const ambas = (row['AMBAS_OU_SO_UMA'] || '').toUpperCase().includes('AMBAS');
+  const cadeira = row['CADEIRA'] || '';
+  const sigla = row['Sigla'] || row['Nome fantasia'] || '';
+
+  const titAtual = nameNorm(row['NOME_TITULAR']);
+  const titNovo  = nameNorm(row['Titular Nome']);
+  const supAtual = nameNorm(row['NOME_SUPLENTE']);
+  const supNovo  = nameNorm(row['Suplente Nome']);
+
+  const titMatch = namesMatch(titAtual, titNovo);
+  const supMatch = namesMatch(supAtual, supNovo);
+
+  const hasAnyChange = (titMatch === false) || (supMatch === false);
+
+  // Build conselheiro rows
+  let consHTML = '';
+
+  // Titular
+  if (titAtual || titNovo || cadeira.includes('TITULAR')) {
+    const isVaga = titAtual === '[VAGO]' || titAtual === '';
+    const titChanged = !isVaga && titMatch === false && titNovo;
+    const titSame = titMatch === true;
+    
+    if (titSame) {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd tit"><span>Titular · ${row['ID_TITULAR']||''}</span></div>
+        <div class="same-indicator">${titAtual || titNovo}</div>
+      </div>`;
+    } else if (!hasSub && !titNovo) {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd ${isVaga?'vaga':'tit'}"><span>Titular · ${row['ID_TITULAR']||''}</span>${isVaga?'<span>VAGA</span>':''}</div>
+        <div class="cons-cols">
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
+            <div class="cons-nome ${isVaga?'vaga':''}">${titAtual||'Sem informação'}</div>
+          </div>
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-novo"></span> Nova indicação</div>
+            <div class="cons-nome empty">Sem inscrição</div>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd tit"><span>Titular · ${row['ID_TITULAR']||''}</span>${titChanged?'<span style="font-size:9px;opacity:.7">MUDOU</span>':''}</div>
+        <div class="cons-cols" style="position:relative">
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
+            <div class="cons-nome ${titChanged?'':'same'}">${titAtual||'—'}</div>
+          </div>
+          ${titChanged?`<div class="change-arrow">→</div>`:''}
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-novo"></span> Novo indicado</div>
+            <div class="cons-nome ${titChanged?'changed':'same'}">${titNovo||titAtual||'—'}</div>
+            ${row['Titular Email']?`<div class="cons-email">${row['Titular Email']}</div>`:''}
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // Suplente
+  if (supAtual || supNovo || cadeira.includes('SUPLENTE')) {
+    const supChanged = supMatch === false && supNovo;
+    const supSame = supMatch === true;
+
+    if (supSame) {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd sup"><span>Suplente · ${row['ID_SUPLENTE']||''}</span></div>
+        <div class="same-indicator">${supAtual || supNovo}</div>
+      </div>`;
+    } else if (!hasSub && !supNovo) {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd sup"><span>Suplente · ${row['ID_SUPLENTE']||''}</span></div>
+        <div class="cons-cols">
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
+            <div class="cons-nome">${supAtual||'Sem informação'}</div>
+          </div>
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-novo"></span> Nova indicação</div>
+            <div class="cons-nome empty">Sem inscrição</div>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      consHTML += `<div class="cons-row">
+        <div class="cons-row-hd sup"><span>Suplente · ${row['ID_SUPLENTE']||''}</span>${supChanged?'<span style="font-size:9px;opacity:.7">MUDOU</span>':''}</div>
+        <div class="cons-cols" style="position:relative">
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
+            <div class="cons-nome">${supAtual||'—'}</div>
+          </div>
+          ${supChanged?`<div class="change-arrow">→</div>`:''}
+          <div class="cons-col">
+            <div class="cons-col-lbl"><span class="dot dot-novo"></span> Novo indicado</div>
+            <div class="cons-nome ${supChanged?'changed':'same'}">${supNovo||supAtual||'—'}</div>
+            ${row['Suplente Email']?`<div class="cons-email">${row['Suplente Email']}</div>`:''}
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  const entName = row['ENTIDADE'] || row['Nome completo da entidade'] || '';
+
+  return `<div class="ent-card" style="animation-delay:${(idx%20)*25}ms" onclick="openModal(${idx})">
+    <div class="ent-card-hd">
+      <span class="ent-card-id">${row['ID_TITULAR']||row['ID_SUPLENTE']||'—'}</span>
+      <div class="ent-badges">
+        <span class="badge badge-${segCls}">${segLabel}</span>
+        <span class="badge ${ambas?'badge-ambas':'badge-so-uma'}">${ambas?'2 cadeiras':'1 cadeira'}</span>
+        ${hasSub ? `<span class="badge badge-ok">✓ Inscrita</span>` : `<span class="badge badge-warn">Sem ins.</span>`}
+        ${isM2 ? `<span class="badge badge-m2">M2 ⚠</span>` : ''}
+      </div>
+    </div>
+    <div class="ent-card-name">
+      ${entName}
+      ${sigla && sigla !== entName ? `<div class="ent-card-sigla">${sigla}</div>` : ''}
+    </div>
+    ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato — avaliação plenária necessária</div>` : ''}
+    ${!hasSub ? `<div class="no-sub-banner">⚠ Entidade não submeteu formulário de inscrição</div>` : ''}
+    <div class="conselheiros">${consHTML}</div>
+    <div class="ent-card-footer">
+      <div class="footer-item">
+        ${hasAnyChange ? `<span class="badge" style="background:#F0FDfA;color:var(--teal);font-size:10px">🔄 Mudança(s) detectada(s)</span>` : (hasSub ? `<span class="badge badge-ok" style="font-size:10px">✓ Confirma representantes</span>` : '')}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="footer-item">Ofício: <strong class="${ofOk?'oficio-ok':'oficio-no'}">${ofOk?'✓ Enviado':'✗ Pendente'}</strong></span>
+        ${ofURL ? `<a href="${ofURL}" target="_blank" class="oficio-link">Ver 📎</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+let ALL_ROWS = [];
+
+function openModal(idx) {
+  const row = ALL_ROWS[idx];
+  if (!row) return;
+  const hasSub = hasSubmission(row);
+  const ofURL = getOficioURL(row);
+  const segLabel = isCLS(row) ? 'CLS' : getSegLabel(row['SEGMENTO']||'');
+  const isM2 = rowM2(row);
+  const titAtual = nameNorm(row['NOME_TITULAR']);
+  const titNovo  = nameNorm(row['Titular Nome']);
+  const supAtual = nameNorm(row['NOME_SUPLENTE']);
+  const supNovo  = nameNorm(row['Suplente Nome']);
+  const titMatch = namesMatch(titAtual, titNovo);
+  const supMatch = namesMatch(supAtual, supNovo);
+
+  document.getElementById('modal-eyebrow').textContent = `${segLabel} · ${row['ID_TITULAR']||row['ID_SUPLENTE']||''}`;
+  document.getElementById('modal-title').textContent = row['ENTIDADE'] || '';
+
+  const buildCompare = (func, atualName, novoName, atualInfo, novoInfo, match, label) => {
+    if (!atualName && !novoName) return '';
+    const changed = match === false && novoName;
+    const same = match === true;
+    return `
+      <div class="modal-sec">
+        <div class="modal-sec-title">${label}</div>
+        <div class="full-compare">
+          <div class="fc-col">
+            <div class="fc-col-lbl atual">● Atual</div>
+            <div class="fc-nome">${atualName||'Não informado'}</div>
+            <div class="fc-info">${atualInfo}</div>
+          </div>
+          <div class="fc-col">
+            <div class="fc-col-lbl novo">● Nova Indicação</div>
+            <div class="fc-nome ${changed?'changed-name':''}">${hasSub?(novoName||atualName||'—'):'Sem inscrição'}</div>
+            <div class="fc-info">${hasSub?novoInfo:'—'}</div>
+          </div>
+          ${changed ? `<div class="fc-change-badge">🔄 Mudança de representante detectada</div>` :
+            same ? `<div class="fc-same-badge">✓ Mesma pessoa confirmada no processo</div>` :
+            !hasSub ? `<div class="fc-nosub-badge">⚠ Sem inscrição submetida — representante sem confirmação</div>` : ''}
+        </div>
+      </div>`;
+  };
+
+  const titAtualInfo = [row['Titular Email']||'', row['Titular Telefone']||'', row['Titular RG']?`RG: ${row['Titular RG']}`:''].filter(Boolean).join(' · ');
+  const titNovoInfo  = [row['Titular Email']||'', row['Titular Telefone']||''].filter(Boolean).join(' · ');
+  const supAtualInfo = [row['Suplente Email']||'', row['Suplente Telefone']||'', row['Suplente RG']?`RG: ${row['Suplente RG']}`:''].filter(Boolean).join(' · ');
+  const supNovoInfo  = [row['Suplente Email']||'', row['Suplente Telefone']||''].filter(Boolean).join(' · ');
+
+  document.getElementById('modal-body').innerHTML = `
+    ${isM2 ? `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>Conselheiro(s) em 2º mandato</strong> — situação requer deliberação em plenária antes da homologação.</div></div>` : ''}
+    ${!hasSub ? `<div class="alert warn"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>Sem inscrição submetida.</strong> Esta entidade não enviou formulário de renovação. Recomenda-se contato formal para verificar intenção de continuidade.</div></div>` : ''}
+
+    <div class="modal-sec">
+      <div class="modal-sec-title">Dados Institucionais</div>
+      <div class="modal-grid">
+        <div class="mg-item"><div class="mg-lbl">Sigla</div><div class="mg-val">${row['Sigla']||row['Nome fantasia']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">CNPJ</div><div class="mg-val">${row['CNPJ']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Área de atuação</div><div class="mg-val">${row['Área atuação']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Segmento</div><div class="mg-val">${row['SEGMENTO']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Diretor(a)</div><div class="mg-val">${row['Diretor']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Cargo</div><div class="mg-val">${row['Cargo']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Telefone</div><div class="mg-val">${row['Telefone']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">E-mail</div><div class="mg-val" style="word-break:break-all;font-size:12px">${row['Email']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Endereço</div><div class="mg-val">${row['Endereço']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Cadeira</div><div class="mg-val">${row['CADEIRA']||'—'}</div></div>
+      </div>
+    </div>
+
+    ${buildCompare('tit', titAtual, titNovo, titAtualInfo, titNovoInfo, titMatch, `Titular — ${row['ID_TITULAR']||''}`)}
+    ${buildCompare('sup', supAtual, supNovo, supAtualInfo, supNovoInfo, supMatch, `Suplente — ${row['ID_SUPLENTE']||''}`)}
+
+    <div class="modal-sec">
+      <div class="modal-sec-title">Documentação</div>
+      <div class="modal-grid">
+        <div class="mg-item"><div class="mg-lbl">Ofício</div><div class="mg-val">${hasOficio(row)?'✅ Enviado':'⚠ Pendente'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Confirmação ofício</div><div class="mg-val">${row['Confirmação Ofício']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Declarante</div><div class="mg-val">${row['Nome Declarante']||'—'}</div></div>
+        <div class="mg-item"><div class="mg-lbl">Data submissão</div><div class="mg-val">${row['Carimbo de data/hora']||'Não submetido'}</div></div>
+        ${ofURL ? `<div class="mg-item" style="grid-column:1/-1"><div class="mg-lbl">Link do Ofício</div><div class="mg-val"><a href="${ofURL}" target="_blank" style="color:var(--blue)">Acessar documento 📎</a></div></div>` : ''}
+      </div>
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal({}); });
+
+/* ============================================================
+   FILTERS & SORT
+   ============================================================ */
+let currentFilter = 'all';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('search-ent').value || '').toLowerCase();
+  const sort = document.getElementById('sort-sel').value;
+
+  let rows = [...ALL_ROWS];
+
+  // filter
+  rows = rows.filter((row, i) => {
+    const hasSub = hasSubmission(row);
+    const seg = getSegDisplay(row);
+    const isCls = isCLS(row);
+    const hasChange = namesMatch(nameNorm(row['NOME_TITULAR']), nameNorm(row['Titular Nome'])) === false ||
+                      namesMatch(nameNorm(row['NOME_SUPLENTE']), nameNorm(row['Suplente Nome'])) === false;
+
+    if (currentFilter === 'USUARIO' && (seg !== 'USUARIO' || isCls)) return false;
+    if (currentFilter === 'TRABALHADOR' && seg !== 'TRABALHADOR') return false;
+    if (currentFilter === 'GESTOR/PRESTADOR' && (!seg.includes('GESTOR') && !seg.includes('PRESTADOR'))) return false;
+    if (currentFilter === 'CLS' && !isCls) return false;
+    if (currentFilter === 'mudanca' && !hasChange) return false;
+    if (currentFilter === 'semins' && hasSub) return false;
+
+    if (q) {
+      const text = `${row['ENTIDADE']} ${row['NOME_TITULAR']} ${row['NOME_SUPLENTE']} ${row['Titular Nome']} ${row['Suplente Nome']}`.toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // sort
+  rows.sort((a, b) => {
+    if (sort === 'nome') return (a['ENTIDADE']||'').localeCompare(b['ENTIDADE']||'');
+    if (sort === 'status') {
+      const sa = hasSubmission(a) ? 0 : 1;
+      const sb = hasSubmission(b) ? 0 : 1;
+      return sa - sb;
+    }
+    // by segment
+    const order = {'GESTOR/PRESTADOR':0,'TRABALHADOR':1,'USUARIO':2,'CLS':3};
+    const sa = order[getSegDisplay(a)] ?? 4;
+    const sb = order[getSegDisplay(b)] ?? 4;
+    return sa - sb || (a['ENTIDADE']||'').localeCompare(b['ENTIDADE']||'');
+  });
+
+  // Find original indices
+  document.getElementById('ent-grid').innerHTML = rows.length
+    ? rows.map(row => buildCard(row, ALL_ROWS.indexOf(row))).join('')
+    : `<div class="empty-state"><h3>Nenhuma entidade encontrada</h3><p>Tente ajustar os filtros.</p></div>`;
+
+  document.getElementById('ent-count').textContent = `${rows.length} entidade${rows.length!==1?'s':''} exibida${rows.length!==1?'s':''}`;
+
+  // Table mode
+  renderMainTable(rows);
+}
+
+/* ============================================================
+   TABLE RENDER
+   ============================================================ */
+let tblSortCol=0, tblSortDir=1;
+function renderMainTable(rows) {
+  const segColors = {'GESTOR/PRESTADOR':'#F3E8FF','TRABALHADOR':'#DCFCE7','USUARIO':'#DBEAFE','CLS':'#FFEDD5'};
+  const segTextColors = {'GESTOR/PRESTADOR':0,'TRABALHADOR':0,'USUARIO':0,'CLS':0};
+  document.getElementById('main-tbl-body').innerHTML = rows.map(row => {
+    const hasSub = hasSubmission(row);
+    const seg = getSegDisplay(row);
+    const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
+    const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
+    const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
+    const ofOk = hasOficio(row);
+    const isM2 = rowM2(row);
+    const segBg = seg.includes('GESTOR')||seg.includes('PRESTADOR') ? '#F3E8FF' : seg==='TRABALHADOR'?'#DCFCE7':seg==='USUARIO'?'#DBEAFE':'#FFEDD5';
+    const segTx = seg.includes('GESTOR')||seg.includes('PRESTADOR') ? '#6B21A8' : seg==='TRABALHADOR'?'#14532D':seg==='USUARIO'?'#1E3A5F':'#7C2D12';
+    return `<tr class="${!hasSub?'no-sub-row':''}">
+      <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
+      <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${segBg};color:${segTx}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
+      <td style="font-size:11px;color:var(--muted);font-weight:700">${row['CADEIRA']||'—'}</td>
+      <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
+      <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN||(tC?'—':'igual')):'-'}</td>
+      <td style="font-size:12px">${sA||'—'}</td>
+      <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN||(sC?'—':'igual')):'-'}</td>
+      <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'Inscrita':'Sem ins.'}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('main-tbl-footer').textContent = `${rows.length} registro${rows.length!==1?'s':''} exibido${rows.length!==1?'s':''}`;
+}
+function sortMainTbl(c){tblSortCol=c;applyFilters()}
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#64748B';
+const C = {navy:'#0B2545',blue:'#1A5EA8',teal:'#1A8A7A',yellow:'#F5C400',green:'#16A34A',orange:'#EA580C',red:'#DC2626',purple:'#9333EA'};
+let chartsBuilt = false;
+
+function buildCharts(rows) {
+  if (chartsBuilt) return;
+  chartsBuilt = true;
+
+  const withSub = rows.filter(r => hasSubmission(r)).length;
+  const noSub = rows.filter(r => !hasSubmission(r)).length;
+  new Chart(document.getElementById('ch-status'), {
+    type: 'doughnut',
+    data: { labels: ['Com inscrição','Sem inscrição'], datasets: [{ data: [withSub, noSub], backgroundColor: [C.teal, C.orange], borderWidth: 0, hoverOffset: 8 }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } } }, cutout: '62%', responsive: true, maintainAspectRatio: false }
+  });
+
+  const segCounts = {};
+  rows.forEach(r => { const s = getSegDisplay(r); segCounts[s] = (segCounts[s]||0)+1; });
+  new Chart(document.getElementById('ch-seg'), {
+    type: 'pie',
+    data: { labels: Object.keys(segCounts).map(getSegLabel), datasets: [{ data: Object.values(segCounts), backgroundColor: [C.purple,C.green,C.blue,C.orange], borderWidth: 0, hoverOffset: 7 }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } }, responsive: true, maintainAspectRatio: false }
+  });
+
+  const ambas = rows.filter(r => (r['AMBAS_OU_SO_UMA']||'').toUpperCase().includes('AMBAS')).length;
+  const soUma = rows.filter(r => !(r['AMBAS_OU_SO_UMA']||'').toUpperCase().includes('AMBAS')).length;
+  new Chart(document.getElementById('ch-ambas'), {
+    type: 'doughnut',
+    data: { labels: ['2 cadeiras (ambas)','1 cadeira'], datasets: [{ data: [ambas, soUma], backgroundColor: [C.blue, C.yellow], borderWidth: 0, hoverOffset: 8 }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } } }, cutout: '60%', responsive: true, maintainAspectRatio: false }
+  });
+
+  let titMant=0, titMud=0, supMant=0, supMud=0;
+  rows.forEach(r => {
+    const hasSub = hasSubmission(r);
+    if (!hasSub) return;
+    const tA = nameNorm(r['NOME_TITULAR']), tN = nameNorm(r['Titular Nome']);
+    const sA = nameNorm(r['NOME_SUPLENTE']), sN = nameNorm(r['Suplente Nome']);
+    const tm = namesMatch(tA, tN);
+    const sm = namesMatch(sA, sN);
+    if (tm === true) titMant++; else if (tm === false) titMud++;
+    if (sm === true) supMant++; else if (sm === false) supMud++;
+  });
+  new Chart(document.getElementById('ch-changes'), {
+    type: 'bar',
+    data: {
+      labels: ['Titular — manteve','Titular — mudou','Suplente — manteve','Suplente — mudou'],
+      datasets: [{ data: [titMant, titMud, supMant, supMud], backgroundColor: [C.teal, C.orange, '#1A8A7A99', '#EA580C99'], borderRadius: 6, borderWidth: 0 }]
+    },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#E2E8F0' }, ticks: { font: { size: 11 }, stepSize: 1 } }, y: { grid: { display: false }, ticks: { font: { size: 11 } } } }, responsive: true, maintainAspectRatio: false }
+  });
+
+  // Progress
+  const ofOk = rows.filter(r => hasOficio(r) && hasSubmission(r)).length;
+  const subCount = rows.filter(r => hasSubmission(r)).length;
+  const withEmail = rows.filter(r => r['Titular Email'] || r['Email']).length;
+  const progs = [
+    { l: 'Entidades com inscrição submetida', v: Math.round(subCount/rows.length*100) },
+    { l: 'Com ofício confirmado', v: Math.round(ofOk/rows.length*100) },
+    { l: 'Com e-mail de contato', v: Math.round(withEmail/rows.length*100) },
+    { l: 'Titulares identificados', v: Math.round(rows.filter(r=>nameNorm(r['NOME_TITULAR'])).length/rows.length*100) },
+  ];
+  document.getElementById('ch-progs').innerHTML = progs.map(p => `
+    <div class="prog-item">
+      <div class="prog-hd">${p.l}<span>${p.v}%</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${p.v}%;background:${p.v>=75?C.teal:p.v>=50?C.yellow:C.orange}"></div></div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   SUMMARY CARDS
+   ============================================================ */
+function buildSummary(rows) {
+  const sub = rows.filter(r => hasSubmission(r)).length;
+  const noSub = rows.filter(r => !hasSubmission(r)).length;
+  const m2Count = rows.filter(r => rowM2(r)).length;
+  const changed = rows.filter(r => namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false || namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false).length;
+  const ofOk = rows.filter(r => hasOficio(r)).length;
+  
+  document.getElementById('sum-cards').innerHTML = `
+    <div class="sum-card c-navy"><span class="sum-num">${rows.length}</span><span class="sum-lbl">Vagas no processo</span><span class="sum-sub">Linhas na planilha consolidada</span></div>
+    <div class="sum-card c-teal"><span class="sum-num">${sub}</span><span class="sum-lbl">Com inscrição</span><span class="sum-sub">Formulário submetido</span></div>
+    <div class="sum-card c-orange"><span class="sum-num">${noSub}</span><span class="sum-lbl">Sem inscrição</span><span class="sum-sub">Não submeteram no prazo</span></div>
+    <div class="sum-card c-red"><span class="sum-num">${m2Count}</span><span class="sum-lbl">Vagas c/ mandato 2</span><span class="sum-sub">Avaliação plenária necessária</span></div>
+    <div class="sum-card c-blue"><span class="sum-num">${changed}</span><span class="sum-lbl">Com mudança</span><span class="sum-sub">Conselheiro substituído</span></div>
+    <div class="sum-card c-green"><span class="sum-num">${ofOk}</span><span class="sum-lbl">Ofícios enviados</span><span class="sum-sub">Documentação recebida</span></div>
+  `;
+
+  document.getElementById('hdr-stats').innerHTML = `
+    <div class="hstat"><b>${rows.length}</b><s>vagas</s></div>
+    <div class="hstat"><b>${sub}</b><s>inscritas</s></div>
+    <div class="hstat"><b>${changed}</b><s>mudanças</s></div>
+    <div class="hstat"><b>${m2Count}</b><s>mandato 2</s></div>
+  `;
+}
+
+/* ============================================================
+   CRITICAL SECTION
+   ============================================================ */
+function buildCriticos(rows) {
+  const noSub = rows.filter(r => !hasSubmission(r));
+  const m2 = rows.filter(r => rowM2(r));
+
+  let html = '';
+
+  if (noSub.length) {
+    html += `<div class="alert warn"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>${noSub.length} vaga${noSub.length>1?'s':''} sem inscrição submetida.</strong> As entidades abaixo não enviaram formulário. Recomenda-se contato formal imediato.</div></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
+    noSub.forEach(row => {
+      html += `<div style="background:var(--white);border:1px solid #FDE68A;border-radius:var(--r);padding:18px;border-left:4px solid var(--orange);box-shadow:var(--card-sh)">
+        <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">${row['ENTIDADE']}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${isCLS(row)?'Conselho Local':getSegLabel(row['SEGMENTO']||'')} · ${row['CADEIRA']||''}</div>
+        <div style="font-size:12px;display:flex;gap:8px;flex-wrap:wrap">
+          ${row['Telefone']?`<span style="color:var(--ink)">📞 ${row['Telefone']}</span>`:''}
+          ${row['Email']?`<span style="color:var(--blue)">${row['Email']}</span>`:''}
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--orange);font-weight:600">⚠ Titular atual: ${nameNorm(row['NOME_TITULAR'])||'—'}</div>
+        <div style="font-size:11px;color:var(--orange)">⚠ Suplente atual: ${nameNorm(row['NOME_SUPLENTE'])||'—'}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (m2.length) {
+    html += `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>${m2.length} vaga${m2.length>1?'s com conselheiros':' com conselheiro'} em 2º mandato (máximo regimental).</strong> Precisam de deliberação em plenária. A entidade pode indicar novo representante ou requerer análise de excepcionalidade.</div></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
+    m2.forEach(row => {
+      const ids = ROW_SEAT_IDS[Object.keys(ROW_SEAT_IDS).find(k => (row['ENTIDADE']||'').toUpperCase().includes(k.toUpperCase().substring(0,30)))||''] || [];
+      const m2ids = ids.filter(id => M2_IDS.has(id)).join(', ');
+      html += `<div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
+        <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">${row['ENTIDADE']}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${m2ids?'Cadeiras M2: '+m2ids:''}</div>
+        <div style="font-size:12px;background:#FEF2F2;border-radius:6px;padding:8px 10px;color:var(--red);font-weight:600">
+          Titular: ${nameNorm(row['NOME_TITULAR'])||'—'}<br>Suplente: ${nameNorm(row['NOME_SUPLENTE'])||'—'}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // APAE sem titular
+  const apae = rows.filter(r => (r['ENTIDADE']||'').includes('APAE') || (r['ENTIDADE']||'').includes('PAIS E AMIGOS'));
+  if (apae.length) {
+    html += `<div class="alert info"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>APAE — Titular não informado no formulário.</strong> O campo de titular estava em branco na inscrição. Necessário solicitar complementação.</div></div>`;
+  }
+
+  // HUCF sem dados
+  const hucf = rows.filter(r => (r['ENTIDADE']||'').includes('HUCF') || (r['ENTIDADE']||'').includes('CLEMENTE'));
+  if (hucf.length) {
+    html += `<div class="alert info"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>HUCF — Hospital Universitário Clemente de Faria:</strong> Submeteu formulário mas sem indicação de novos representantes. Titular e suplente atuais seguem sem confirmação explícita.</div></div>`;
+  }
+
+  document.getElementById('criticos-content').innerHTML = html || `<div class="alert ok"><span class="alert-ico">✅</span><div class="alert-txt">Nenhuma situação crítica identificada.</div></div>`;
+}
+
+/* ============================================================
+   MUDANÇAS SECTION
+   ============================================================ */
+function buildMudancas(rows) {
+  const changed = rows.filter(r => {
+    if (!hasSubmission(r)) return false;
+    const tA = nameNorm(r['NOME_TITULAR']), tN = nameNorm(r['Titular Nome']);
+    const sA = nameNorm(r['NOME_SUPLENTE']), sN = nameNorm(r['Suplente Nome']);
+    return namesMatch(tA,tN)===false || namesMatch(sA,sN)===false;
+  });
+
+  if (!changed.length) {
+    document.getElementById('mudancas-content').innerHTML = `<div class="alert ok"><span class="alert-ico">✅</span><div class="alert-txt">Nenhuma mudança de conselheiro detectada.</div></div>`;
+    return;
+  }
+
+  document.getElementById('mudancas-content').innerHTML = `
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px">${changed.length} entidade${changed.length>1?'s':''} com substituição de conselheiro detectada.</p>
+    <div style="display:flex;flex-direction:column;gap:16px">
+    ${changed.map(row => {
+      const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
+      const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
+      const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
+      const segLabel = isCLS(row)?'CLS':getSegLabel(row['SEGMENTO']||'');
+      const segBg = getSegDisplay(row).includes('GESTOR')||getSegDisplay(row).includes('PRESTADOR') ? '#F3E8FF' : getSegDisplay(row)==='TRABALHADOR'?'#DCFCE7':getSegDisplay(row)==='USUARIO'?'#DBEAFE':'#FFEDD5';
+      const segTx = getSegDisplay(row).includes('GESTOR')||getSegDisplay(row).includes('PRESTADOR') ? '#6B21A8' : getSegDisplay(row)==='TRABALHADOR'?'#14532D':getSegDisplay(row)==='USUARIO'?'#1E3A5F':'#7C2D12';
+      return `<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--card-sh)">
+        <div style="padding:14px 20px;background:var(--off);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:var(--FD);font-size:14px;font-weight:700;color:var(--navy)">${row['ENTIDADE']}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">${row['CADEIRA']||''}</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:${segBg};color:${segTx}">${segLabel}</span>
+        </div>
+        <div style="padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          ${tC ? `<div style="grid-column:1/-1;background:#F0FDF4;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+            <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">Titular — antes</div><div style="font-size:13px;font-weight:600;color:var(--ink)">${tA||'—'}</div></div>
+            <div style="font-size:20px;color:var(--teal)">→</div>
+            <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:3px">Titular — novo indicado</div><div style="font-size:13px;font-weight:700;color:var(--teal)">${tN||'—'}</div>${row['Titular Email']?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${row['Titular Email']}</div>`:''}</div>
+          </div>` : ''}
+          ${sC ? `<div style="grid-column:1/-1;background:#EFF6FF;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+            <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">Suplente — antes</div><div style="font-size:13px;font-weight:600;color:var(--ink)">${sA||'—'}</div></div>
+            <div style="font-size:20px;color:var(--blue)">→</div>
+            <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);margin-bottom:3px">Suplente — novo indicado</div><div style="font-size:13px;font-weight:700;color:var(--blue)">${sN||'—'}</div>${row['Suplente Email']?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${row['Suplente Email']}</div>`:''}</div>
+          </div>` : ''}
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+/* ============================================================
+   FULL TABLE SECTION
+   ============================================================ */
+function buildFullTable(rows) {
+  const segBg = seg => seg.includes('GESTOR')||seg.includes('PRESTADOR')?'#F3E8FF':seg==='TRABALHADOR'?'#DCFCE7':seg==='USUARIO'?'#DBEAFE':'#FFEDD5';
+  const segTx = seg => seg.includes('GESTOR')||seg.includes('PRESTADOR')?'#6B21A8':seg==='TRABALHADOR'?'#14532D':seg==='USUARIO'?'#1E3A5F':'#7C2D12';
+  document.getElementById('full-table-content').innerHTML = `
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Entidade</th><th>Seg.</th><th>Cadeira</th>
+          <th>Titular Atual</th><th>Novo Titular</th>
+          <th>Suplente Atual</th><th>Novo Suplente</th>
+          <th>Inscrição</th><th>Ofício</th>
+        </tr></thead>
+        <tbody>
+        ${rows.map(row => {
+          const hasSub = hasSubmission(row);
+          const seg = getSegDisplay(row);
+          const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
+          const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
+          const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
+          const isM2 = rowM2(row);
+          const ofOk = hasOficio(row);
+          const ofURL = getOficioURL(row);
+          return `<tr class="${!hasSub?'no-sub-row':''}">
+            <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
+            <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${segBg(seg)};color:${segTx(seg)}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
+            <td style="font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap">${row['CADEIRA']||'—'}</td>
+            <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:700">M2</span>`:''}</td>
+            <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN?tN:(tC?'—':'=')):'—'}</td>
+            <td style="font-size:12px">${sA||'—'}</td>
+            <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN?sN:(sC?'—':'=')):'—'}</td>
+            <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'✓ Sim':'✗ Não'}</span></td>
+            <td>${ofOk?`<span style="font-size:9px;font-weight:700;color:var(--green)">✓ Sim</span>${ofURL?` <a href="${ofURL}" target="_blank" style="font-size:9px;color:var(--blue);font-weight:700">ver</a>`:''}`:`<span style="font-size:9px;color:var(--orange);font-weight:700">✗ Pend.</span>`}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+      <div class="tbl-footer">${rows.length} registro${rows.length!==1?'s':''}</div>
+    </div>`;
+}
+
+/* ============================================================
+   VIEW TOGGLE
+   ============================================================ */
+function setView(mode) {
+  if (mode === 'table') {
+    document.body.classList.add('table-mode');
+    document.getElementById('btn-table').classList.add('on');
+    document.getElementById('btn-cards').classList.remove('on');
+  } else {
+    document.body.classList.remove('table-mode');
+    document.getElementById('btn-cards').classList.add('on');
+    document.getElementById('btn-table').classList.remove('on');
+  }
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+const SECS = ['sec-dash','sec-cards','sec-criticos','sec-mudancas','sec-tabela'];
+function goSec(id, btn) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+}
+window.addEventListener('scroll', () => {
+  let cur = SECS[0];
+  SECS.forEach(id => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= 90) cur = id; });
+  document.querySelectorAll('.nb').forEach((b,i) => b.classList.toggle('on', SECS[i]===cur));
+}, { passive: true });
+
+/* ============================================================
+   MAIN: LOAD CSV
+   ============================================================ */
+const bar = document.getElementById('load-bar');
+const status = document.getElementById('load-status');
+
+function setProgress(v, msg) {
+  bar.style.width = v + '%';
+  status.textContent = msg;
+}
+
+document.getElementById('gen-date').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+async function init() {
+  try {
+    setProgress(15, 'Conectando ao Google Sheets...');
+    await new Promise(r => setTimeout(r, 400));
+
+    setProgress(40, 'Baixando dados...');
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+
+    setProgress(65, 'Processando planilha...');
+    await new Promise(r => setTimeout(r, 200));
+    const rows = parseCSV(text);
+    ALL_ROWS = rows;
+
+    setProgress(80, 'Construindo visualizações...');
+    await new Promise(r => setTimeout(r, 150));
+
+    buildSummary(rows);
+    buildCharts(rows);
+    applyFilters();
+    buildCriticos(rows);
+    buildMudancas(rows);
+    buildFullTable(rows);
+
+    document.getElementById('last-update').innerHTML = `<strong>Última atualização:</strong> ${new Date().toLocaleTimeString('pt-BR')}`;
+
+    setProgress(100, `${rows.length} entidades carregadas!`);
+    await new Promise(r => setTimeout(r, 500));
+
+    document.getElementById('loading').classList.add('hide');
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+
+  } catch(err) {
+    console.error(err);
+    setProgress(100, 'Erro ao carregar. Verifique o console.');
+    status.style.color = '#FCA5A5';
+    setTimeout(() => {
+      document.getElementById('loading').classList.add('hide');
+      setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+    }, 2500);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
