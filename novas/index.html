@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Novos Inscritos · CMS-MOC 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<!-- Usando Phosphor Icons para um visual moderno e clean -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ══════════════════════════════════════════
+   DESIGN SYSTEM & MOBILE FIRST
+   ══════════════════════════════════════════ */
+:root {
+  --navy: #0B2545; --blue: #1A5EA8; --teal: #1A8A7A; --yellow: #F5C400;
+  --green: #16A34A; --orange: #EA580C; --red: #DC2626; --ink: #0F172A;
+  --muted: #64748B; --border: #E2E8F0; --off: #F8FAFC; --white: #FFFFFF;
+  --card-sh: 0 2px 8px rgba(11,37,69,.06), 0 8px 24px rgba(11,37,69,.04);
+  --card-sh-hover: 0 4px 12px rgba(11,37,69,.08), 0 12px 32px rgba(11,37,69,.08);
+  --FD: 'Syne', sans-serif; --FB: 'DM Sans', sans-serif; --r: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 14px; }
+body { font-family: var(--FB); background: var(--off); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: var(--blue); text-decoration: none; }
+
+/* ──── LOADING SCREEN ──── */
+#loading { position: fixed; inset: 0; z-index: 9999; background: var(--navy); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 20px; }
+.load-icon { font-size: 48px; color: var(--yellow); animation: spin 2s linear infinite; }
+.load-title { font-family: var(--FD); font-size: clamp(24px, 6vw, 36px); font-weight: 800; color: #fff; text-align: center; }
+.load-title em { color: var(--yellow); font-style: normal; }
+.load-bar-wrap { width: 100%; max-width: 280px; height: 4px; background: rgba(255,255,255,.15); border-radius: 4px; overflow: hidden; }
+.load-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--teal)); transition: width .3s ease; }
+.load-status { font-size: 12px; color: rgba(255,255,255,.5); font-family: var(--FB); text-align: center; }
+#loading.hide { opacity: 0; pointer-events: none; transition: opacity .4s ease .1s; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ──── HEADER ──── */
+#header { background: var(--navy); position: relative; overflow: hidden; }
+#header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--yellow) 0%, var(--teal) 40%, var(--blue) 100%); }
+.hdr-inner { max-width: 1280px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+.hdr-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--yellow); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.hdr-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--yellow); display: inline-block; }
+.hdr-h1 { font-family: var(--FD); font-size: clamp(28px, 6vw, 42px); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: -.5px; }
+.hdr-desc { font-size: 14px; color: rgba(255,255,255,.6); max-width: 520px; font-weight: 400; line-height: 1.6; }
+
+/* ──── LAYOUT GLOBALS ──── */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+.sec { padding: 48px 0; } .sec-alt { background: var(--white); }
+.sec-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sec-h2 { font-family: var(--FD); font-size: clamp(22px,5vw,28px); font-weight: 800; color: var(--navy); margin-bottom: 24px; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+.sec-h2 i { color: var(--blue); }
+
+/* ──── SUMMARY CARDS ──── */
+.summary-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
+.sum-card { border-radius: var(--r); padding: 24px; display: flex; flex-direction: column; gap: 6px; color: #fff; position: relative; overflow: hidden; box-shadow: var(--card-sh); }
+.sum-card i.bg-icon { position: absolute; right: -10px; bottom: -15px; font-size: 100px; opacity: 0.15; pointer-events: none; }
+.sum-card.c-navy { background: linear-gradient(135deg, var(--navy), #103666); } 
+.sum-card.c-teal { background: linear-gradient(135deg, var(--teal), #126357); } 
+.sum-card.c-orange { background: linear-gradient(135deg, var(--orange), #C2410C); }
+.sum-num { font-family: var(--FD); font-size: 42px; font-weight: 800; line-height: 1; z-index: 1; }
+.sum-lbl { font-size: 14px; color: rgba(255,255,255,.8); font-weight: 600; z-index: 1; }
+
+/* ──── ENTITY CARDS (MOBILE FIRST) ──── */
+#ent-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.ent-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--card-sh); transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+.ent-card:hover { transform: translateY(-4px); box-shadow: var(--card-sh-hover); }
+
+.ent-card-hd { padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--off); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-family: var(--FD); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; padding: 4px 10px; border-radius: 6px; }
+.badge.seg { background: #DBEAFE; color: var(--blue); }
+.badge.date { background: #F1F5F9; color: var(--muted); }
+
+.ent-card-body { padding: 20px; flex: 1; }
+.ent-card-name { font-family: var(--FD); font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1.25; margin-bottom: 12px; }
+.ent-info-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.ent-info-row i { font-size: 16px; color: var(--teal); flex-shrink: 0; margin-top: 2px; }
+.ent-info-row strong { color: var(--ink); font-weight: 600; }
+
+.contact-section { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.contact-box { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.contact-box-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-family: var(--FD); font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.contact-box-title i { color: var(--blue); font-size: 14px; }
+.contact-row { display: flex; flex-direction: column; gap: 2px; font-size: 13px; margin-bottom: 8px; }
+.contact-row:last-child { margin-bottom: 0; }
+.contact-row span { color: var(--muted); font-size: 11px; }
+.contact-row strong { color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.contact-row strong i { color: var(--muted); }
+
+.ent-card-footer { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--off); display: flex; gap: 8px; flex-wrap: wrap; }
+.doc-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: var(--white); border: 1px solid var(--border); color: var(--ink); font-size: 11px; font-weight: 700; font-family: var(--FB); transition: all .2s; }
+.doc-btn i { font-size: 14px; color: var(--blue); }
+.doc-btn:hover { background: #EFF6FF; border-color: #BFDBFE; color: var(--blue); }
+
+/* ──── RESPONSIVE TABLE ──── */
+.tbl-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow-x: auto; box-shadow: var(--card-sh); -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+thead tr { background: var(--navy); color: #fff; }
+th { padding: 16px; text-align: left; font-family: var(--FD); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+tbody tr:hover { background: #F8FAFC; }
+td { padding: 14px 16px; vertical-align: middle; color: var(--ink); }
+td.td-name { font-weight: 700; color: var(--navy); }
+td.td-muted { color: var(--muted); }
+
+/* ──── DESKTOP / TABLET ADJUSTMENTS ──── */
+@media(min-width: 640px) {
+  .hdr-inner { padding: 56px 28px 64px; }
+  .summary-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .contact-section { flex-direction: row; }
+  .contact-box { flex: 1; }
+  .sec { padding: 80px 0; }
+}
+@media(min-width: 900px) {
+  #ent-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(min-width: 1200px) {
+  #ent-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <i class="ph ph-spinner-gap load-icon"></i>
+  <div class="load-title">Buscando Entidades<br><em>Novas Inscrições</em></div>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+  <div class="load-status" id="load-status">Conectando à base de dados oficial...</div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="hdr-inner">
+    <div>
+      <div class="hdr-eyebrow">Conselho Municipal de Saúde · MOC</div>
+      <h1 class="hdr-h1">Novas Inscrições<br><span>Processo 2026</span></h1>
+      <p class="hdr-desc">Lista em tempo real de entidades que solicitaram habilitação inédita para compor o Conselho. Análise documental primária.</p>
+    </div>
+  </div>
+</header>
+
+<!-- RESUMO -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-chart-pie-slice"></i> Painel Executivo</div>
+    <h2 class="sec-h2">Resumo de Inscrições</h2>
+    <div class="summary-grid">
+      <div class="sum-card c-navy">
+        <i class="ph-fill ph-buildings bg-icon"></i>
+        <span class="sum-num" id="tot-ent">-</span>
+        <span class="sum-lbl">Novas Entidades</span>
+      </div>
+      <div class="sum-card c-teal">
+        <i class="ph-fill ph-identification-card bg-icon"></i>
+        <span class="sum-num" id="tot-cnpj">-</span>
+        <span class="sum-lbl">CNPJs Identificados</span>
+      </div>
+      <div class="sum-card c-orange">
+        <i class="ph-fill ph-heartbeat bg-icon"></i>
+        <span class="sum-num" id="tot-saude">-</span>
+        <span class="sum-lbl">Setor Saúde</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="sec sec-alt">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-cards"></i> Fichas Detalhadas</div>
+    <h2 class="sec-h2">Análise por Entidade</h2>
+    <div id="ent-grid">
+      <!-- Injetado via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- TABELA -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-table"></i> Visualização Compacta</div>
+    <h2 class="sec-h2">Mapeamento Consolidado</h2>
+    <div class="tbl-wrap">
+      <table id="main-tbl">
+        <thead>
+          <tr>
+            <th>Entidade</th>
+            <th>Segmento</th>
+            <th>CNPJ</th>
+            <th>Fundação</th>
+            <th>Diretor(a) Responsável</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body">
+          <!-- Injetado via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+// URL Fornecida no Prompt
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLxTO2gZdYLs5LMfONE-5M-dQ2xnPKGkiA1j35aR8B2aYPeKnYRBjGt49N5fJOMBVouzr-_AsQXQrZ/pub?gid=1998830026&single=true&output=csv';
+
+// Parser Robusto de CSV
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length === 0) return [];
+  
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (vals[i] || '').trim(); });
+    return obj;
+  }).filter(r => r['Carimbo de data/hora'] || r['Carimbo']); // Filtra linhas vazias
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// Utilitário para formatar nomes/strings
+function formatStr(s) {
+  if(!s || s.toLowerCase() === 'nan') return '—';
+  return s;
+}
+
+// Extrai data
+function extDate(s) {
+  if(!s) return '—';
+  return s.split(' ')[0]; // Pega só a data do carimbo
+}
+
+// Função Principal
+async function init() {
+  const bar = document.getElementById('load-bar');
+  const status = document.getElementById('load-status');
+
+  try {
+    bar.style.width = '30%';
+    status.textContent = 'Baixando dados...';
+    
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    const text = await res.text();
+    
+    bar.style.width = '60%';
+    status.textContent = 'Processando planilhas...';
+    
+    // Simular um tempinho rápido para a barra fluir bonito
+    await new Promise(r => setTimeout(r, 400));
+    
+    const rows = parseCSV(text);
+    
+    // Mapeamento dinâmico
+    const data = rows.map(r => ({
+      data: formatStr(r['Carimbo de data/hora'] || r['Carimbo']),
+      nome: formatStr(r['Nome Instituição'] || r['Nome da Entidade/Instituição']),
+      cnpj: formatStr(r['CNPJ']),
+      fundacao: formatStr(r['Fundação']),
+      segmento: formatStr(r['Segmento']),
+      diretor: formatStr(r['Diretor']),
+      tel_diretor: formatStr(r['Tel Diretor'] || r['Telefone Diretor']),
+      email_diretor: formatStr(r['Email Diretor']),
+      responsavel: formatStr(r['Responsável pela Inscrição']),
+      cargo: formatStr(r['Cargo na Entidade']),
+      doc_estatuto: r['Estatuto'] || '',
+      doc_ata: r['Ata Eleição'] || '',
+      doc_cnpj: r['Doc CNPJ'] || ''
+    }));
+
+    // Preenche Resumo
+    document.getElementById('tot-ent').textContent = data.length;
+    document.getElementById('tot-cnpj').textContent = data.filter(d => d.cnpj && d.cnpj !== '—').length;
+    document.getElementById('tot-saude').textContent = data.filter(d => d.segmento.toLowerCase().includes('saúde')).length;
+
+    // Renderiza Grid de Cards
+    document.getElementById('ent-grid').innerHTML = data.map((d, i) => {
+      // Verifica se há links de doc válidos
+      const hasEstatuto = d.doc_estatuto.startsWith('http');
+      const hasAta = d.doc_ata.startsWith('http');
+      const hasCnpjDoc = d.doc_cnpj.startsWith('http');
+      
+      const docHtml = (hasEstatuto || hasAta || hasCnpjDoc) 
+        ? `
+          ${hasEstatuto ? `<a href="${d.doc_estatuto}" target="_blank" class="doc-btn" title="Visualizar Estatuto"><i class="ph-fill ph-book-bookmark"></i> Estatuto</a>` : ''}
+          ${hasAta ? `<a href="${d.doc_ata}" target="_blank" class="doc-btn" title="Visualizar Ata"><i class="ph-fill ph-scroll"></i> Ata Eleição</a>` : ''}
+          ${hasCnpjDoc ? `<a href="${d.doc_cnpj}" target="_blank" class="doc-btn" title="Visualizar CNPJ"><i class="ph-fill ph-file-text"></i> Doc CNPJ</a>` : ''}
+        `
+        : `<span style="font-size:11px;color:var(--muted);font-style:italic;"><i class="ph ph-warning-circle"></i> Nenhum documento anexado</span>`;
+
+      return `
+      <div class="ent-card" style="animation: fadeIn .4s ease backwards ${(i*0.05)}s;">
+        <div class="ent-card-hd">
+          <span class="badge seg"><i class="ph-fill ph-tag"></i> ${d.segmento}</span>
+          <span class="badge date"><i class="ph-fill ph-clock"></i> ${extDate(d.data)}</span>
+        </div>
+        <div class="ent-card-body">
+          <div class="ent-card-name">${d.nome}</div>
+          <div class="ent-info-row"><i class="ph-fill ph-identification-card"></i> <span><strong>CNPJ:</strong> ${d.cnpj}</span></div>
+          <div class="ent-info-row"><i class="ph-fill ph-calendar-check"></i> <span><strong>Fundação:</strong> ${d.fundacao}</span></div>
+          
+          <div class="contact-section">
+            <div class="contact-box">
+              <div class="contact-box-title"><i class="ph-fill ph-star"></i> Direção da Entidade</div>
+              <div class="contact-row"><span>Nome</span><strong><i class="ph-fill ph-user-circle"></i> ${d.diretor}</strong></div>
+              <div class="contact-row"><span>Telefone</span><strong><i class="ph-fill ph-phone"></i> ${d.tel_diretor}</strong></div>
+              <div class="contact-row"><span>E-mail</span><strong style="word-break: break-all; font-size: 11px;"><i class="ph-fill ph-envelope"></i> ${d.email_diretor}</strong></div>
+            </div>
+            
+            <div class="contact-box">
+              <div class="contact-box-title"><i class="ph-fill ph-pencil-simple"></i> Preenchimento</div>
+              <div class="contact-row"><span>Responsável</span><strong><i class="ph-fill ph-user"></i> ${d.responsavel}</strong></div>
+              <div class="contact-row"><span>Cargo</span><strong><i class="ph-fill ph-briefcase"></i> ${d.cargo}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="ent-card-footer">
+          ${docHtml}
+        </div>
+      </div>
+      `
+    }).join('');
+
+    // Renderiza Tabela
+    document.getElementById('tbl-body').innerHTML = data.map(d => `
+      <tr>
+        <td class="td-name">${d.nome}</td>
+        <td><span class="badge seg" style="background:#F1F5F9;color:var(--ink);">${d.segmento}</span></td>
+        <td style="font-family:monospace;font-size:12px;">${d.cnpj}</td>
+        <td class="td-muted">${d.fundacao}</td>
+        <td>${d.diretor}<br><span style="font-size:10px;color:var(--muted);">${d.tel_diretor}</span></td>
+      </tr>
+    `).join('');
+
+    // Finaliza Loading
+    bar.style.width = '100%';
+    status.textContent = 'Renderizando painel...';
+    await new Promise(r => setTimeout(r, 500));
+    document.getElementById('loading').classList.add('hide');
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+
+  } catch(e) {
+    console.error(e);
+    status.innerHTML = `<span style="color:var(--red)">Erro ao carregar dados. Tente atualizar a página.</span>`;
+  }
+}
+
+// Inicia
+init();
+</script>
+</body>
+</html>
