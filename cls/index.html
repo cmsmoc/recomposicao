@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Conselhos Locais · CMS-MOC 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<!-- Phosphor Icons -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ══════════════════════════════════════════
+   DESIGN SYSTEM & MOBILE FIRST
+   ══════════════════════════════════════════ */
+:root {
+  --navy: #0B2545; --blue: #1A5EA8; --teal: #1A8A7A; --yellow: #F5C400;
+  --green: #16A34A; --orange: #EA580C; --red: #DC2626; --ink: #0F172A;
+  --muted: #64748B; --border: #E2E8F0; --off: #F8FAFC; --white: #FFFFFF;
+  --card-sh: 0 2px 8px rgba(11,37,69,.06), 0 8px 24px rgba(11,37,69,.04);
+  --card-sh-hover: 0 4px 12px rgba(11,37,69,.08), 0 12px 32px rgba(11,37,69,.08);
+  --FD: 'Syne', sans-serif; --FB: 'DM Sans', sans-serif; --r: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 14px; }
+body { font-family: var(--FB); background: var(--off); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: var(--blue); text-decoration: none; }
+
+/* ──── LOADING SCREEN ──── */
+#loading { position: fixed; inset: 0; z-index: 9999; background: var(--navy); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 20px; }
+.load-icon { font-size: 48px; color: var(--yellow); animation: spin 2s linear infinite; }
+.load-title { font-family: var(--FD); font-size: clamp(24px, 6vw, 36px); font-weight: 800; color: #fff; text-align: center; }
+.load-title em { color: var(--yellow); font-style: normal; }
+.load-bar-wrap { width: 100%; max-width: 280px; height: 4px; background: rgba(255,255,255,.15); border-radius: 4px; overflow: hidden; }
+.load-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--teal)); transition: width .3s ease; }
+.load-status { font-size: 12px; color: rgba(255,255,255,.5); font-family: var(--FB); text-align: center; }
+#loading.hide { opacity: 0; pointer-events: none; transition: opacity .4s ease .1s; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ──── HEADER ──── */
+#header { background: var(--navy); position: relative; overflow: hidden; }
+#header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--yellow) 0%, var(--teal) 40%, var(--blue) 100%); }
+.hdr-inner { max-width: 1280px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+.hdr-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--yellow); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.hdr-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--yellow); display: inline-block; }
+.hdr-h1 { font-family: var(--FD); font-size: clamp(28px, 6vw, 42px); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: -.5px; }
+.hdr-desc { font-size: 14px; color: rgba(255,255,255,.6); max-width: 520px; font-weight: 400; line-height: 1.6; }
+
+/* ──── LAYOUT GLOBALS ──── */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+.sec { padding: 48px 0; } .sec-alt { background: var(--white); }
+.sec-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sec-h2 { font-family: var(--FD); font-size: clamp(22px,5vw,28px); font-weight: 800; color: var(--navy); margin-bottom: 24px; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+.sec-h2 i { color: var(--blue); }
+
+/* ──── SUMMARY CARDS & ALERTS ──── */
+.summary-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
+.sum-card { border-radius: var(--r); padding: 24px; display: flex; flex-direction: column; gap: 6px; color: #fff; position: relative; overflow: hidden; box-shadow: var(--card-sh); }
+.sum-card i.bg-icon { position: absolute; right: -10px; bottom: -15px; font-size: 100px; opacity: 0.15; pointer-events: none; }
+.sum-card.c-navy { background: linear-gradient(135deg, var(--navy), #103666); } 
+.sum-card.c-teal { background: linear-gradient(135deg, var(--teal), #126357); } 
+.sum-card.c-red { background: linear-gradient(135deg, var(--red), #991B1B); }
+.sum-num { font-family: var(--FD); font-size: 42px; font-weight: 800; line-height: 1; z-index: 1; }
+.sum-lbl { font-size: 14px; color: rgba(255,255,255,.8); font-weight: 600; z-index: 1; }
+
+.alert { border-radius: var(--r); padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start; background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; box-shadow: var(--card-sh); }
+.alert i { font-size: 28px; color: var(--red); flex-shrink: 0; }
+.alert-content strong { display: block; font-size: 15px; margin-bottom: 4px; font-family: var(--FD); }
+
+/* ──── ENTITY CARDS (MOBILE FIRST) ──── */
+#ent-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.ent-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--card-sh); transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+.ent-card:hover { transform: translateY(-4px); box-shadow: var(--card-sh-hover); }
+
+.ent-card-hd { padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--off); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-family: var(--FD); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; padding: 4px 10px; border-radius: 6px; }
+.badge.proto { background: #FFEDD5; color: #9A3412; }
+.badge.date { background: #F1F5F9; color: var(--muted); }
+
+.ent-card-body { padding: 20px; flex: 1; }
+.ent-card-name { font-family: var(--FD); font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1.25; margin-bottom: 8px; }
+.ent-addr { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.ent-addr i { color: var(--teal); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.contact-section { display: flex; flex-direction: column; gap: 12px; }
+.contact-box { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.contact-box.is-dup { background: #FEF2F2; border-color: #FECACA; }
+.contact-box-title { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-family: var(--FD); font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.contact-box.is-dup .contact-box-title { color: var(--red); }
+.contact-box-title i { color: var(--blue); font-size: 14px; }
+.contact-box.is-dup .contact-box-title i { color: var(--red); }
+
+.contact-row { display: flex; flex-direction: column; gap: 2px; font-size: 13px; margin-bottom: 8px; }
+.contact-row:last-child { margin-bottom: 0; }
+.contact-row span { color: var(--muted); font-size: 11px; }
+.contact-box.is-dup .contact-row span { color: #991B1B; }
+.contact-row strong { color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.contact-box.is-dup .contact-row strong { color: var(--red); font-weight: 700; }
+.contact-row strong i { color: var(--muted); }
+.contact-box.is-dup .contact-row strong i { color: var(--red); }
+
+.ent-card-footer { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--off); display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; color: var(--muted); }
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-family: var(--FD); }
+.status-badge.ok { background: #DCFCE7; color: var(--green); border: 1px solid #BBF7D0; }
+.status-badge.pend { background: #FFF7ED; color: var(--orange); border: 1px solid #FFEDD5; }
+
+/* ──── RESPONSIVE TABLE ──── */
+.tbl-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow-x: auto; box-shadow: var(--card-sh); -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
+thead tr { background: var(--navy); color: #fff; }
+th { padding: 16px; text-align: left; font-family: var(--FD); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+tbody tr:hover { background: #F8FAFC; }
+td { padding: 14px 16px; vertical-align: middle; color: var(--ink); }
+td.td-name { font-weight: 700; color: var(--navy); }
+.td-proto { font-family: monospace; color: var(--muted); font-size: 12px; background: #F1F5F9; padding: 2px 6px; border-radius: 4px; }
+
+/* ──── DESKTOP / TABLET ADJUSTMENTS ──── */
+@media(min-width: 640px) {
+  .hdr-inner { padding: 56px 28px 64px; }
+  .summary-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .contact-section { flex-direction: row; }
+  .contact-box { flex: 1; }
+  .sec { padding: 80px 0; }
+}
+@media(min-width: 900px) {
+  #ent-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(min-width: 1200px) {
+  #ent-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <i class="ph ph-spinner-gap load-icon"></i>
+  <div class="load-title">Buscando Entidades<br><em>Conselhos Locais</em></div>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+  <div class="load-status" id="load-status">A ligar à base de dados oficial...</div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="hdr-inner">
+    <div>
+      <div class="hdr-eyebrow">Conselhos Locais de Saúde · MOC</div>
+      <h1 class="hdr-h1">Conselhos Locais<br><span>Inscrições 2026</span></h1>
+      <p class="hdr-desc">Dados extraídos diretamente dos formulários submetidos pelas unidades de saúde e representações de bairros para o processo eleitoral.</p>
+    </div>
+  </div>
+</header>
+
+<!-- RESUMO -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-chart-pie-slice"></i> Painel Executivo</div>
+    <h2 class="sec-h2">Visão Geral - CLS</h2>
+    
+    <div class="summary-grid">
+      <div class="sum-card c-navy">
+        <i class="ph-fill ph-users-three bg-icon"></i>
+        <span class="sum-num" id="tot-cls">-</span>
+        <span class="sum-lbl">Conselhos Inscritos</span>
+      </div>
+      <div class="sum-card c-teal">
+        <i class="ph-fill ph-file-pdf bg-icon"></i>
+        <span class="sum-num" id="tot-ok">-</span>
+        <span class="sum-lbl">Com Ofício Anexado</span>
+      </div>
+      <div class="sum-card c-red">
+        <i class="ph-fill ph-warning-circle bg-icon"></i>
+        <span class="sum-num" id="tot-pend">-</span>
+        <span class="sum-lbl">Ofício Pendente</span>
+      </div>
+    </div>
+
+    <!-- ALERTA DE DUPLICIDADE -->
+    <div class="alert" id="alert-duplicidade" style="display:none;">
+      <i class="ph-fill ph-warning-octagon"></i>
+      <div class="alert-content">
+        <strong>Atenção: Duplicidade de Representação</strong>
+        Identificamos que em <span id="dup-count">X</span> inscrições, a mesma pessoa foi colocada simultaneamente como Titular e Suplente. Pelo regimento interno do Conselho, estas cadeiras devem ser obrigatoriamente ocupadas por pessoas distintas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="sec sec-alt">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-cards"></i> Fichas Detalhadas</div>
+    <h2 class="sec-h2">Unidades Locais Mapeadas</h2>
+    <div id="cls-grid">
+      <!-- Injetado via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- TABELA -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-eyebrow"><i class="ph-fill ph-table"></i> Visualização Compacta</div>
+    <h2 class="sec-h2">Mapeamento Consolidado</h2>
+    <div class="tbl-wrap">
+      <table id="main-tbl">
+        <thead>
+          <tr>
+            <th>Protocolo</th>
+            <th>CLS</th>
+            <th>Gerente / Coordenação</th>
+            <th>Titular Indicado</th>
+            <th>Suplente Indicado</th>
+            <th>Ofício</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body">
+          <!-- Injetado via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+// URL Fornecida no Prompt para Conselhos Locais
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLxTO2gZdYLs5LMfONE-5M-dQ2xnPKGkiA1j35aR8B2aYPeKnYRBjGt49N5fJOMBVouzr-_AsQXQrZ/pub?gid=394041828&single=true&output=csv';
+
+// Parser Robusto de CSV
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length === 0) return [];
+  
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (vals[i] || '').trim(); });
+    return obj;
+  }).filter(r => r['Protocolo']); // Filtra linhas sem protocolo
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// Utilitário para formatar strings
+function formatStr(s) {
+  if(!s || s.toLowerCase() === 'nan') return '—';
+  return s;
+}
+
+// Utilitário para extrair apenas a data
+function extDate(s) {
+  if(!s) return '—';
+  return s.split(' ')[0];
+}
+
+// Função Principal
+async function init() {
+  const bar = document.getElementById('load-bar');
+  const status = document.getElementById('load-status');
+
+  try {
+    bar.style.width = '30%';
+    status.textContent = 'A baixar dados...';
+    
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    const text = await res.text();
+    
+    bar.style.width = '60%';
+    status.textContent = 'A processar formulários CLS...';
+    
+    await new Promise(r => setTimeout(r, 400));
+    
+    const rows = parseCSV(text);
+    
+    // Mapeamento dinâmico baseado nos cabeçalhos da Parte 3
+    const data = rows.map(r => ({
+      protocolo: formatStr(r['Protocolo']),
+      data: formatStr(r['Data/Hora de Inscrição']),
+      nome: formatStr(r['CLS — Nome Completo']),
+      endereco: formatStr(r['Endereço da Unidade de Saúde']),
+      gerente: formatStr(r['Gerente — Nome Completo']),
+      tel_gerente: formatStr(r['Gerente — Celular']) !== '—' ? formatStr(r['Gerente — Celular']) : formatStr(r['Telefone Fixo (Unidade)']),
+      titular: formatStr(r['Presidente/Titular — Nome Completo']),
+      suplente: formatStr(r['Suplente — Nome Completo']),
+      oficio: formatStr(r['Ofício Anexado? (Sim/Não)']),
+      email: formatStr(r['E-mail Principal para Contato'])
+    }));
+
+    // Verifica duplicidades (Titular == Suplente ignorando maiúsculas/minúsculas e espaços)
+    let duplicidades = 0;
+    data.forEach(d => {
+      d.isDup = false;
+      if (d.titular !== '—' && d.suplente !== '—') {
+        const tit = d.titular.trim().toLowerCase();
+        const sup = d.suplente.trim().toLowerCase();
+        if (tit === sup) {
+          d.isDup = true;
+          duplicidades++;
+        }
+      }
+    });
+
+    // Preenche Resumo
+    document.getElementById('tot-cls').textContent = data.length;
+    document.getElementById('tot-ok').textContent = data.filter(d => d.oficio.toLowerCase().includes('sim')).length;
+    document.getElementById('tot-pend').textContent = data.filter(d => d.oficio.toLowerCase().includes('não') || d.oficio === '—').length;
+
+    // Mostra alerta de duplicidade se existir
+    if (duplicidades > 0) {
+      document.getElementById('alert-duplicidade').style.display = 'flex';
+      document.getElementById('dup-count').textContent = duplicidades;
+    }
+
+    // Renderiza Grid de Cards
+    document.getElementById('cls-grid').innerHTML = data.map((d, i) => {
+      const isOficioOk = d.oficio.toLowerCase().includes('sim');
+      
+      return `
+      <div class="ent-card" style="animation: fadeIn .4s ease backwards ${(i*0.05)}s;">
+        <div class="ent-card-hd">
+          <span class="badge proto"><i class="ph-fill ph-hash"></i> ${d.protocolo}</span>
+          <span class="badge date"><i class="ph-fill ph-clock"></i> ${extDate(d.data)}</span>
+        </div>
+        <div class="ent-card-body">
+          <div class="ent-card-name">${d.nome}</div>
+          <div class="ent-addr"><i class="ph-fill ph-map-pin"></i> <span>${d.endereco}</span></div>
+          
+          <div class="contact-section">
+            <div class="contact-box">
+              <div class="contact-box-title"><i class="ph-fill ph-star"></i> Gerência / Coordenação</div>
+              <div class="contact-row"><span>Nome</span><strong><i class="ph-fill ph-user-circle"></i> ${d.gerente}</strong></div>
+              <div class="contact-row"><span>Telefone</span><strong><i class="ph-fill ph-phone"></i> ${d.tel_gerente}</strong></div>
+            </div>
+            
+            <div class="contact-box ${d.isDup ? 'is-dup' : ''}">
+              <div class="contact-box-title">
+                ${d.isDup ? '<i class="ph-fill ph-warning-circle"></i> Cadeiras Locais (Nomes Iguais)' : '<i class="ph-fill ph-users"></i> Cadeiras Locais'}
+              </div>
+              <div class="contact-row"><span>Titular</span><strong><i class="ph-fill ph-user"></i> ${d.titular}</strong></div>
+              <div class="contact-row"><span>Suplente</span><strong><i class="ph-fill ph-user-switch"></i> ${d.suplente}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="ent-card-footer">
+          <span>Situação do Ofício:</span>
+          <span class="status-badge ${isOficioOk ? 'ok' : 'pend'}">
+            ${isOficioOk ? '<i class="ph-fill ph-check-circle"></i> Validado' : '<i class="ph-fill ph-clock-countdown"></i> Pendente'}
+          </span>
+        </div>
+      </div>
+      `
+    }).join('');
+
+    // Renderiza Tabela
+    document.getElementById('tbl-body').innerHTML = data.map(d => {
+      const isOficioOk = d.oficio.toLowerCase().includes('sim');
+      return `
+      <tr>
+        <td><span class="td-proto">${d.protocolo}</span></td>
+        <td class="td-name">${d.nome}</td>
+        <td>${d.gerente}</td>
+        <td style="color:${d.isDup ? 'var(--red)' : 'inherit'}; font-weight:${d.isDup ? '600' : 'normal'}">${d.titular}</td>
+        <td style="color:${d.isDup ? 'var(--red)' : 'inherit'}; font-weight:${d.isDup ? '600' : 'normal'}">${d.suplente}</td>
+        <td>
+          <span style="color:${isOficioOk ? 'var(--green)' : 'var(--orange)'}; font-weight: 700; display:flex; align-items:center; gap:4px;">
+            ${isOficioOk ? '<i class="ph-fill ph-check-circle"></i> Sim' : '<i class="ph-fill ph-warning-circle"></i> Não'}
+          </span>
+        </td>
+      </tr>
+    `}).join('');
+
+    // Finaliza Loading
+    bar.style.width = '100%';
+    status.textContent = 'A renderizar painel...';
+    await new Promise(r => setTimeout(r, 500));
+    document.getElementById('loading').classList.add('hide');
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+
+  } catch(e) {
+    console.error(e);
+    status.innerHTML = `<span style="color:var(--red)">Erro ao carregar dados. Tente atualizar a página.</span>`;
+  }
+}
+
+// Inicia
+init();
+</script>
+</body>
+</html>
