@@ -1335,7 +1335,18 @@ function buildCharts(rows) {
 function buildSummary(rows) {
   const sub = rows.filter(r => hasSubmission(r)).length;
   const noSub = rows.filter(r => !hasSubmission(r)).length;
-  const m2Count = rows.filter(r => rowM2(r)).length;
+  let m2Count = 0;
+rows.forEach(r => {
+  const ent = r['ENTIDADE'] || '';
+  for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
+    // Se encontrar a entidade mapeada
+    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,30))) {
+      // Soma quantos IDs dessa entidade específica estão na lista de M2
+      m2Count += ids.filter(id => M2_IDS.has(id)).length;
+      break; // Interrompe o loop para não contar a mesma entidade duas vezes
+    }
+  }
+});
   const changed = rows.filter(r => namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false || namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false).length;
   const ofOk = rows.filter(r => hasOficio(r)).length;
   
