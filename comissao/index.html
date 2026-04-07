@@ -1,618 +1,295 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CMS-MOC 2026 · Recomposição — Relatório Vivo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-/* ══════════════════════════════════════════
-   DESIGN SYSTEM — CMS-MOC 2026
-   ══════════════════════════════════════════ */
-:root {
-  --navy:    #0B2545;
-  --blue:    #1A5EA8;
-  --teal:    #1A8A7A;
-  --yellow:  #F5C400;
-  --green:   #16A34A;
-  --orange:  #EA580C;
-  --red:     #DC2626;
-  --ink:     #0F172A;
-  --muted:   #64748B;
-  --border:  #E2E8F0;
-  --off:     #F8FAFC;
-  --white:   #FFFFFF;
-  --card-sh: 0 1px 3px rgba(11,37,69,.08), 0 4px 16px rgba(11,37,69,.06);
-  --card-sh2:0 4px 24px rgba(11,37,69,.14);
-  --FD: 'Syne', sans-serif;
-  --FB: 'DM Sans', sans-serif;
-  --r: 12px;
-  /* Segment colors */
-  --c-usuario:    #0369A1;
-  --c-trabalhador:#15803D;
-  --c-gestor:     #9333EA;
-  --c-cls:        #C2410C;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 15px; }
-body { font-family: var(--FB); background: var(--off); color: var(--ink); line-height: 1.6; }
-a { color: var(--blue); }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CMS-MOC 2026 · Recomposição — Relatório Vivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    /* ══════════════════════════════════════════
+       DESIGN SYSTEM — CMS-MOC 2026
+       ══════════════════════════════════════════ */
+    :root {
+      --navy:    #0B2545;
+      --blue:    #1A5EA8;
+      --teal:    #1A8A7A;
+      --yellow:  #F5C400;
+      --green:   #16A34A;
+      --orange:  #EA580C;
+      --red:     #DC2626;
+      --ink:     #0F172A;
+      --muted:   #64748B;
+      --border:  #E2E8F0;
+      --off:     #F8FAFC;
+      --white:   #FFFFFF;
+      --card-sh: 0 1px 3px rgba(11,37,69,.08), 0 4px 16px rgba(11,37,69,.06);
+      --card-sh2:0 4px 24px rgba(11,37,69,.14);
+      --FD: 'Syne', sans-serif;
+      --FB: 'DM Sans', sans-serif;
+      --r: 12px;
+      --c-usuario:    #0369A1;
+      --c-trabalhador:#15803D;
+      --c-gestor:     #9333EA;
+      --c-cls:        #C2410C;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 15px; }
+    body { font-family: var(--FB); background: var(--off); color: var(--ink); line-height: 1.6; }
+    a { color: var(--blue); }
 
-/* ──── LOADING SCREEN ──── */
-#loading {
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--navy);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 20px;
-}
-.load-logo {
-  font-family: var(--FD); font-size: 13px; font-weight: 700;
-  letter-spacing: .15em; text-transform: uppercase;
-  color: rgba(255,255,255,.5); margin-bottom: 4px;
-}
-.load-title {
-  font-family: var(--FD); font-size: clamp(22px,4vw,36px); font-weight: 800;
-  color: #fff; text-align: center; line-height: 1.15;
-}
-.load-title em { color: var(--yellow); font-style: normal; }
-.load-bar-wrap {
-  width: 280px; height: 3px; background: rgba(255,255,255,.15);
-  border-radius: 4px; overflow: hidden;
-}
-.load-bar {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--yellow), var(--teal));
-  border-radius: 4px;
-  transition: width .3s ease;
-}
-.load-status { font-size: 12px; color: rgba(255,255,255,.4); font-family: var(--FB); }
-#loading.hide { opacity: 0; pointer-events: none; transition: opacity .4s ease .1s; }
+    /* ──── LOADING SCREEN ──── */
+    #loading { position: fixed; inset: 0; z-index: 9999; background: var(--navy); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .load-logo { font-family: var(--FD); font-size: 13px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 4px; }
+    .load-title { font-family: var(--FD); font-size: clamp(22px,4vw,36px); font-weight: 800; color: #fff; text-align: center; line-height: 1.15; }
+    .load-title em { color: var(--yellow); font-style: normal; }
+    .load-bar-wrap { width: 280px; height: 3px; background: rgba(255,255,255,.15); border-radius: 4px; overflow: hidden; }
+    .load-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--teal)); border-radius: 4px; transition: width .3s ease; }
+    .load-status { font-size: 12px; color: rgba(255,255,255,.4); font-family: var(--FB); }
+    #loading.hide { opacity: 0; pointer-events: none; transition: opacity .4s ease .1s; }
 
-/* ──── HEADER ──── */
-#header {
-  background: var(--navy);
-  position: relative; overflow: hidden;
-}
-#header::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle at 20% 50%, rgba(26,94,168,.35) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 30%, rgba(26,138,122,.2) 0%, transparent 45%);
-  pointer-events: none;
-}
-#header::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--yellow) 0%, var(--teal) 40%, var(--blue) 100%);
-}
-.hdr-inner {
-  max-width: 1280px; margin: 0 auto; padding: 52px 28px 56px;
-  position: relative; z-index: 1;
-  display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end;
-}
-@media(max-width:700px){ .hdr-inner { grid-template-columns: 1fr; padding: 32px 20px 40px; } }
-.hdr-eyebrow {
-  font-family: var(--FD); font-size: 11px; font-weight: 600;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: var(--yellow); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
-.hdr-eyebrow::before {
-  content: ''; width: 24px; height: 2px;
-  background: var(--yellow); display: inline-block; flex-shrink: 0;
-}
-.hdr-h1 {
-  font-family: var(--FD); font-size: clamp(26px, 4.5vw, 46px);
-  font-weight: 800; color: #fff; line-height: 1.1;
-  margin-bottom: 12px; letter-spacing: -.5px;
-}
-.hdr-h1 span { color: var(--yellow); }
-.hdr-desc { font-size: 15px; color: rgba(255,255,255,.55); max-width: 520px; font-weight: 300; }
-.hdr-meta {
-  font-size: 12px; color: rgba(255,255,255,.35);
-  margin-top: 18px; display: flex; gap: 20px; flex-wrap: wrap;
-}
-.hdr-meta strong { color: rgba(255,255,255,.65); }
-.hdr-stats {
-  display: flex; flex-direction: column; gap: 10px;
-  align-self: center;
-}
-@media(max-width:700px){ .hdr-stats { flex-direction: row; flex-wrap: wrap; } }
-.hstat {
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 10px; padding: 14px 18px;
-  text-align: center; min-width: 100px;
-  flex: 1;
-}
-.hstat b { font-family: var(--FD); font-size: 28px; font-weight: 800; color: #fff; display: block; line-height: 1; }
-.hstat s { font-size: 10px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em; text-decoration: none; display: block; margin-top: 3px; }
+    /* ──── HEADER ──── */
+    #header { background: var(--navy); position: relative; overflow: hidden; }
+    #header::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 50%, rgba(26,94,168,.35) 0%, transparent 50%), radial-gradient(circle at 80% 30%, rgba(26,138,122,.2) 0%, transparent 45%); pointer-events: none; }
+    #header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--yellow) 0%, var(--teal) 40%, var(--blue) 100%); }
+    .hdr-inner { max-width: 1280px; margin: 0 auto; padding: 52px 28px 56px; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+    @media(max-width:700px){ .hdr-inner { grid-template-columns: 1fr; } }
+    .hdr-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--yellow); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .hdr-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--yellow); display: inline-block; flex-shrink: 0; }
+    .hdr-h1 { font-family: var(--FD); font-size: clamp(26px, 4.5vw, 46px); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: -.5px; }
+    .hdr-h1 span { color: var(--yellow); }
+    .hdr-desc { font-size: 15px; color: rgba(255,255,255,.55); max-width: 520px; font-weight: 300; }
+    .hdr-meta { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 18px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .hdr-meta strong { color: rgba(255,255,255,.65); }
+    .hdr-stats { display: flex; flex-direction: column; gap: 10px; align-self: center; }
+    @media(max-width:700px){ .hdr-stats { flex-direction: row; flex-wrap: wrap; } }
+    .hstat { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px 18px; text-align: center; min-width: 100px; }
+    .hstat b { font-family: var(--FD); font-size: 28px; font-weight: 800; color: #fff; display: block; line-height: 1; }
+    .hstat s { font-size: 10px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em; text-decoration: none; display: block; margin-top: 3px; }
 
-/* ──── NAV ──── */
-#nav {
-  background: var(--white); border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 500;
-  box-shadow: 0 1px 8px rgba(0,0,0,.06);
-}
-.nav-inner {
-  max-width: 1280px; margin: 0 auto; padding: 0 28px;
-  display: flex; align-items: center; gap: 0;
-  overflow-x: auto;
-}
-@media(max-width:700px) { .nav-inner { padding: 0 10px; } }
-.nav-inner::-webkit-scrollbar { display: none; }
-.nb {
-  padding: 13px 16px; cursor: pointer; background: none;
-  border: none; border-bottom: 3px solid transparent;
-  font-family: var(--FD); font-size: 11px; font-weight: 700;
-  letter-spacing: .07em; text-transform: uppercase;
-  color: var(--muted); white-space: nowrap;
-  transition: color .18s, border-color .18s;
-}
-.nb:hover, .nb.on { color: var(--blue); border-bottom-color: var(--blue); }
+    /* ──── NAV ──── */
+    #nav { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 500; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; gap: 0; overflow-x: auto; }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nb { padding: 13px 16px; cursor: pointer; background: none; border: none; border-bottom: 3px solid transparent; font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); white-space: nowrap; transition: color .18s, border-color .18s; }
+    .nb:hover, .nb.on { color: var(--blue); border-bottom-color: var(--blue); }
 
-/* ──── LAYOUT ──── */
-.wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
-@media(max-width:700px){ .wrap { padding: 0 20px; } }
-.sec { padding: 60px 0; }
-@media(max-width:700px){ .sec { padding: 40px 0; } }
-.sec-alt { background: var(--white); }
+    /* ──── LAYOUT ──── */
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+    .sec { padding: 60px 0; }
+    .sec-alt { background: var(--white); }
 
-.sec-eyebrow {
-  font-family: var(--FD); font-size: 11px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase;
-  color: var(--teal); margin-bottom: 6px;
-  display: flex; align-items: center; gap: 8px;
-}
-.sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.sec-h2 {
-  font-family: var(--FD); font-size: clamp(22px,3vw,30px);
-  font-weight: 800; color: var(--navy); margin-bottom: 8px;
-  letter-spacing: -.3px;
-}
-.sec-desc { font-size: 14px; color: var(--muted); max-width: 700px; margin-bottom: 36px; }
+    .sec-eyebrow { font-family: var(--FD); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .sec-h2 { font-family: var(--FD); font-size: clamp(22px,3vw,30px); font-weight: 800; color: var(--navy); margin-bottom: 8px; letter-spacing: -.3px; }
+    .sec-desc { font-size: 14px; color: var(--muted); max-width: 700px; margin-bottom: 36px; }
 
-/* ──── SUMMARY CARDS ──── */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr) 1.5fr;
-  gap: 20px; margin-bottom: 32px;
-}
-@media(max-width:900px){ .summary-grid { grid-template-columns: 1fr 1fr; } }
-@media(max-width:540px){ .summary-grid { grid-template-columns: 1fr; gap: 12px; } .sum-card { padding: 18px 20px; } }
-.sum-card {
-  border-radius: var(--r); padding: 22px 24px;
-  display: flex; flex-direction: column; gap: 4px;
-  position: relative; overflow: hidden;
-}
-.sum-card::before { content: ''; position: absolute; inset: 0; opacity: .05; }
-.sum-card.c-navy { background: var(--navy); }
-.sum-card.c-blue { background: var(--blue); }
-.sum-card.c-teal { background: var(--teal); }
-.sum-card.c-green { background: var(--green); }
-.sum-card.c-orange { background: var(--orange); }
-.sum-card.c-red { background: var(--red); }
-.sum-card.c-yellow { background: #92400E; }
-.sum-num {
-  font-family: var(--FD); font-size: clamp(36px, 6vw, 48px); font-weight: 800;
-  color: #fff; line-height: 1; display: block;
-}
-.sum-lbl { font-size: 13px; color: rgba(255,255,255,.7); font-weight: 500; }
-.sum-sub { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
+    /* ──── SUMMARY CARDS ──── */
+    .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr) 1.5fr; gap: 20px; margin-bottom: 32px; }
+    @media(max-width:900px){ .summary-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:540px){ .summary-grid { grid-template-columns: 1fr; } }
+    .sum-card { border-radius: var(--r); padding: 22px 24px; display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden; }
+    .sum-card::before { content: ''; position: absolute; inset: 0; opacity: .05; }
+    .sum-card.c-navy { background: var(--navy); }
+    .sum-card.c-blue { background: var(--blue); }
+    .sum-card.c-teal { background: var(--teal); }
+    .sum-card.c-green { background: var(--green); }
+    .sum-card.c-orange { background: var(--orange); }
+    .sum-card.c-red { background: var(--red); }
+    .sum-card.c-yellow { background: #92400E; }
+    .sum-num { font-family: var(--FD); font-size: 48px; font-weight: 800; color: #fff; line-height: 1; display: block; }
+    .sum-lbl { font-size: 13px; color: rgba(255,255,255,.7); font-weight: 500; }
+    .sum-sub { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
 
-/* ──── CHARTS ROW ──── */
-.charts-row {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px; margin-bottom: 20px;
-}
-@media(max-width:900px){ .charts-row { grid-template-columns: 1fr 1fr; } }
-@media(max-width:540px){ .charts-row { grid-template-columns: 1fr; gap: 16px; } }
-.charts-row.two { grid-template-columns: 1.4fr 1fr; }
-.ch-card {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 20px; box-shadow: var(--card-sh);
-}
-.ch-card.span2 { grid-column: span 2; }
-@media(max-width:900px){ .ch-card.span2 { grid-column: span 1; } }
-.ch-title {
-  font-family: var(--FD); font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .07em;
-  color: var(--navy); margin-bottom: 3px;
-}
-.ch-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
-.ch-wrap { position: relative; height: 200px; }
-.ch-wrap.tall { height: 280px; }
+    /* ──── CHARTS ROW ──── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media(max-width:900px){ .charts-row { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:540px){ .charts-row { grid-template-columns: 1fr; } }
+    .charts-row.two { grid-template-columns: 1.4fr 1fr; }
+    .ch-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; box-shadow: var(--card-sh); }
+    .ch-card.span2 { grid-column: span 2; }
+    @media(max-width:900px){ .ch-card.span2 { grid-column: span 1; } }
+    .ch-title { font-family: var(--FD); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--navy); margin-bottom: 3px; }
+    .ch-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    .ch-wrap { position: relative; height: 200px; }
+    .ch-wrap.tall { height: 280px; }
 
-/* ──── ENTITY CARDS ──── */
-.filters-bar {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 24px; align-items: center;
-}
-#search-ent {
-  padding: 9px 16px; border: 1px solid var(--border);
-  border-radius: 8px; font-family: var(--FB); font-size: 14px;
-  background: var(--white); color: var(--ink); outline: none;
-  min-width: 240px; flex: 1;
-}
-#search-ent:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,94,168,.08); }
-.filter-pill {
-  padding: 8px 16px; border-radius: 100px;
-  border: 1.5px solid var(--border); background: var(--white);
-  font-family: var(--FD); font-size: 10px; font-weight: 700;
-  letter-spacing: .08em; text-transform: uppercase;
-  color: var(--muted); cursor: pointer; transition: all .18s;
-  white-space: nowrap;
-}
-.filter-pill:hover { border-color: var(--blue); color: var(--blue); }
-.filter-pill.on { background: var(--navy); border-color: var(--navy); color: #fff; }
-.filter-pill.seg-usuario.on { background: var(--c-usuario); border-color: var(--c-usuario); }
-.filter-pill.seg-trabalhador.on { background: var(--c-trabalhador); border-color: var(--c-trabalhador); }
-.filter-pill.seg-gestor.on { background: var(--c-gestor); border-color: var(--c-gestor); }
-.filter-pill.seg-cls.on { background: var(--c-cls); border-color: var(--c-cls); }
+    /* ──── ENTITY CARDS ──── */
+    .filters-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+    #search-ent { padding: 9px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--FB); font-size: 14px; background: var(--white); color: var(--ink); outline: none; min-width: 240px; flex: 1; }
+    #search-ent:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,94,168,.08); }
+    .filter-pill { padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--white); font-family: var(--FD); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all .18s; white-space: nowrap; }
+    .filter-pill:hover { border-color: var(--blue); color: var(--blue); }
+    .filter-pill.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .filter-pill.seg-usuario.on { background: var(--c-usuario); border-color: var(--c-usuario); }
+    .filter-pill.seg-trabalhador.on { background: var(--c-trabalhador); border-color: var(--c-trabalhador); }
+    .filter-pill.seg-gestor.on { background: var(--c-gestor); border-color: var(--c-gestor); }
+    .filter-pill.seg-cls.on { background: var(--c-cls); border-color: var(--c-cls); }
 
-@media(max-width: 600px) {
-  #search-ent { min-width: 100%; flex: 1 1 100%; }
-  .filters-bar { gap: 6px; }
-  .filter-pill { font-size: 9px; padding: 6px 12px; }
-}
+    .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .sort-bar label { font-size: 12px; color: var(--muted); }
+    .sort-bar select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--FB); font-size: 12px; background: var(--white); color: var(--ink); outline: none; cursor: pointer; }
+    #ent-count { font-family: var(--FD); font-size: 12px; font-weight: 700; color: var(--muted); }
 
-/* sort + count bar */
-.sort-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-}
-.sort-bar label { font-size: 12px; color: var(--muted); }
-.sort-bar select {
-  padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px;
-  font-family: var(--FB); font-size: 12px; background: var(--white);
-  color: var(--ink); outline: none; cursor: pointer;
-}
-#ent-count { font-family: var(--FD); font-size: 12px; font-weight: 700; color: var(--muted); }
+    #ent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+    @media(max-width:540px){ #ent-grid { grid-template-columns: 1fr; } }
 
-/* Entity grid */
-#ent-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 20px;
-}
-@media(max-width:540px){ #ent-grid { grid-template-columns: 1fr; } }
+    .ent-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--card-sh); transition: transform .18s, box-shadow .18s; cursor: pointer; display: flex; flex-direction: column; }
+    .ent-card:hover { transform: translateY(-2px); box-shadow: var(--card-sh2); }
 
-/* ── THE ENTITY CARD ── */
-.ent-card {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); overflow: hidden;
-  box-shadow: var(--card-sh);
-  transition: transform .18s, box-shadow .18s;
-  cursor: pointer;
-}
-.ent-card:hover { transform: translateY(-2px); box-shadow: var(--card-sh2); }
+    .ent-card-hd { padding: 14px 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); }
+    .ent-card-id { font-family: var(--FD); font-size: 10px; font-weight: 700; letter-spacing: .09em; padding: 3px 9px; border-radius: 6px; background: var(--off); color: var(--muted); flex-shrink: 0; }
+    .ent-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .badge { font-family: var(--FD); font-size: 9px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; }
+    .badge-seg-usuario    { background: #DBEAFE; color: var(--c-usuario); }
+    .badge-seg-trabalhador{ background: #DCFCE7; color: var(--c-trabalhador); }
+    .badge-seg-gestor     { background: #F3E8FF; color: var(--c-gestor); }
+    .badge-seg-cls        { background: #FFEDD5; color: var(--c-cls); }
+    .badge-ambas   { background: #F0FDF4; color: var(--green); }
+    .badge-so-uma  { background: #F1F5F9; color: var(--muted); border: 1px solid #CBD5E1; }
+    .badge-ok      { background: #DCFCE7; color: var(--green); }
+    .badge-warn    { background: #FFF7ED; color: var(--orange); }
+    .badge-err     { background: #FEE2E2; color: var(--red); }
+    .badge-m2      { background: #FEE2E2; color: var(--red); animation: pulse-m2 2s infinite; }
+    @keyframes pulse-m2 { 0%,100%{opacity:1} 50%{opacity:.65} }
 
-.ent-card-hd {
-  padding: 14px 18px;
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.ent-card-id {
-  font-family: var(--FD); font-size: 10px; font-weight: 700;
-  letter-spacing: .09em; padding: 3px 9px; border-radius: 6px;
-  background: var(--off); color: var(--muted); flex-shrink: 0;
-}
-.ent-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-.badge {
-  font-family: var(--FD); font-size: 9px; font-weight: 700;
-  letter-spacing: .07em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 5px;
-}
-.badge-seg-usuario    { background: #DBEAFE; color: var(--c-usuario); }
-.badge-seg-trabalhador{ background: #DCFCE7; color: var(--c-trabalhador); }
-.badge-seg-gestor     { background: #F3E8FF; color: var(--c-gestor); }
-.badge-seg-cls        { background: #FFEDD5; color: var(--c-cls); }
-.badge-ambas   { background: #F0FDF4; color: var(--green); }
-.badge-so-uma  { background: #FFF7ED; color: var(--orange); }
-.badge-ok      { background: #DCFCE7; color: var(--green); }
-.badge-warn    { background: #FFF7ED; color: var(--orange); }
-.badge-err     { background: #FEE2E2; color: var(--red); }
-.badge-m2      { background: #FEE2E2; color: var(--red); animation: pulse-m2 2s infinite; }
-@keyframes pulse-m2 { 0%,100%{opacity:1} 50%{opacity:.65} }
+    .ent-card-name { padding: 14px 18px 10px; font-family: var(--FD); font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.25; }
+    .ent-card-sigla { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; }
 
-.ent-card-name {
-  padding: 14px 18px 10px;
-  font-family: var(--FD); font-size: 14px; font-weight: 700;
-  color: var(--navy); line-height: 1.25;
-}
-.ent-card-sigla { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+    .conselheiros { padding: 0 18px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .cons-row { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+    .cons-row-hd { padding: 6px 10px; font-family: var(--FD); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+    .cons-row-hd.tit { background: var(--navy); color: rgba(255,255,255,.8); }
+    .cons-row-hd.sup { background: #374151; color: rgba(255,255,255,.7); }
+    .cons-row-hd.vaga { background: var(--red); color: rgba(255,255,255,.8); }
+    .cons-row-hd.na { background: var(--border); color: var(--muted); }
+    .cons-cols { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
+    .cons-col { padding: 9px 12px; position: relative; }
+    .cons-col:first-child { border-right: 1px solid var(--border); }
+    .cons-col-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
+    .cons-col-lbl .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+    .dot-atual { background: #94A3B8; }
+    .dot-novo  { background: var(--teal); }
+    .cons-nome { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+    .cons-nome.same { color: var(--ink); }
+    .cons-nome.changed { color: var(--teal); font-weight: 700; }
+    .cons-nome.vaga { color: var(--red); font-style: italic; }
+    .cons-nome.empty { color: #CBD5E1; font-style: italic; font-weight: 400; font-size: 11px; }
+    .cons-email { font-size: 10px; color: var(--muted); margin-top: 2px; word-break: break-all; }
 
-/* conselheiro comparison rows */
-.conselheiros {
-  padding: 0 18px 16px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.cons-row {
-  border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
-}
-.cons-row-hd {
-  padding: 6px 10px;
-  font-family: var(--FD); font-size: 9px; font-weight: 700;
-  letter-spacing: .09em; text-transform: uppercase;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.cons-row-hd.tit { background: var(--navy); color: rgba(255,255,255,.8); }
-.cons-row-hd.sup { background: #374151; color: rgba(255,255,255,.7); }
-.cons-row-hd.vaga { background: var(--red); color: rgba(255,255,255,.8); }
-.cons-cols {
-  display: grid; grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--border);
-}
-.cons-col {
-  padding: 9px 12px; position: relative;
-}
-.cons-col:first-child { border-right: 1px solid var(--border); }
-.cons-col-lbl {
-  font-size: 9px; text-transform: uppercase; letter-spacing: .08em;
-  color: var(--muted); margin-bottom: 3px; display: flex; align-items: center; gap: 4px;
-}
-.cons-col-lbl .dot {
-  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-  display: inline-block;
-}
-.dot-atual { background: #94A3B8; }
-.dot-novo  { background: var(--teal); }
-.cons-nome {
-  font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3;
-}
-.cons-nome.same { color: var(--ink); }
-.cons-nome.changed { color: var(--teal); font-weight: 700; }
-.cons-nome.vaga { color: var(--red); font-style: italic; }
-.cons-nome.empty { color: #CBD5E1; font-style: italic; font-weight: 400; font-size: 11px; }
-.cons-email { font-size: 10px; color: var(--muted); margin-top: 2px; word-break: break-all; }
-.cons-phone { font-size: 10px; color: var(--muted); }
+    .change-arrow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border-radius: 50%; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,.15); pointer-events: none; }
+    .same-indicator { padding: 8px 12px; font-size: 11px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 6px; background: #F0FDF4; }
+    .same-indicator::before { content: '✓'; }
 
-.change-arrow {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--teal); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,.15);
-  pointer-events: none;
-}
+    .ent-card-footer { padding: 10px 18px; border-top: 1px solid var(--border); background: var(--off); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+    .footer-item { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .footer-item strong { color: var(--ink); }
+    .oficio-ok { color: var(--green); font-weight: 700; }
+    .oficio-no { color: var(--orange); font-weight: 700; }
+    .oficio-link { font-size: 10px; padding: 3px 8px; border-radius: 5px; background: var(--blue); color: #fff; font-weight: 700; text-decoration: none; font-family: var(--FD); letter-spacing: .05em; }
+    .oficio-link:hover { background: var(--navy); }
 
-/* mobile stack for conselheiro rows */
-@media(max-width: 420px) {
-  .cons-cols { display: flex; flex-direction: column; }
-  .cons-col:first-child { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
-  .cons-col:last-child { padding-top: 14px; }
-  .change-arrow { transform: translate(-50%, -50%) rotate(90deg); }
-}
+    .no-sub-banner { margin: 0 18px 14px; padding: 10px 14px; border-radius: 8px; background: #FFFBEB; border: 1px solid #FDE68A; font-size: 12px; color: #92400E; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+    .m2-banner { margin: 0 18px 12px; padding: 9px 14px; border-radius: 8px; background: #FEF2F2; border: 1px solid #FECACA; font-size: 11px; color: var(--red); font-weight: 700; display: flex; align-items: center; gap: 7px; }
+    .obs-banner { margin: 0 18px 12px; padding: 9px 14px; border-radius: 8px; background: #EFF6FF; border: 1px solid #BFDBFE; font-size: 11px; color: #1E3A5F; display: flex; align-items: flex-start; gap: 8px; }
+    .exit-banner { margin: 0 18px 12px; padding: 9px 14px; border-radius: 8px; background: #FEF2F2; border: 1px solid #FECACA; font-size: 11.5px; color: var(--red); font-weight: 700; display: flex; align-items: center; gap: 7px; }
 
-/* same indicator */
-.same-indicator {
-  padding: 8px 12px;
-  font-size: 11px; color: var(--green); font-weight: 600;
-  display: flex; align-items: center; gap: 6px;
-  background: #F0FDF4;
-}
-.same-indicator::before { content: '✓'; }
+    /* ──── MODAL ──── */
+    #modal-overlay { position: fixed; inset: 0; z-index: 800; background: rgba(11,37,69,.65); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 20px; }
+    #modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    #modal { background: var(--white); border-radius: 16px; max-width: 760px; width: 100%; max-height: 88vh; overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,.3); animation: slideUp .25s ease; }
+    @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    #modal::-webkit-scrollbar { width: 4px; }
+    #modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .modal-hd { padding: 24px 28px 20px; background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 5; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .modal-close { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.12); border: none; color: #fff; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
+    .modal-close:hover { background: rgba(255,255,255,.22); }
+    .modal-body { padding: 24px 28px; }
+    .modal-sec { margin-bottom: 24px; }
+    .modal-sec-title { font-family: var(--FD); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--blue); border-bottom: 2px solid var(--blue); padding-bottom: 7px; margin-bottom: 14px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    @media(max-width:500px){ .modal-grid { grid-template-columns: 1fr; } }
+    .mg-item { padding: 11px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .mg-item:nth-child(even) { border-right: none; }
+    .mg-item:last-child, .mg-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+    .mg-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 2px; }
+    .mg-val { font-size: 13px; font-weight: 600; color: var(--ink); word-break: break-word; }
 
-/* card footer */
-.ent-card-footer {
-  padding: 10px 18px;
-  border-top: 1px solid var(--border);
-  background: var(--off);
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 6px;
-}
-.footer-item { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-.footer-item strong { color: var(--ink); }
-.oficio-ok { color: var(--green); font-weight: 700; }
-.oficio-no { color: var(--orange); font-weight: 700; }
-.oficio-link {
-  font-size: 10px; padding: 3px 8px; border-radius: 5px;
-  background: var(--blue); color: #fff; font-weight: 700;
-  text-decoration: none; font-family: var(--FD);
-  letter-spacing: .05em;
-}
-.oficio-link:hover { background: var(--navy); }
+    .full-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+    @media(max-width:500px){ .full-compare { grid-template-columns: 1fr; } }
+    .fc-col { background: var(--white); padding: 16px; }
+    .fc-col:first-child { background: #F8FAFC; }
+    .fc-col-lbl { font-family: var(--FD); font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .fc-col-lbl.atual { color: var(--muted); }
+    .fc-col-lbl.novo { color: var(--teal); }
+    .fc-nome { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .fc-nome.changed-name { color: var(--teal); }
+    .fc-info { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .fc-change-badge { grid-column: 1 / -1; background: #F0FDF4; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--green); }
+    .fc-same-badge { grid-column: 1 / -1; background: #F0FDF4; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--green); }
+    .fc-nosub-badge { grid-column: 1 / -1; background: #FFFBEB; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #92400E; }
 
-/* sem inscrição */
-.no-sub-banner {
-  margin: 0 18px 14px;
-  padding: 10px 14px; border-radius: 8px;
-  background: #FFFBEB; border: 1px solid #FDE68A;
-  font-size: 12px; color: #92400E; font-weight: 600;
-  display: flex; align-items: center; gap: 7px;
-}
+    /* ──── TABLE VIEW ──── */
+    .tbl-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: auto; box-shadow: var(--card-sh); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: var(--navy); color: #fff; }
+    th { padding: 12px 14px; text-align: left; font-family: var(--FD); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; cursor: pointer; white-space: nowrap; user-select: none; }
+    th:hover { background: #163f7a; }
+    th.asc::after { content: ' ↑'; } th.desc::after { content: ' ↓'; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:hover { background: var(--off); }
+    tbody tr.no-sub-row { background: #FFFBEB; }
+    td { padding: 11px 14px; vertical-align: middle; }
+    .tbl-name { font-weight: 600; color: var(--navy); max-width: 200px; font-size: 12px; line-height: 1.2; }
+    .tbl-footer { padding: 10px 14px; text-align: right; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); background: var(--off); }
 
-/* m2 banner */
-.m2-banner {
-  margin: 0 18px 12px;
-  padding: 9px 14px; border-radius: 8px;
-  background: #FEF2F2; border: 1px solid #FECACA;
-  font-size: 11px; color: var(--red); font-weight: 700;
-  display: flex; align-items: center; gap: 7px;
-}
+    /* ──── EMPTY STATE ──── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); grid-column: 1 / -1; }
+    .empty-state h3 { font-family: var(--FD); font-size: 18px; color: var(--navy); margin-bottom: 8px; }
 
-/* ──── DETAIL MODAL ──── */
-#modal-overlay {
-  position: fixed; inset: 0; z-index: 800;
-  background: rgba(11,37,69,.65); backdrop-filter: blur(4px);
-  display: none; align-items: center; justify-content: center;
-  padding: 20px;
-}
-@media(max-width: 600px) { #modal-overlay { padding: 12px; } }
-#modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-#modal {
-  background: var(--white); border-radius: 16px;
-  max-width: 760px; width: 100%;
-  max-height: 88vh; overflow-y: auto;
-  box-shadow: 0 24px 80px rgba(0,0,0,.3);
-  animation: slideUp .25s ease;
-}
-@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-#modal::-webkit-scrollbar { width: 4px; }
-#modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-.modal-hd {
-  padding: 24px 28px 20px;
-  background: var(--navy); color: #fff;
-  position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
-}
-.modal-close {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(255,255,255,.12); border: none; color: #fff;
-  cursor: pointer; font-size: 18px; display: flex; align-items: center;
-  justify-content: center; flex-shrink: 0; transition: background .15s;
-}
-.modal-close:hover { background: rgba(255,255,255,.22); }
-.modal-body { padding: 24px 28px; }
+    /* ──── ALERT BLOCKS ──── */
+    .alert { border-radius: var(--r); padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+    .alert-ico { font-size: 20px; flex-shrink: 0; }
+    .alert-txt { font-size: 13.5px; line-height: 1.65; }
+    .alert-txt strong { font-weight: 700; }
+    .alert.warn { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+    .alert.err  { background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; }
+    .alert.info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A5F; }
+    .alert.ok   { background: #F0FDF4; border: 1px solid #A7F3D0; color: #064E3B; }
 
-@media(max-width: 600px) {
-  .modal-hd { padding: 16px 20px; }
-  .modal-body { padding: 16px 20px; }
-}
+    /* ──── LEGEND ──── */
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; padding: 14px 18px; background: var(--white); border: 1px solid var(--border); border-radius: var(--r); align-items: center; }
+    .leg-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink); }
+    .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .leg-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: .06em; text-transform: uppercase; }
 
-.modal-sec { margin-bottom: 24px; }
-.modal-sec-title {
-  font-family: var(--FD); font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .1em;
-  color: var(--blue); border-bottom: 2px solid var(--blue);
-  padding-bottom: 7px; margin-bottom: 14px;
-}
-.modal-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-}
-@media(max-width:500px){ .modal-grid { grid-template-columns: 1fr; } }
-.mg-item {
-  padding: 11px 14px; border-bottom: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-}
-.mg-item:nth-child(even) { border-right: none; }
-.mg-item:last-child, .mg-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
-.mg-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 2px; }
-.mg-val { font-size: 13px; font-weight: 600; color: var(--ink); word-break: break-word; }
+    /* ──── ANIMATIONS ──── */
+    @keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .ent-card { animation: fadeSlide .3s ease both; }
 
-/* full conselheiro compare */
-.full-compare {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-  background: var(--border); border-radius: 10px; overflow: hidden;
-  margin-bottom: 12px;
-}
-@media(max-width:500px){ .full-compare { grid-template-columns: 1fr; } }
-.fc-col {
-  background: var(--white); padding: 16px;
-}
-.fc-col:first-child { background: #F8FAFC; }
-.fc-col-lbl {
-  font-family: var(--FD); font-size: 10px; font-weight: 700;
-  letter-spacing: .09em; text-transform: uppercase;
-  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-}
-.fc-col-lbl.atual { color: var(--muted); }
-.fc-col-lbl.novo { color: var(--teal); }
-.fc-nome { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-.fc-nome.changed-name { color: var(--teal); }
-.fc-info { font-size: 12px; color: var(--muted); line-height: 1.6; }
-.fc-change-badge {
-  grid-column: 1 / -1; background: #F0FDF4;
-  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 700; color: var(--green);
-}
-.fc-same-badge {
-  grid-column: 1 / -1; background: #F0FDF4;
-  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 600; color: var(--green);
-}
-.fc-nosub-badge {
-  grid-column: 1 / -1; background: #FFFBEB;
-  padding: 10px 16px; display: flex; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 700; color: #92400E;
-}
+    /* ──── PROGRESS ──── */
+    .prog-item { margin-bottom: 14px; }
+    .prog-hd { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12.5px; color: var(--ink); }
+    .prog-hd span { color: var(--muted); font-size: 11px; }
+    .prog-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 4px; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
 
-/* ──── TABLE VIEW ──── */
-.tbl-wrap {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); overflow: auto; box-shadow: var(--card-sh);
-}
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead tr { background: var(--navy); color: #fff; }
-th {
-  padding: 12px 14px; text-align: left;
-  font-family: var(--FD); font-size: 10px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .08em;
-  cursor: pointer; white-space: nowrap; user-select: none;
-}
-th:hover { background: #163f7a; }
-th.asc::after { content: ' ↑'; } th.desc::after { content: ' ↓'; }
-tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
-tbody tr:hover { background: var(--off); }
-tbody tr.no-sub-row { background: #FFFBEB; }
-td { padding: 11px 14px; vertical-align: middle; }
-.tbl-name { font-weight: 600; color: var(--navy); max-width: 200px; font-size: 12px; }
-.tbl-footer { padding: 10px 14px; text-align: right; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); background: var(--off); }
+    /* ──── VIEW TOGGLE ──── */
+    .view-toggle { display: flex; gap: 6px; }
+    .vbtn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); transition: all .15s; }
+    .vbtn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
 
-/* ──── EMPTY STATE ──── */
-.empty-state {
-  text-align: center; padding: 60px 20px; color: var(--muted);
-  grid-column: 1 / -1;
-}
-.empty-state h3 { font-family: var(--FD); font-size: 18px; color: var(--navy); margin-bottom: 8px; }
-
-/* ──── ALERT BLOCKS ──── */
-.alert { border-radius: var(--r); padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
-.alert-ico { font-size: 20px; flex-shrink: 0; }
-.alert-txt { font-size: 13.5px; line-height: 1.65; }
-.alert-txt strong { font-weight: 700; }
-.alert.warn { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
-.alert.err  { background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; }
-.alert.info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A5F; }
-.alert.ok   { background: #F0FDF4; border: 1px solid #A7F3D0; color: #064E3B; }
-
-/* ──── LEGEND ──── */
-.legend {
-  display: flex; gap: 18px; flex-wrap: wrap;
-  margin-bottom: 20px; padding: 14px 18px;
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); align-items: center;
-}
-.leg-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink); }
-.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.leg-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: .06em; text-transform: uppercase; }
-
-/* ──── ANIMATIONS ──── */
-@keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-.ent-card { animation: fadeSlide .3s ease both; }
-
-/* ──── PROGRESS ──── */
-.prog-item { margin-bottom: 14px; }
-.prog-hd { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12.5px; color: var(--ink); }
-.prog-hd span { color: var(--muted); font-size: 11px; }
-.prog-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 4px; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
-
-/* ──── VIEW TOGGLE ──── */
-.view-toggle { display: flex; gap: 6px; }
-.vbtn {
-  width: 34px; height: 34px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--white);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 14px; color: var(--muted); transition: all .15s;
-}
-.vbtn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
-
-/* Table view hidden by default */
-#tbl-view { display: none; }
-body.table-mode #ent-grid { display: none; }
-body.table-mode #tbl-view { display: block; }
-</style>
+    #tbl-view { display: none; }
+    body.table-mode #ent-grid { display: none; }
+    body.table-mode #tbl-view { display: block; }
+  </style>
 </head>
 <body>
 
+<!-- LOADING -->
 <div id="loading">
   <div class="load-logo">CMS-MOC · Montes Claros</div>
   <div class="load-title">Recomposição <em>2026</em></div>
@@ -620,6 +297,7 @@ body.table-mode #tbl-view { display: block; }
   <div class="load-status" id="load-status">Conectando à planilha...</div>
 </div>
 
+<!-- HEADER -->
 <header id="header">
   <div class="hdr-inner">
     <div>
@@ -636,6 +314,7 @@ body.table-mode #tbl-view { display: block; }
   </div>
 </header>
 
+<!-- NAV -->
 <nav id="nav">
   <div class="nav-inner">
     <button class="nb on" onclick="goSec('sec-dash',this)">📊 Painel</button>
@@ -646,137 +325,149 @@ body.table-mode #tbl-view { display: block; }
   </div>
 </nav>
 
+<!-- SEC: DASHBOARD -->
 <section id="sec-dash" class="sec">
-<div class="wrap">
-  <div class="sec-eyebrow">Painel Executivo</div>
-  <h2 class="sec-h2">Visão Geral do Processo</h2>
-  <p class="sec-desc">Consolidado completo das inscrições, status de documentação e comparativo de conselheiros.</p>
+  <div class="wrap">
+    <div class="sec-eyebrow">Painel Executivo</div>
+    <h2 class="sec-h2">Visão Geral do Processo</h2>
+    <p class="sec-desc">Consolidado completo das inscrições, status de documentação e comparativo de conselheiros.</p>
 
-  <div class="summary-grid" id="sum-cards"></div>
+    <div class="summary-grid" id="sum-cards"></div>
 
-  <div class="charts-row">
-    <div class="ch-card">
-      <div class="ch-title">Status de Inscrição</div>
-      <div class="ch-sub">Entidades com e sem submissão</div>
-      <div class="ch-wrap"><canvas id="ch-status"></canvas></div>
+    <div class="charts-row">
+      <div class="ch-card">
+        <div class="ch-title">Status de Inscrição</div>
+        <div class="ch-sub">Entidades com e sem submissão</div>
+        <div class="ch-wrap"><canvas id="ch-status"></canvas></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">Distribuição por Segmento</div>
+        <div class="ch-sub">Vagas por categoria tripartite</div>
+        <div class="ch-wrap"><canvas id="ch-seg"></canvas></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">Tipo de Vaga</div>
+        <div class="ch-sub">Ambas as cadeiras vs. só uma</div>
+        <div class="ch-wrap"><canvas id="ch-ambas"></canvas></div>
+      </div>
     </div>
-    <div class="ch-card">
-      <div class="ch-title">Distribuição por Segmento</div>
-      <div class="ch-sub">Vagas por categoria tripartite</div>
-      <div class="ch-wrap"><canvas id="ch-seg"></canvas></div>
-    </div>
-    <div class="ch-card">
-      <div class="ch-title">Tipo de Vaga</div>
-      <div class="ch-sub">Ambas as cadeiras vs. só uma</div>
-      <div class="ch-wrap"><canvas id="ch-ambas"></canvas></div>
-    </div>
-  </div>
-  <div class="charts-row two">
-    <div class="ch-card">
-      <div class="ch-title">Conselheiros: Mantidos vs. Substituídos</div>
-      <div class="ch-sub">Titular e suplente separados</div>
-      <div class="ch-wrap tall"><canvas id="ch-changes"></canvas></div>
-    </div>
-    <div class="ch-card">
-      <div class="ch-title">Cobertura Documental</div>
-      <div class="ch-sub">Indicadores do processo</div>
-      <div id="ch-progs" style="margin-top:8px"></div>
-    </div>
-  </div>
-</div>
-</section>
-
-<section id="sec-cards" class="sec sec-alt">
-<div class="wrap">
-  <div class="sec-eyebrow">Entidades</div>
-  <h2 class="sec-h2">Navegador de Entidades</h2>
-  <p class="sec-desc">Cada card mostra a composição atual vs. nova indicação. Clique para ver ficha completa.</p>
-
-  <div class="legend">
-    <strong style="font-family:var(--FD);font-size:11px;color:var(--navy)">Legenda:</strong>
-    <div class="leg-item"><span class="leg-dot" style="background:#94A3B8"></span> Conselheiro atual</div>
-    <div class="leg-item"><span class="leg-dot" style="background:var(--teal)"></span> Nova indicação</div>
-    <div class="leg-item"><span class="leg-badge badge-ok">Manteve</span> Mesma pessoa</div>
-    <div class="leg-item"><span class="leg-badge" style="background:#F0FDF4;color:var(--teal)">Mudou</span> Novo indicado</div>
-    <div class="leg-item"><span class="leg-badge badge-err">M2 ⚠</span> 2º mandato</div>
-    <div class="leg-item"><span class="leg-badge badge-warn">Sem ins.</span> Sem formulário</div>
-  </div>
-
-  <div class="filters-bar">
-    <input type="text" id="search-ent" placeholder="🔍 Buscar entidade ou conselheiro..." oninput="applyFilters()"/>
-    <button class="filter-pill on" onclick="setFilter('all',this)" data-f="all">Todas</button>
-    <button class="filter-pill seg-usuario" onclick="setFilter('USUARIO',this)" data-f="USUARIO">Usuário</button>
-    <button class="filter-pill seg-trabalhador" onclick="setFilter('TRABALHADOR',this)" data-f="TRABALHADOR">Trabalhador</button>
-    <button class="filter-pill seg-gestor" onclick="setFilter('GESTOR/PRESTADOR',this)" data-f="GESTOR/PRESTADOR">Gestor/Prestador</button>
-    <button class="filter-pill seg-cls" onclick="setFilter('CLS',this)" data-f="CLS">CLS</button>
-    <button class="filter-pill" onclick="setFilter('mudanca',this)" data-f="mudanca">Com Mudança</button>
-    <button class="filter-pill" onclick="setFilter('semins',this)" data-f="semins">Sem Inscrição</button>
-  </div>
-
-  <div class="sort-bar">
-    <span id="ent-count">—</span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <label>Ordenar: <select id="sort-sel" onchange="applyFilters()">
-        <option value="seg">Segmento</option>
-        <option value="nome">Nome A–Z</option>
-        <option value="status">Status</option>
-      </select></label>
-      <div class="view-toggle">
-        <button class="vbtn on" id="btn-cards" onclick="setView('cards')" title="Cards">⊞</button>
-        <button class="vbtn" id="btn-table" onclick="setView('table')" title="Tabela">≡</button>
+    
+    <div class="charts-row two">
+      <div class="ch-card">
+        <div class="ch-title">Conselheiros: Mantidos vs. Substituídos</div>
+        <div class="ch-sub">Titular e suplente separados</div>
+        <div class="ch-wrap tall"><canvas id="ch-changes"></canvas></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">Cobertura Documental</div>
+        <div class="ch-sub">Indicadores do processo</div>
+        <div id="ch-progs" style="margin-top:8px"></div>
       </div>
     </div>
   </div>
+</section>
 
-  <div id="ent-grid"></div>
-  <div id="tbl-view">
-    <div class="tbl-wrap">
-      <table id="main-tbl">
-        <thead><tr>
-          <th onclick="sortMainTbl(0)">Entidade</th>
-          <th onclick="sortMainTbl(1)">Segmento</th>
-          <th onclick="sortMainTbl(2)">Cadeira</th>
-          <th onclick="sortMainTbl(3)">Titular Atual</th>
-          <th onclick="sortMainTbl(4)">Novo Titular</th>
-          <th onclick="sortMainTbl(5)">Suplente Atual</th>
-          <th onclick="sortMainTbl(6)">Novo Suplente</th>
-          <th onclick="sortMainTbl(7)">Status</th>
-        </tr></thead>
-        <tbody id="main-tbl-body"></tbody>
-      </table>
-      <div class="tbl-footer" id="main-tbl-footer"></div>
+<!-- SEC: ENTITY CARDS -->
+<section id="sec-cards" class="sec sec-alt">
+  <div class="wrap">
+    <div class="sec-eyebrow">Entidades</div>
+    <h2 class="sec-h2">Navegador de Entidades</h2>
+    <p class="sec-desc">Cada card mostra a composição atual vs. nova indicação. Clique para ver ficha completa.</p>
+
+    <div class="legend">
+      <strong style="font-family:var(--FD);font-size:11px;color:var(--navy)">Legenda:</strong>
+      <div class="leg-item"><span class="leg-dot" style="background:#94A3B8"></span> Conselheiro atual</div>
+      <div class="leg-item"><span class="leg-dot" style="background:var(--teal)"></span> Nova indicação</div>
+      <div class="leg-item"><span class="leg-badge badge-ok">Manteve</span> Mesma pessoa</div>
+      <div class="leg-item"><span class="leg-badge" style="background:#F0FDF4;color:var(--teal)">Mudou</span> Novo indicado</div>
+      <div class="leg-item"><span class="leg-badge badge-err">M2 ⚠</span> 2º mandato</div>
+      <div class="leg-item"><span class="leg-badge badge-warn">Sem ins.</span> Sem formulário</div>
+    </div>
+
+    <div class="filters-bar">
+      <input type="text" id="search-ent" placeholder="🔍 Buscar entidade ou conselheiro..." oninput="applyFilters()"/>
+      <button class="filter-pill on" onclick="setFilter('all',this)" data-f="all">Todas</button>
+      <button class="filter-pill seg-usuario" onclick="setFilter('USUARIO',this)" data-f="USUARIO">Usuário</button>
+      <button class="filter-pill seg-trabalhador" onclick="setFilter('TRABALHADOR',this)" data-f="TRABALHADOR">Trabalhador</button>
+      <button class="filter-pill seg-gestor" onclick="setFilter('GESTOR/PRESTADOR',this)" data-f="GESTOR/PRESTADOR">Gestor/Prestador</button>
+      <button class="filter-pill seg-cls" onclick="setFilter('CLS',this)" data-f="CLS">CLS</button>
+      <button class="filter-pill" onclick="setFilter('mudanca',this)" data-f="mudanca">Com Mudança</button>
+      <button class="filter-pill" onclick="setFilter('semins',this)" data-f="semins">Sem Inscrição</button>
+    </div>
+
+    <div class="sort-bar">
+      <span id="ent-count">—</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label>Ordenar: 
+          <select id="sort-sel" onchange="applyFilters()">
+            <option value="seg">Segmento</option>
+            <option value="nome">Nome A–Z</option>
+            <option value="status">Status</option>
+          </select>
+        </label>
+        <div class="view-toggle">
+          <button class="vbtn on" id="btn-cards" onclick="setView('cards')" title="Cards">⊞</button>
+          <button class="vbtn" id="btn-table" onclick="setView('table')" title="Tabela">≡</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="ent-grid"></div>
+    
+    <div id="tbl-view">
+      <div class="tbl-wrap">
+        <table id="main-tbl">
+          <thead>
+            <tr>
+              <th onclick="sortMainTbl(0)">Entidade</th>
+              <th onclick="sortMainTbl(1)">Segmento</th>
+              <th onclick="sortMainTbl(2)">Cadeira</th>
+              <th onclick="sortMainTbl(3)">Titular Atual</th>
+              <th onclick="sortMainTbl(4)">Novo Titular</th>
+              <th onclick="sortMainTbl(5)">Suplente Atual</th>
+              <th onclick="sortMainTbl(6)">Novo Suplente</th>
+              <th onclick="sortMainTbl(7)">Status</th>
+            </tr>
+          </thead>
+          <tbody id="main-tbl-body"></tbody>
+        </table>
+        <div class="tbl-footer" id="main-tbl-footer"></div>
+      </div>
     </div>
   </div>
-</div>
 </section>
 
+<!-- SEC: CRÍTICOS -->
 <section id="sec-criticos" class="sec">
-<div class="wrap">
-  <div class="sec-eyebrow">Casos Críticos</div>
-  <h2 class="sec-h2">Situações que Requerem Atenção</h2>
-  <p class="sec-desc">Pendências, mandatos máximos e dados incompletos identificados no processo.</p>
-  <div id="criticos-content"></div>
-</div>
+  <div class="wrap">
+    <div class="sec-eyebrow">Casos Críticos</div>
+    <h2 class="sec-h2">Situações que Requerem Atenção</h2>
+    <p class="sec-desc">Pendências, mandatos máximos e vagas abertas no conselho identificadas.</p>
+    <div id="criticos-content"></div>
+  </div>
 </section>
 
+<!-- SEC: MUDANÇAS -->
 <section id="sec-mudancas" class="sec sec-alt">
-<div class="wrap">
-  <div class="sec-eyebrow">Mudanças de Representação</div>
-  <h2 class="sec-h2">Conselheiros Substituídos</h2>
-  <p class="sec-desc">Todas as entidades em que há divergência entre o conselheiro atual e a nova indicação.</p>
-  <div id="mudancas-content"></div>
-</div>
+  <div class="wrap">
+    <div class="sec-eyebrow">Mudanças de Representação</div>
+    <h2 class="sec-h2">Conselheiros Substituídos</h2>
+    <p class="sec-desc">Todas as entidades em que há divergência entre o conselheiro atual e a nova indicação.</p>
+    <div id="mudancas-content"></div>
+  </div>
 </section>
 
+<!-- SEC: TABELA COMPLETA -->
 <section id="sec-tabela" class="sec">
-<div class="wrap">
-  <div class="sec-eyebrow">Tabela Completa</div>
-  <h2 class="sec-h2">Todas as Vagas</h2>
-  <p class="sec-desc">Visão linha-a-linha de todas as entidades com dados completos.</p>
-  <div id="full-table-content"></div>
-</div>
+  <div class="wrap">
+    <div class="sec-eyebrow">Tabela Completa</div>
+    <h2 class="sec-h2">Todas as Vagas</h2>
+    <p class="sec-desc">Visão linha-a-linha de todas as entidades com dados completos.</p>
+    <div id="full-table-content"></div>
+  </div>
 </section>
 
+<!-- MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal">
     <div class="modal-hd" id="modal-hd">
@@ -804,23 +495,8 @@ body.table-mode #tbl-view { display: block; }
    ============================================================ */
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLxTO2gZdYLs5LMfONE-5M-dQ2xnPKGkiA1j35aR8B2aYPeKnYRBjGt49N5fJOMBVouzr-_AsQXQrZ/pub?gid=467330833&single=true&output=csv';
 
-/* ── mandato 2 from composicao atual (external knowledge) ── */
-const M2_IDS = new Set([
-  'ID-P3-S','ID-P2-S','G2-T','G2-S','TR6B-T','U9-S','U6-T','U4-S','U10-T','U10-S','U1-T','U1-S'
-]);
-
-/* ── seat IDs per entity row (to check M2) ── */
-const ROW_SEAT_IDS = {
-  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 1': ['U1-T','U1-S'],
-  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 2': ['U9-T','U9-S'],
-  'ASSOCIAÇÃO PRESENTE DE APOIO A PACIENTES COM CÂNCER': ['U6-T','U6-S'],
-  'ASSOCIAÇÃO DOS DEFICIENTES DE MONTES CLAROS (ADEMOC)': ['U4-T','U4-S'],
-  'FUNDAÇÃO SARA ALBUQUERQUE COSTA (FUNDAÇÃO SARA)': ['U10-T','U10-S'],
-  'SUPERINTENDÊNCIA REGIONAL DE SAÚDE DE MONTES CLAROS (SR': ['G2-T','G2-S'],
-  'FUNDAÇÃO CLARICE ALBUQUERQUE (VOVÓ CLARICE)': ['ID-P3-S'],
-  'ASSOCIAÇÃO SOCIEDADE EDUCACIONAL MENDONÇA E SILVA (CAPE': ['ID-P2-S'],
-  'SINDICATO ÚNICO DOS SERVIORES DE SAÚDE DO ESTADO DE MIN': ['TR6B-T','TR6A-T'], // both rows
-};
+/* ── mandato 2 from composicao atual ── */
+const M2_IDS = new Set(['ID-P3-S','ID-P2-S','G2-T','G2-S','TR6B-T','U9-S','U6-T','U4-S','U10-T','U10-S','U1-T','U1-S']);
 
 /* ============================================================
    CSV PARSER
@@ -869,8 +545,7 @@ function nameNorm(n) {
 
 function namesMatch(a, b) {
   const na = nameNorm(a), nb = nameNorm(b);
-  if (!na || !nb) return null; // unknown
-  // Allow minor differences (accents, extra titles)
+  if (!na || !nb) return null; 
   const clean = s => s.replace(/[^A-Z\s]/g,'').replace(/\s+/g,' ').trim();
   return clean(na) === clean(nb);
 }
@@ -886,20 +561,14 @@ function getOficioURL(row) {
 }
 
 function rowM2(row) {
-  const ent = row['ENTIDADE'] || '';
-  for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-    if (ent.toUpperCase().includes(key.toUpperCase())) {
-      return ids.some(id => M2_IDS.has(id));
-    }
-  }
-  return false;
+  return M2_IDS.has(row['ID_TITULAR']) || M2_IDS.has(row['ID_SUPLENTE']);
 }
 
 function segClass(seg) {
   if (seg.includes('USUARIO')) return 'seg-usuario';
   if (seg.includes('TRABALHADOR')) return 'seg-trabalhador';
   if (seg.includes('GESTOR') || seg.includes('PRESTADOR')) return 'seg-gestor';
-  if (seg.includes('CLS') || (seg==='USUARIO' && false)) return 'seg-cls';
+  if (seg.includes('CLS')) return 'seg-cls';
   return 'seg-usuario';
 }
 
@@ -922,9 +591,17 @@ function getSegDisplay(row) {
   return s || 'USUARIO';
 }
 
-function initials(name) {
-  if (!name || !nameNorm(name)) return '?';
-  return nameNorm(name).split(' ').slice(0,2).map(w=>w[0]).join('');
+function isNotApplicable(name) {
+  if (!name) return false;
+  const n = name.toUpperCase();
+  return n.includes('NÃO TEM') || n.includes('APENAS TITULAR') || n.includes('APENAS SUPLENTE');
+}
+
+function isVagaAberta(row) {
+  const nT = (row['NOME_TITULAR']||'').toUpperCase();
+  const nS = (row['NOME_SUPLENTE']||'').toUpperCase();
+  const e = (row['ENTIDADE']||'').toUpperCase();
+  return nT.includes('SAÍDA') || nS.includes('SAÍDA') || nT.includes('VAGA ABERTA') || nS.includes('VAGA ABERTA') || nT.includes('SEM SUBSTITUTO') || e.includes('CODEVASF');
 }
 
 /* ============================================================
@@ -952,14 +629,24 @@ function buildCard(row, idx) {
   const titMatch = namesMatch(titAtual, titNovo);
   const supMatch = namesMatch(supAtual, supNovo);
 
-  const hasAnyChange = (titMatch === false) || (supMatch === false);
+  const titNA = isNotApplicable(titAtual) || isNotApplicable(row['NOME_TITULAR']);
+  const supNA = isNotApplicable(supAtual) || isNotApplicable(row['NOME_SUPLENTE']);
+  const hasLeft = isVagaAberta(row);
 
-  // Build conselheiro rows
+  const hasAnyChange = (!titNA && titMatch === false) || (!supNA && supMatch === false);
+
   let consHTML = '';
 
-  // Titular
-  if (titAtual || titNovo || cadeira.includes('TITULAR')) {
-    const isVaga = titAtual === '[VAGO]' || titAtual === '';
+  /* Titular */
+  if (titNA) {
+    consHTML += `<div class="cons-row" style="background:#F8FAFC;border:1px dashed #CBD5E1">
+      <div class="cons-row-hd na"><span>Titular · ${row['ID_TITULAR']||'—'}</span></div>
+      <div style="padding:10px 14px;font-size:11px;color:var(--muted);font-style:italic;display:flex;align-items:center;gap:6px">
+        <span>⊘</span> Cadeira não aplicável (Entidade possui apenas 1 vaga)
+      </div>
+    </div>`;
+  } else if (titAtual || titNovo || cadeira.includes('TITULAR') || ambas) {
+    const isVaga = titAtual === '[VAGO]' || titAtual === '' || hasLeft;
     const titChanged = !isVaga && titMatch === false && titNovo;
     const titSame = titMatch === true;
     
@@ -970,11 +657,11 @@ function buildCard(row, idx) {
       </div>`;
     } else if (!hasSub && !titNovo) {
       consHTML += `<div class="cons-row">
-        <div class="cons-row-hd ${isVaga?'vaga':'tit'}"><span>Titular · ${row['ID_TITULAR']||''}</span>${isVaga?'<span>VAGA</span>':''}</div>
+        <div class="cons-row-hd ${isVaga?'vaga':'tit'}"><span>Titular · ${row['ID_TITULAR']||''}</span>${isVaga?'<span>VAGA ABERTA</span>':''}</div>
         <div class="cons-cols">
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
-            <div class="cons-nome ${isVaga?'vaga':''}">${titAtual||'Sem informação'}</div>
+            <div class="cons-nome ${isVaga?'vaga':''}">${hasLeft?'Vaga Aberta':(titAtual||'Sem informação')}</div>
           </div>
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-novo"></span> Nova indicação</div>
@@ -988,7 +675,7 @@ function buildCard(row, idx) {
         <div class="cons-cols" style="position:relative">
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
-            <div class="cons-nome ${titChanged?'':'same'}">${titAtual||'—'}</div>
+            <div class="cons-nome ${titChanged?'':'same'}">${hasLeft?'Vaga Aberta':(titAtual||'—')}</div>
           </div>
           ${titChanged?`<div class="change-arrow">→</div>`:''}
           <div class="cons-col">
@@ -1001,8 +688,15 @@ function buildCard(row, idx) {
     }
   }
 
-  // Suplente
-  if (supAtual || supNovo || cadeira.includes('SUPLENTE')) {
+  /* Suplente */
+  if (supNA) {
+    consHTML += `<div class="cons-row" style="background:#F8FAFC;border:1px dashed #CBD5E1">
+      <div class="cons-row-hd na"><span>Suplente · ${row['ID_SUPLENTE']||'—'}</span></div>
+      <div style="padding:10px 14px;font-size:11px;color:var(--muted);font-style:italic;display:flex;align-items:center;gap:6px">
+        <span>⊘</span> Cadeira não aplicável (Entidade possui apenas 1 vaga)
+      </div>
+    </div>`;
+  } else if (supAtual || supNovo || cadeira.includes('SUPLENTE') || ambas) {
     const supChanged = supMatch === false && supNovo;
     const supSame = supMatch === true;
 
@@ -1017,7 +711,7 @@ function buildCard(row, idx) {
         <div class="cons-cols">
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
-            <div class="cons-nome">${supAtual||'Sem informação'}</div>
+            <div class="cons-nome ${hasLeft?'vaga':''}">${hasLeft?'Vaga Aberta':(supAtual||'Sem informação')}</div>
           </div>
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-novo"></span> Nova indicação</div>
@@ -1031,7 +725,7 @@ function buildCard(row, idx) {
         <div class="cons-cols" style="position:relative">
           <div class="cons-col">
             <div class="cons-col-lbl"><span class="dot dot-atual"></span> Atual</div>
-            <div class="cons-nome">${supAtual||'—'}</div>
+            <div class="cons-nome">${hasLeft?'Vaga Aberta':(supAtual||'—')}</div>
           </div>
           ${supChanged?`<div class="change-arrow">→</div>`:''}
           <div class="cons-col">
@@ -1060,16 +754,18 @@ function buildCard(row, idx) {
       ${entName}
       ${sigla && sigla !== entName ? `<div class="ent-card-sigla">${sigla}</div>` : ''}
     </div>
+    ${hasLeft ? `<div class="exit-banner"><span style="font-size:14px">🚨</span> Entidade solicitou saída. Vaga aberta para o segmento.</div>` : ''}
     ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato — avaliação plenária necessária</div>` : ''}
-    ${!hasSub ? `<div class="no-sub-banner">⚠ Entidade não submeteu formulário de inscrição</div>` : ''}
+    ${!hasSub && !hasLeft ? `<div class="no-sub-banner">⚠ Entidade não submeteu formulário de inscrição</div>` : ''}
+    ${row['Observação'] ? `<div class="obs-banner"><span style="font-size:14px;margin-top:-2px">ℹ️</span> <div><strong>Observação:</strong> ${row['Observação']}</div></div>` : ''}
     <div class="conselheiros">${consHTML}</div>
     <div class="ent-card-footer">
       <div class="footer-item">
-        ${hasAnyChange ? `<span class="badge" style="background:#F0FDfA;color:var(--teal);font-size:10px">🔄 Mudança(s) detectada(s)</span>` : (hasSub ? `<span class="badge badge-ok" style="font-size:10px">✓ Confirma representantes</span>` : '')}
+        ${hasAnyChange ? `<span class="badge" style="background:#F0FDfA;color:var(--teal);font-size:10px">🔄 Mudança detectada</span>` : (hasSub ? `<span class="badge badge-ok" style="font-size:10px">✓ Confirma representantes</span>` : '')}
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <span class="footer-item">Ofício: <strong class="${ofOk?'oficio-ok':'oficio-no'}">${ofOk?'✓ Enviado':'✗ Pendente'}</strong></span>
-        ${ofURL ? `<a href="${ofURL}" target="_blank" class="oficio-link">Ver 📎</a>` : ''}
+        ${ofURL ? `<a href="${ofURL}" target="_blank" class="oficio-link" onclick="event.stopPropagation()">Ver 📎</a>` : ''}
       </div>
     </div>
   </div>`;
@@ -1094,11 +790,26 @@ function openModal(idx) {
   const titMatch = namesMatch(titAtual, titNovo);
   const supMatch = namesMatch(supAtual, supNovo);
 
+  const titNA = isNotApplicable(titAtual) || isNotApplicable(row['NOME_TITULAR']);
+  const supNA = isNotApplicable(supAtual) || isNotApplicable(row['NOME_SUPLENTE']);
+  const hasLeft = isVagaAberta(row);
+
   document.getElementById('modal-eyebrow').textContent = `${segLabel} · ${row['ID_TITULAR']||row['ID_SUPLENTE']||''}`;
   document.getElementById('modal-title').textContent = row['ENTIDADE'] || '';
 
-  const buildCompare = (func, atualName, novoName, atualInfo, novoInfo, match, label) => {
-    if (!atualName && !novoName) return '';
+  const buildCompare = (func, isNA, atualName, novoName, atualInfo, novoInfo, match, label) => {
+    if (isNA) {
+      return `
+        <div class="modal-sec">
+          <div class="modal-sec-title" style="color:var(--muted);border-color:var(--muted)">${label} (Vaga Inexistente)</div>
+          <div class="full-compare" style="grid-template-columns:1fr; background:transparent; border:1px dashed #CBD5E1">
+            <div class="fc-col" style="background:#F8FAFC; text-align:center; padding:20px; color:var(--muted)">
+              <em>Esta entidade possui direito a apenas uma cadeira no conselho, não aplicando-se indicação para esta vaga específica.</em>
+            </div>
+          </div>
+        </div>`;
+    }
+    if (!atualName && !novoName && !hasLeft) return '';
     const changed = match === false && novoName;
     const same = match === true;
     return `
@@ -1107,8 +818,8 @@ function openModal(idx) {
         <div class="full-compare">
           <div class="fc-col">
             <div class="fc-col-lbl atual">● Atual</div>
-            <div class="fc-nome">${atualName||'Não informado'}</div>
-            <div class="fc-info">${atualInfo}</div>
+            <div class="fc-nome ${hasLeft?'changed-name':''}">${hasLeft?'Vaga Aberta':(atualName||'Não informado')}</div>
+            <div class="fc-info">${hasLeft?'A entidade anterior solicitou saída':atualInfo}</div>
           </div>
           <div class="fc-col">
             <div class="fc-col-lbl novo">● Nova Indicação</div>
@@ -1117,6 +828,7 @@ function openModal(idx) {
           </div>
           ${changed ? `<div class="fc-change-badge">🔄 Mudança de representante detectada</div>` :
             same ? `<div class="fc-same-badge">✓ Mesma pessoa confirmada no processo</div>` :
+            hasLeft ? `<div class="fc-nosub-badge" style="background:#FEF2F2; color:var(--red)">🚨 Vaga aguardando nova indicação pelo segmento</div>` :
             !hasSub ? `<div class="fc-nosub-badge">⚠ Sem inscrição submetida — representante sem confirmação</div>` : ''}
         </div>
       </div>`;
@@ -1128,8 +840,10 @@ function openModal(idx) {
   const supNovoInfo  = [row['Suplente Email']||'', row['Suplente Telefone']||''].filter(Boolean).join(' · ');
 
   document.getElementById('modal-body').innerHTML = `
+    ${hasLeft ? `<div class="alert err"><span class="alert-ico">🚨</span><div class="alert-txt"><strong>Entidade solicitou saída do conselho.</strong> Esta cadeira encontra-se atualmente vaga, aguardando que o respectivo segmento indique nova instituição ou realize eleição.</div></div>` : ''}
+    ${row['Observação'] ? `<div class="alert info"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>Observação Administrativa:</strong> ${row['Observação']}</div></div>` : ''}
     ${isM2 ? `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>Conselheiro(s) em 2º mandato</strong> — situação requer deliberação em plenária antes da homologação.</div></div>` : ''}
-    ${!hasSub ? `<div class="alert warn"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>Sem inscrição submetida.</strong> Esta entidade não enviou formulário de renovação. Recomenda-se contato formal para verificar intenção de continuidade.</div></div>` : ''}
+    ${!hasSub && !hasLeft ? `<div class="alert warn"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>Sem inscrição submetida.</strong> Esta entidade não enviou formulário de renovação. Recomenda-se contato formal para verificar intenção de continuidade.</div></div>` : ''}
 
     <div class="modal-sec">
       <div class="modal-sec-title">Dados Institucionais</div>
@@ -1138,8 +852,6 @@ function openModal(idx) {
         <div class="mg-item"><div class="mg-lbl">CNPJ</div><div class="mg-val">${row['CNPJ']||'—'}</div></div>
         <div class="mg-item"><div class="mg-lbl">Área de atuação</div><div class="mg-val">${row['Área atuação']||'—'}</div></div>
         <div class="mg-item"><div class="mg-lbl">Segmento</div><div class="mg-val">${row['SEGMENTO']||'—'}</div></div>
-        <div class="mg-item"><div class="mg-lbl">Diretor(a)</div><div class="mg-val">${row['Diretor']||'—'}</div></div>
-        <div class="mg-item"><div class="mg-lbl">Cargo</div><div class="mg-val">${row['Cargo']||'—'}</div></div>
         <div class="mg-item"><div class="mg-lbl">Telefone</div><div class="mg-val">${row['Telefone']||'—'}</div></div>
         <div class="mg-item"><div class="mg-lbl">E-mail</div><div class="mg-val" style="word-break:break-all;font-size:12px">${row['Email']||'—'}</div></div>
         <div class="mg-item"><div class="mg-lbl">Endereço</div><div class="mg-val">${row['Endereço']||'—'}</div></div>
@@ -1147,8 +859,8 @@ function openModal(idx) {
       </div>
     </div>
 
-    ${buildCompare('tit', titAtual, titNovo, titAtualInfo, titNovoInfo, titMatch, `Titular — ${row['ID_TITULAR']||''}`)}
-    ${buildCompare('sup', supAtual, supNovo, supAtualInfo, supNovoInfo, supMatch, `Suplente — ${row['ID_SUPLENTE']||''}`)}
+    ${buildCompare('tit', titNA, titAtual, titNovo, titAtualInfo, titNovoInfo, titMatch, `Titular — ${row['ID_TITULAR']||''}`)}
+    ${buildCompare('sup', supNA, supAtual, supNovo, supAtualInfo, supNovoInfo, supMatch, `Suplente — ${row['ID_SUPLENTE']||''}`)}
 
     <div class="modal-sec">
       <div class="modal-sec-title">Documentação</div>
@@ -1189,14 +901,13 @@ function applyFilters() {
   const sort = document.getElementById('sort-sel').value;
 
   let rows = [...ALL_ROWS];
-
-  // filter
   rows = rows.filter((row, i) => {
     const hasSub = hasSubmission(row);
     const seg = getSegDisplay(row);
     const isCls = isCLS(row);
-    const hasChange = namesMatch(nameNorm(row['NOME_TITULAR']), nameNorm(row['Titular Nome'])) === false ||
-                      namesMatch(nameNorm(row['NOME_SUPLENTE']), nameNorm(row['Suplente Nome'])) === false;
+    const tC = namesMatch(nameNorm(row['NOME_TITULAR']), nameNorm(row['Titular Nome'])) === false && !isNotApplicable(row['NOME_TITULAR']);
+    const sC = namesMatch(nameNorm(row['NOME_SUPLENTE']), nameNorm(row['Suplente Nome'])) === false && !isNotApplicable(row['NOME_SUPLENTE']);
+    const hasChange = tC || sC;
 
     if (currentFilter === 'USUARIO' && (seg !== 'USUARIO' || isCls)) return false;
     if (currentFilter === 'TRABALHADOR' && seg !== 'TRABALHADOR') return false;
@@ -1212,7 +923,6 @@ function applyFilters() {
     return true;
   });
 
-  // sort
   rows.sort((a, b) => {
     if (sort === 'nome') return (a['ENTIDADE']||'').localeCompare(b['ENTIDADE']||'');
     if (sort === 'status') {
@@ -1220,21 +930,18 @@ function applyFilters() {
       const sb = hasSubmission(b) ? 0 : 1;
       return sa - sb;
     }
-    // by segment
     const order = {'GESTOR/PRESTADOR':0,'TRABALHADOR':1,'USUARIO':2,'CLS':3};
     const sa = order[getSegDisplay(a)] ?? 4;
     const sb = order[getSegDisplay(b)] ?? 4;
     return sa - sb || (a['ENTIDADE']||'').localeCompare(b['ENTIDADE']||'');
   });
 
-  // Find original indices
   document.getElementById('ent-grid').innerHTML = rows.length
     ? rows.map(row => buildCard(row, ALL_ROWS.indexOf(row))).join('')
     : `<div class="empty-state"><h3>Nenhuma entidade encontrada</h3><p>Tente ajustar os filtros.</p></div>`;
 
   document.getElementById('ent-count').textContent = `${rows.length} entidade${rows.length!==1?'s':''} exibida${rows.length!==1?'s':''}`;
 
-  // Table mode
   renderMainTable(rows);
 }
 
@@ -1243,26 +950,34 @@ function applyFilters() {
    ============================================================ */
 let tblSortCol=0, tblSortDir=1;
 function renderMainTable(rows) {
-  const segColors = {'GESTOR/PRESTADOR':'#F3E8FF','TRABALHADOR':'#DCFCE7','USUARIO':'#DBEAFE','CLS':'#FFEDD5'};
-  const segTextColors = {'GESTOR/PRESTADOR':0,'TRABALHADOR':0,'USUARIO':0,'CLS':0};
   document.getElementById('main-tbl-body').innerHTML = rows.map(row => {
     const hasSub = hasSubmission(row);
     const seg = getSegDisplay(row);
     const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
     const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
-    const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
-    const ofOk = hasOficio(row);
+    const titNA = isNotApplicable(tA);
+    const supNA = isNotApplicable(sA);
+    const hasLeft = isVagaAberta(row);
+
+    const tC = !titNA && namesMatch(tA,tN)===false;
+    const sC = !supNA && namesMatch(sA,sN)===false;
     const isM2 = rowM2(row);
     const segBg = seg.includes('GESTOR')||seg.includes('PRESTADOR') ? '#F3E8FF' : seg==='TRABALHADOR'?'#DCFCE7':seg==='USUARIO'?'#DBEAFE':'#FFEDD5';
     const segTx = seg.includes('GESTOR')||seg.includes('PRESTADOR') ? '#6B21A8' : seg==='TRABALHADOR'?'#14532D':seg==='USUARIO'?'#1E3A5F':'#7C2D12';
+    
+    const outTa = titNA ? '<span style="color:#CBD5E1;font-size:10px;font-weight:600">N/A (Apenas 1 Vaga)</span>' : (hasLeft?'<span style="color:var(--red);font-style:italic">Vaga Aberta</span>':(tA||'—'));
+    const outTn = titNA ? '<span style="color:#CBD5E1;font-size:10px;font-weight:600">-</span>' : (hasSub?(tN||(tC?'—':'igual')):'-');
+    const outSa = supNA ? '<span style="color:#CBD5E1;font-size:10px;font-weight:600">N/A (Apenas 1 Vaga)</span>' : (hasLeft?'<span style="color:var(--red);font-style:italic">Vaga Aberta</span>':(sA||'—'));
+    const outSn = supNA ? '<span style="color:#CBD5E1;font-size:10px;font-weight:600">-</span>' : (hasSub?(sN||(sC?'—':'igual')):'-');
+
     return `<tr class="${!hasSub?'no-sub-row':''}">
       <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
       <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${segBg};color:${segTx}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
       <td style="font-size:11px;color:var(--muted);font-weight:700">${row['CADEIRA']||'—'}</td>
-      <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
-      <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN||(tC?'—':'igual')):'-'}</td>
-      <td style="font-size:12px">${sA||'—'}</td>
-      <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN||(sC?'—':'igual')):'-'}</td>
+      <td style="font-size:12px">${outTa}${isM2&&!titNA&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
+      <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${outTn}</td>
+      <td style="font-size:12px">${outSa}</td>
+      <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${outSn}</td>
       <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'Inscrita':'Sem ins.'}</span></td>
     </tr>`;
   }).join('');
@@ -1283,7 +998,7 @@ function buildCharts(rows) {
   chartsBuilt = true;
 
   const withSub = rows.filter(r => hasSubmission(r)).length;
-  const noSub = rows.filter(r => !hasSubmission(r)).length;
+  const noSub = rows.filter(r => !hasSubmission(r) && !isVagaAberta(r)).length;
   new Chart(document.getElementById('ch-status'), {
     type: 'doughnut',
     data: { labels: ['Com inscrição','Sem inscrição'], datasets: [{ data: [withSub, noSub], backgroundColor: [C.teal, C.orange], borderWidth: 0, hoverOffset: 8 }] },
@@ -1308,14 +1023,17 @@ function buildCharts(rows) {
 
   let titMant=0, titMud=0, supMant=0, supMud=0;
   rows.forEach(r => {
-    const hasSub = hasSubmission(r);
-    if (!hasSub) return;
+    if (!hasSubmission(r)) return;
     const tA = nameNorm(r['NOME_TITULAR']), tN = nameNorm(r['Titular Nome']);
     const sA = nameNorm(r['NOME_SUPLENTE']), sN = nameNorm(r['Suplente Nome']);
-    const tm = namesMatch(tA, tN);
-    const sm = namesMatch(sA, sN);
-    if (tm === true) titMant++; else if (tm === false) titMud++;
-    if (sm === true) supMant++; else if (sm === false) supMud++;
+    if (!isNotApplicable(tA)) {
+      const tm = namesMatch(tA, tN);
+      if (tm === true) titMant++; else if (tm === false) titMud++;
+    }
+    if (!isNotApplicable(sA)) {
+      const sm = namesMatch(sA, sN);
+      if (sm === true) supMant++; else if (sm === false) supMud++;
+    }
   });
   new Chart(document.getElementById('ch-changes'), {
     type: 'bar',
@@ -1326,7 +1044,6 @@ function buildCharts(rows) {
     options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#E2E8F0' }, ticks: { font: { size: 11 }, stepSize: 1 } }, y: { grid: { display: false }, ticks: { font: { size: 11 } } } }, responsive: true, maintainAspectRatio: false }
   });
 
-  // Progress
   const ofOk = rows.filter(r => hasOficio(r) && hasSubmission(r)).length;
   const subCount = rows.filter(r => hasSubmission(r)).length;
   const withEmail = rows.filter(r => r['Titular Email'] || r['Email']).length;
@@ -1348,33 +1065,28 @@ function buildCharts(rows) {
    ============================================================ */
 function buildSummary(rows) {
   const sub = rows.filter(r => hasSubmission(r)).length;
-  const noSub = rows.filter(r => !hasSubmission(r)).length;
+  const noSub = rows.filter(r => !hasSubmission(r) && !isVagaAberta(r)).length;
   
-  // Utilizando um SET para garantir que a mesma pessoa NÃO seja contada duas vezes.
-  const cadeirasM2 = new Set();
-  
+  /* Contagem M2 EXATA pelas colunas de ID (evita problemas de nomes iguais) */
+  let m2Total = 0;
   rows.forEach(r => {
-    const ent = r['ENTIDADE'] || '';
-    for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-      if (ent.toUpperCase().includes(key.toUpperCase())) {
-        ids.forEach(id => {
-          if (M2_IDS.has(id)) cadeirasM2.add(id);
-        });
-        break; 
-      }
-    }
+    if (M2_IDS.has(r['ID_TITULAR'])) m2Total++;
+    if (M2_IDS.has(r['ID_SUPLENTE'])) m2Total++;
   });
-  
-  const m2Count = cadeirasM2.size; // Isso crava o número exato, sem repetição!
 
-  const changed = rows.filter(r => namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false || namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false).length;
+  const changed = rows.filter(r => {
+    if (!hasSubmission(r)) return false;
+    const tC = !isNotApplicable(r['NOME_TITULAR']) && namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false;
+    const sC = !isNotApplicable(r['NOME_SUPLENTE']) && namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false;
+    return tC || sC;
+  }).length;
   const ofOk = rows.filter(r => hasOficio(r)).length;
-  
+    
   document.getElementById('sum-cards').innerHTML = `
     <div class="sum-card c-navy"><span class="sum-num">${rows.length}</span><span class="sum-lbl">Vagas no processo</span><span class="sum-sub">Linhas na planilha consolidada</span></div>
     <div class="sum-card c-teal"><span class="sum-num">${sub}</span><span class="sum-lbl">Com inscrição</span><span class="sum-sub">Formulário submetido</span></div>
     <div class="sum-card c-orange"><span class="sum-num">${noSub}</span><span class="sum-lbl">Sem inscrição</span><span class="sum-sub">Não submeteram no prazo</span></div>
-    <div class="sum-card c-red"><span class="sum-num">${m2Count}</span><span class="sum-lbl">Vagas c/ mandato 2</span><span class="sum-sub">Avaliação plenária necessária</span></div>
+    <div class="sum-card c-red"><span class="sum-num">${m2Total}</span><span class="sum-lbl">Conselheiros M2</span><span class="sum-sub">Avaliação plenária necessária</span></div>
     <div class="sum-card c-blue"><span class="sum-num">${changed}</span><span class="sum-lbl">Com mudança</span><span class="sum-sub">Conselheiro substituído</span></div>
     <div class="sum-card c-green"><span class="sum-num">${ofOk}</span><span class="sum-lbl">Ofícios enviados</span><span class="sum-sub">Documentação recebida</span></div>
   `;
@@ -1383,7 +1095,7 @@ function buildSummary(rows) {
     <div class="hstat"><b>${rows.length}</b><s>vagas</s></div>
     <div class="hstat"><b>${sub}</b><s>inscritas</s></div>
     <div class="hstat"><b>${changed}</b><s>mudanças</s></div>
-    <div class="hstat"><b>${m2Count}</b><s>mandato 2</s></div>
+    <div class="hstat"><b>${m2Total}</b><s>mandato 2</s></div>
   `;
 }
 
@@ -1391,16 +1103,64 @@ function buildSummary(rows) {
    CRITICAL SECTION
    ============================================================ */
 function buildCriticos(rows) {
-  const noSub = rows.filter(r => !hasSubmission(r));
-  const m2 = rows.filter(r => rowM2(r));
+  const noSub = rows.filter(r => !hasSubmission(r) && !isVagaAberta(r));
+  const exited = rows.filter(r => isVagaAberta(r));
+
+  let m2Total = 0;
+  /* Agora os Críticos filtram EXATAMENTE se a linha possui aquele ID */
+  const m2Rows = rows.filter(r => {
+    let isM2 = false;
+    if (M2_IDS.has(r['ID_TITULAR'])) { isM2 = true; m2Total++; }
+    if (M2_IDS.has(r['ID_SUPLENTE'])) { isM2 = true; m2Total++; }
+    return isM2;
+  });
 
   let html = '';
 
+  /* Vaga Aberta / Codevasf */
+  if (exited.length) {
+    html += `<div class="alert err"><span class="alert-ico">🚨</span><div class="alert-txt"><strong>${exited.length} entidade(s) solicitaram saída do conselho.</strong> A cadeira e o segmento necessitam de nova indicação ou eleição para preenchimento da vaga aberta.</div></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
+    exited.forEach(row => {
+      html += `
+      <div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
+        <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">${row['ENTIDADE']}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${row['CADEIRA']||''}</div>
+        <div style="margin-top:10px;font-size:12px;background:#FEF2F2;border-radius:6px;padding:8px 10px;color:var(--red);font-weight:600">⚠ VAGA ABERTA PARA O SEGMENTO</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  /* M2 */
+  if (m2Rows.length) {
+    html += `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>${m2Total} conselheiros em 2º mandato (máximo regimental).</strong> Precisam de deliberação em plenária. A entidade pode indicar novo representante ou requerer análise de excepcionalidade.</div></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
+    m2Rows.forEach(row => {
+      const arr = [];
+      if (M2_IDS.has(row['ID_TITULAR'])) arr.push(row['ID_TITULAR']);
+      if (M2_IDS.has(row['ID_SUPLENTE'])) arr.push(row['ID_SUPLENTE']);
+      const m2idsStr = arr.join(', ');
+      
+      html += `
+      <div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
+        <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">${row['ENTIDADE']}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${m2idsStr ? 'Cadeiras M2: ' + m2idsStr : ''}</div>
+        <div style="font-size:12px;background:#FEF2F2;border-radius:6px;padding:8px 10px;color:var(--red);font-weight:600">
+          Titular: ${nameNorm(row['NOME_TITULAR'])||'—'}<br>Suplente: ${nameNorm(row['NOME_SUPLENTE'])||'—'}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  /* Sem Inscrição */
   if (noSub.length) {
     html += `<div class="alert warn"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>${noSub.length} vaga${noSub.length>1?'s':''} sem inscrição submetida.</strong> As entidades abaixo não enviaram formulário. Recomenda-se contato formal imediato.</div></div>`;
     html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
     noSub.forEach(row => {
-      html += `<div style="background:var(--white);border:1px solid #FDE68A;border-radius:var(--r);padding:18px;border-left:4px solid var(--orange);box-shadow:var(--card-sh)">
+      html += `
+      <div style="background:var(--white);border:1px solid #FDE68A;border-radius:var(--r);padding:18px;border-left:4px solid var(--orange);box-shadow:var(--card-sh)">
         <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">${row['ENTIDADE']}</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${isCLS(row)?'Conselho Local':getSegLabel(row['SEGMENTO']||'')} · ${row['CADEIRA']||''}</div>
         <div style="font-size:12px;display:flex;gap:8px;flex-wrap:wrap">
@@ -1414,35 +1174,6 @@ function buildCriticos(rows) {
     html += `</div>`;
   }
 
-  if (m2.length) {
-    html += `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>${m2.length} vaga${m2.length>1?'s com conselheiros':' com conselheiro'} em 2º mandato (máximo regimental).</strong> Precisam de deliberação em plenária. A entidade pode indicar novo representante ou requerer análise de excepcionalidade.</div></div>`;
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
-    m2.forEach(row => {
-      const ids = ROW_SEAT_IDS[Object.keys(ROW_SEAT_IDS).find(k => (row['ENTIDADE']||'').toUpperCase().includes(k.toUpperCase()))||''] || [];
-      const m2ids = ids.filter(id => M2_IDS.has(id)).join(', ');
-      html += `<div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
-        <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">${row['ENTIDADE']}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${m2ids?'Cadeiras M2: '+m2ids:''}</div>
-        <div style="font-size:12px;background:#FEF2F2;border-radius:6px;padding:8px 10px;color:var(--red);font-weight:600">
-          Titular: ${nameNorm(row['NOME_TITULAR'])||'—'}<br>Suplente: ${nameNorm(row['NOME_SUPLENTE'])||'—'}
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // APAE sem titular
-  const apae = rows.filter(r => (r['ENTIDADE']||'').includes('APAE') || (r['ENTIDADE']||'').includes('PAIS E AMIGOS'));
-  if (apae.length) {
-    html += `<div class="alert info"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>APAE — Titular não informado no formulário.</strong> O campo de titular estava em branco na inscrição. Necessário solicitar complementação.</div></div>`;
-  }
-
-  // HUCF sem dados
-  const hucf = rows.filter(r => (r['ENTIDADE']||'').includes('HUCF') || (r['ENTIDADE']||'').includes('CLEMENTE'));
-  if (hucf.length) {
-    html += `<div class="alert info"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>HUCF — Hospital Universitário Clemente de Faria:</strong> Submeteu formulário mas sem indicação de novos representantes. Titular e suplente atuais seguem sem confirmação explícita.</div></div>`;
-  }
-
   document.getElementById('criticos-content').innerHTML = html || `<div class="alert ok"><span class="alert-ico">✅</span><div class="alert-txt">Nenhuma situação crítica identificada.</div></div>`;
 }
 
@@ -1452,9 +1183,9 @@ function buildCriticos(rows) {
 function buildMudancas(rows) {
   const changed = rows.filter(r => {
     if (!hasSubmission(r)) return false;
-    const tA = nameNorm(r['NOME_TITULAR']), tN = nameNorm(r['Titular Nome']);
-    const sA = nameNorm(r['NOME_SUPLENTE']), sN = nameNorm(r['Suplente Nome']);
-    return namesMatch(tA,tN)===false || namesMatch(sA,sN)===false;
+    const tC = !isNotApplicable(r['NOME_TITULAR']) && namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false;
+    const sC = !isNotApplicable(r['NOME_SUPLENTE']) && namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false;
+    return tC || sC;
   });
 
   if (!changed.length) {
@@ -1468,25 +1199,30 @@ function buildMudancas(rows) {
     ${changed.map(row => {
       const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
       const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
-      const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
+      const tC = !isNotApplicable(row['NOME_TITULAR']) && namesMatch(tA,tN)===false;
+      const sC = !isNotApplicable(row['NOME_SUPLENTE']) && namesMatch(sA,sN)===false;
       const segLabel = isCLS(row)?'CLS':getSegLabel(row['SEGMENTO']||'');
       const segBg = getSegDisplay(row).includes('GESTOR')||getSegDisplay(row).includes('PRESTADOR') ? '#F3E8FF' : getSegDisplay(row)==='TRABALHADOR'?'#DCFCE7':getSegDisplay(row)==='USUARIO'?'#DBEAFE':'#FFEDD5';
       const segTx = getSegDisplay(row).includes('GESTOR')||getSegDisplay(row).includes('PRESTADOR') ? '#6B21A8' : getSegDisplay(row)==='TRABALHADOR'?'#14532D':getSegDisplay(row)==='USUARIO'?'#1E3A5F':'#7C2D12';
-      return `<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--card-sh)">
+      
+      return `
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--card-sh)">
         <div style="padding:14px 20px;background:var(--off);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
             <div style="font-family:var(--FD);font-size:14px;font-weight:700;color:var(--navy)">${row['ENTIDADE']}</div>
             <div style="font-size:11px;color:var(--muted);margin-top:3px">${row['CADEIRA']||''}</div>
           </div>
-          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:${segBg};color:${segTx}">${segLabel}</span>
+          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:${segBg};color:${segTx}"><span style="text-transform:uppercase;">${segLabel}</span></span>
         </div>
         <div style="padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          ${tC ? `<div style="grid-column:1/-1;background:#F0FDF4;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+          ${tC ? `
+          <div style="grid-column:1/-1;background:#F0FDF4;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
             <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">Titular — antes</div><div style="font-size:13px;font-weight:600;color:var(--ink)">${tA||'—'}</div></div>
             <div style="font-size:20px;color:var(--teal)">→</div>
             <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:3px">Titular — novo indicado</div><div style="font-size:13px;font-weight:700;color:var(--teal)">${tN||'—'}</div>${row['Titular Email']?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${row['Titular Email']}</div>`:''}</div>
           </div>` : ''}
-          ${sC ? `<div style="grid-column:1/-1;background:#EFF6FF;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+          ${sC ? `
+          <div style="grid-column:1/-1;background:#EFF6FF;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
             <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">Suplente — antes</div><div style="font-size:13px;font-weight:600;color:var(--ink)">${sA||'—'}</div></div>
             <div style="font-size:20px;color:var(--blue)">→</div>
             <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);margin-bottom:3px">Suplente — novo indicado</div><div style="font-size:13px;font-weight:700;color:var(--blue)">${sN||'—'}</div>${row['Suplente Email']?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${row['Suplente Email']}</div>`:''}</div>
@@ -1518,18 +1254,29 @@ function buildFullTable(rows) {
           const seg = getSegDisplay(row);
           const tA = nameNorm(row['NOME_TITULAR']), tN = nameNorm(row['Titular Nome']);
           const sA = nameNorm(row['NOME_SUPLENTE']), sN = nameNorm(row['Suplente Nome']);
-          const tC = namesMatch(tA,tN)===false, sC = namesMatch(sA,sN)===false;
+          const titNA = isNotApplicable(tA);
+          const supNA = isNotApplicable(sA);
+          const hasLeft = isVagaAberta(row);
+          const tC = !titNA && namesMatch(tA,tN)===false;
+          const sC = !supNA && namesMatch(sA,sN)===false;
           const isM2 = rowM2(row);
           const ofOk = hasOficio(row);
           const ofURL = getOficioURL(row);
-          return `<tr class="${!hasSub?'no-sub-row':''}">
+          
+          const outTa = titNA ? '<span style="color:#CBD5E1">- N/A -</span>' : (hasLeft?'<span style="color:var(--red)">Vaga Aberta</span>':(tA||'—'));
+          const outTn = titNA ? '<span style="color:#CBD5E1">-</span>' : (hasSub?(tN?tN:(tC?'—':'=')):'—');
+          const outSa = supNA ? '<span style="color:#CBD5E1">- N/A -</span>' : (hasLeft?'<span style="color:var(--red)">Vaga Aberta</span>':(sA||'—'));
+          const outSn = supNA ? '<span style="color:#CBD5E1">-</span>' : (hasSub?(sN?sN:(sC?'—':'=')):'—');
+          
+          return `
+          <tr class="${!hasSub?'no-sub-row':''}">
             <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
-            <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${segBg(seg)};color:${segTx(seg)}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${segBg(seg)};color:${segTx(seg)}"><span style="text-transform:uppercase;">${getSegLabel(row['SEGMENTO']||'')}</span></span></td>
             <td style="font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap">${row['CADEIRA']||'—'}</td>
-            <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:700">M2</span>`:''}</td>
-            <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN?tN:(tC?'—':'=')):'—'}</td>
-            <td style="font-size:12px">${sA||'—'}</td>
-            <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN?sN:(sC?'—':'=')):'—'}</td>
+            <td style="font-size:12px">${outTa}${isM2&&!titNA&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:700">M2</span>`:''}</td>
+            <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${outTn}</td>
+            <td style="font-size:12px">${outSa}</td>
+            <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${outSn}</td>
             <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'✓ Sim':'✗ Não'}</span></td>
             <td>${ofOk?`<span style="font-size:9px;font-weight:700;color:var(--green)">✓ Sim</span>${ofURL?` <a href="${ofURL}" target="_blank" style="font-size:9px;color:var(--blue);font-weight:700">ver</a>`:''}`:`<span style="font-size:9px;color:var(--orange);font-weight:700">✗ Pend.</span>`}</td>
           </tr>`;
