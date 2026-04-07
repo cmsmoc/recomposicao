@@ -11,9 +11,6 @@
 <style>
 /* ══════════════════════════════════════════
    DESIGN SYSTEM — CMS-MOC 2026
-   Aesthetic: "Institutional Urgency"
-   Syne display + DM Sans body
-   Navy/Blue/Teal with sharp yellow accent
    ══════════════════════════════════════════ */
 :root {
   --navy:    #0B2545;
@@ -590,7 +587,6 @@ body.table-mode #tbl-view { display: block; }
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading">
   <div class="load-logo">CMS-MOC · Montes Claros</div>
   <div class="load-title">Recomposição <em>2026</em></div>
@@ -598,7 +594,6 @@ body.table-mode #tbl-view { display: block; }
   <div class="load-status" id="load-status">Conectando à planilha...</div>
 </div>
 
-<!-- HEADER -->
 <header id="header">
   <div class="hdr-inner">
     <div>
@@ -615,7 +610,6 @@ body.table-mode #tbl-view { display: block; }
   </div>
 </header>
 
-<!-- NAV -->
 <nav id="nav">
   <div class="nav-inner">
     <button class="nb on" onclick="goSec('sec-dash',this)">📊 Painel</button>
@@ -626,7 +620,6 @@ body.table-mode #tbl-view { display: block; }
   </div>
 </nav>
 
-<!-- SEC: DASHBOARD -->
 <section id="sec-dash" class="sec">
 <div class="wrap">
   <div class="sec-eyebrow">Painel Executivo</div>
@@ -667,7 +660,6 @@ body.table-mode #tbl-view { display: block; }
 </div>
 </section>
 
-<!-- SEC: ENTITY CARDS -->
 <section id="sec-cards" class="sec sec-alt">
 <div class="wrap">
   <div class="sec-eyebrow">Entidades</div>
@@ -732,7 +724,6 @@ body.table-mode #tbl-view { display: block; }
 </div>
 </section>
 
-<!-- SEC: CRÍTICOS -->
 <section id="sec-criticos" class="sec">
 <div class="wrap">
   <div class="sec-eyebrow">Casos Críticos</div>
@@ -742,7 +733,6 @@ body.table-mode #tbl-view { display: block; }
 </div>
 </section>
 
-<!-- SEC: MUDANÇAS -->
 <section id="sec-mudancas" class="sec sec-alt">
 <div class="wrap">
   <div class="sec-eyebrow">Mudanças de Representação</div>
@@ -752,7 +742,6 @@ body.table-mode #tbl-view { display: block; }
 </div>
 </section>
 
-<!-- SEC: TABELA COMPLETA -->
 <section id="sec-tabela" class="sec">
 <div class="wrap">
   <div class="sec-eyebrow">Tabela Completa</div>
@@ -762,7 +751,6 @@ body.table-mode #tbl-view { display: block; }
 </div>
 </section>
 
-<!-- MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal">
     <div class="modal-hd" id="modal-hd">
@@ -874,7 +862,7 @@ function getOficioURL(row) {
 function rowM2(row) {
   const ent = row['ENTIDADE'] || '';
   for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,30))) {
+    if (ent.toUpperCase().includes(key.toUpperCase())) {
       return ids.some(id => M2_IDS.has(id));
     }
   }
@@ -1046,7 +1034,7 @@ function buildCard(row, idx) {
       ${entName}
       ${sigla && sigla !== entName ? `<div class="ent-card-sigla">${sigla}</div>` : ''}
     </div>
-    ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato</div>` : ''}
+    ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato — avaliação plenária necessária</div>` : ''}
     ${!hasSub ? `<div class="no-sub-banner">⚠ Entidade não submeteu formulário de inscrição</div>` : ''}
     <div class="conselheiros">${consHTML}</div>
     <div class="ent-card-footer">
@@ -1335,18 +1323,24 @@ function buildCharts(rows) {
 function buildSummary(rows) {
   const sub = rows.filter(r => hasSubmission(r)).length;
   const noSub = rows.filter(r => !hasSubmission(r)).length;
-  let m2Count = 0;
-rows.forEach(r => {
-  const ent = r['ENTIDADE'] || '';
-  for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-    // Se encontrar a entidade mapeada
-    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,40))) {
-      // Soma quantos IDs dessa entidade específica estão na lista de M2
-      m2Count += ids.filter(id => M2_IDS.has(id)).length;
-      break; // Interrompe o loop para não contar a mesma entidade duas vezes
+  
+  // Utilizando um SET para garantir que a mesma pessoa NÃO seja contada duas vezes.
+  const cadeirasM2 = new Set();
+  
+  rows.forEach(r => {
+    const ent = r['ENTIDADE'] || '';
+    for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
+      if (ent.toUpperCase().includes(key.toUpperCase())) {
+        ids.forEach(id => {
+          if (M2_IDS.has(id)) cadeirasM2.add(id);
+        });
+        break; 
+      }
     }
-  }
-});
+  });
+  
+  const m2Count = cadeirasM2.size; // Isso crava o número exato, sem repetição!
+
   const changed = rows.filter(r => namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false || namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false).length;
   const ofOk = rows.filter(r => hasOficio(r)).length;
   
@@ -1398,7 +1392,7 @@ function buildCriticos(rows) {
     html += `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>${m2.length} vaga${m2.length>1?'s com conselheiros':' com conselheiro'} em 2º mandato (máximo regimental).</strong> Precisam de deliberação em plenária. A entidade pode indicar novo representante ou requerer análise de excepcionalidade.</div></div>`;
     html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
     m2.forEach(row => {
-      const ids = ROW_SEAT_IDS[Object.keys(ROW_SEAT_IDS).find(k => (row['ENTIDADE']||'').toUpperCase().includes(k.toUpperCase().substring(0,30)))||''] || [];
+      const ids = ROW_SEAT_IDS[Object.keys(ROW_SEAT_IDS).find(k => (row['ENTIDADE']||'').toUpperCase().includes(k.toUpperCase()))||''] || [];
       const m2ids = ids.filter(id => M2_IDS.has(id)).join(', ');
       html += `<div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
         <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">${row['ENTIDADE']}</div>
