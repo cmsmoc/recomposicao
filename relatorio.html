@@ -11,6 +11,9 @@
 <style>
 /* ══════════════════════════════════════════
    DESIGN SYSTEM — CMS-MOC 2026
+   Aesthetic: "Institutional Urgency"
+   Syne display + DM Sans body
+   Navy/Blue/Teal with sharp yellow accent
    ══════════════════════════════════════════ */
 :root {
   --navy:    #0B2545;
@@ -778,23 +781,21 @@ body.table-mode #tbl-view { display: block; }
    ============================================================ */
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLxTO2gZdYLs5LMfONE-5M-dQ2xnPKGkiA1j35aR8B2aYPeKnYRBjGt49N5fJOMBVouzr-_AsQXQrZ/pub?gid=467330833&single=true&output=csv';
 
-/* ── mandato 2 from composicao atual (external knowledge) ── */
-const M2_IDS = new Set([
-  'ID-P3-S','ID-P2-S','G2-T','G2-S','TR6B-T','U9-S','U6-T','U4-S','U10-T','U10-S','U1-T','U1-S'
-]);
-
-/* ── seat IDs per entity row (to check M2) ── */
-const ROW_SEAT_IDS = {
-  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 1': ['U1-T','U1-S'],
-  'ARQUIDIOCESE DE MONTES CLAROS (ARQUIMOC) - VAGA 2': ['U9-T','U9-S'],
-  'ASSOCIAÇÃO PRESENTE DE APOIO A PACIENTES COM CÂNCER': ['U6-T','U6-S'],
-  'ASSOCIAÇÃO DOS DEFICIENTES DE MONTES CLAROS (ADEMOC)': ['U4-T','U4-S'],
-  'FUNDAÇÃO SARA ALBUQUERQUE COSTA (FUNDAÇÃO SARA)': ['U10-T','U10-S'],
-  'SUPERINTENDÊNCIA REGIONAL DE SAÚDE DE MONTES CLAROS (SR': ['G2-T','G2-S'],
-  'FUNDAÇÃO CLARICE ALBUQUERQUE (VOVÓ CLARICE)': ['ID-P3-S'],
-  'ASSOCIAÇÃO SOCIEDADE EDUCACIONAL MENDONÇA E SILVA (CAPE': ['ID-P2-S'],
-  'SINDICATO ÚNICO DOS SERVIORES DE SAÚDE DO ESTADO DE MIN': ['TR6B-T','TR6A-T'], // both rows
-};
+/* ── mandato 2 from explicit names ── */
+const M2_NAMES = new Set([
+  'PATRICIA ANTUNES DOS SANTOS',
+  'KELLY MENDES FAGUNDES',
+  'RAFAELA DE SOUZA FREITAS',
+  'AGNA SOARES DA SILVA MENEZES',
+  'VALDECI ALVES COSTA',
+  'FELIPE SOARES AMARAL',
+  'SANDRA SIMONE MENDES GONÇALVES CARNIELLE',
+  'JÚNEO DE JESUS SOUZA',
+  'ROSANA SOARES RUAS',
+  'SANDRA VANELLE FONSECA',
+  'ANA MARIA PEREIRA DE SOUZA RODRIGUES',
+  'ROGÉRIO GONÇALVES'
+].map(n => n.toUpperCase().trim()));
 
 /* ============================================================
    CSV PARSER
@@ -860,13 +861,9 @@ function getOficioURL(row) {
 }
 
 function rowM2(row) {
-  const ent = row['ENTIDADE'] || '';
-  for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-    if (ent.toUpperCase().includes(key.toUpperCase())) {
-      return ids.some(id => M2_IDS.has(id));
-    }
-  }
-  return false;
+  const tA = nameNorm(row['NOME_TITULAR']);
+  const sA = nameNorm(row['NOME_SUPLENTE']);
+  return M2_NAMES.has(tA) || M2_NAMES.has(sA);
 }
 
 function segClass(seg) {
@@ -1233,9 +1230,9 @@ function renderMainTable(rows) {
       <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
       <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${segBg};color:${segTx}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
       <td style="font-size:11px;color:var(--muted);font-weight:700">${row['CADEIRA']||'—'}</td>
-      <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
+      <td style="font-size:12px">${tA||'—'}${M2_NAMES.has(tA)?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
       <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN||(tC?'—':'igual')):'-'}</td>
-      <td style="font-size:12px">${sA||'—'}</td>
+      <td style="font-size:12px">${sA||'—'}${M2_NAMES.has(sA)?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
       <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN||(sC?'—':'igual')):'-'}</td>
       <td><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'Inscrita':'Sem ins.'}</span></td>
     </tr>`;
@@ -1324,22 +1321,16 @@ function buildSummary(rows) {
   const sub = rows.filter(r => hasSubmission(r)).length;
   const noSub = rows.filter(r => !hasSubmission(r)).length;
   
-  // Utilizando um SET para garantir que a mesma pessoa NÃO seja contada duas vezes.
+  // Utilizando um SET com o NOME das pessoas garante 0% de duplicação
   const cadeirasM2 = new Set();
-  
   rows.forEach(r => {
-    const ent = r['ENTIDADE'] || '';
-    for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
-      if (ent.toUpperCase().includes(key.toUpperCase())) {
-        ids.forEach(id => {
-          if (M2_IDS.has(id)) cadeirasM2.add(id);
-        });
-        break; 
-      }
-    }
+    const tA = nameNorm(r['NOME_TITULAR']);
+    const sA = nameNorm(r['NOME_SUPLENTE']);
+    if (M2_NAMES.has(tA)) cadeirasM2.add(tA);
+    if (M2_NAMES.has(sA)) cadeirasM2.add(sA);
   });
   
-  const m2Count = cadeirasM2.size; // Isso crava o número exato, sem repetição!
+  const m2Count = cadeirasM2.size;
 
   const changed = rows.filter(r => namesMatch(nameNorm(r['NOME_TITULAR']), nameNorm(r['Titular Nome'])) === false || namesMatch(nameNorm(r['NOME_SUPLENTE']), nameNorm(r['Suplente Nome'])) === false).length;
   const ofOk = rows.filter(r => hasOficio(r)).length;
@@ -1392,13 +1383,18 @@ function buildCriticos(rows) {
     html += `<div class="alert err"><span class="alert-ico">🔴</span><div class="alert-txt"><strong>${m2.length} vaga${m2.length>1?'s com conselheiros':' com conselheiro'} em 2º mandato (máximo regimental).</strong> Precisam de deliberação em plenária. A entidade pode indicar novo representante ou requerer análise de excepcionalidade.</div></div>`;
     html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:28px">`;
     m2.forEach(row => {
-      const ids = ROW_SEAT_IDS[Object.keys(ROW_SEAT_IDS).find(k => (row['ENTIDADE']||'').toUpperCase().includes(k.toUpperCase()))||''] || [];
-      const m2ids = ids.filter(id => M2_IDS.has(id)).join(', ');
+      const tA = nameNorm(row['NOME_TITULAR']);
+      const sA = nameNorm(row['NOME_SUPLENTE']);
+      const nomesM2 = [];
+      if (M2_NAMES.has(tA)) nomesM2.push(tA);
+      if (M2_NAMES.has(sA)) nomesM2.push(sA);
+      const m2Str = nomesM2.join(' e ');
+
       html += `<div style="background:var(--white);border:1px solid #FECACA;border-radius:var(--r);padding:18px;border-left:4px solid var(--red);box-shadow:var(--card-sh)">
         <div style="font-family:var(--FD);font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">${row['ENTIDADE']}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${m2ids?'Cadeiras M2: '+m2ids:''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${getSegLabel(row['SEGMENTO']||'')} · ${m2Str ? 'Pessoa(s) M2: ' + m2Str : ''}</div>
         <div style="font-size:12px;background:#FEF2F2;border-radius:6px;padding:8px 10px;color:var(--red);font-weight:600">
-          Titular: ${nameNorm(row['NOME_TITULAR'])||'—'}<br>Suplente: ${nameNorm(row['NOME_SUPLENTE'])||'—'}
+          Titular: ${tA||'—'}<br>Suplente: ${sA||'—'}
         </div>
       </div>`;
     });
@@ -1500,9 +1496,9 @@ function buildFullTable(rows) {
             <td><div class="tbl-name">${row['ENTIDADE']||''}</div></td>
             <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${segBg(seg)};color:${segTx(seg)}">${getSegLabel(row['SEGMENTO']||'')}</span></td>
             <td style="font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap">${row['CADEIRA']||'—'}</td>
-            <td style="font-size:12px">${tA||'—'}${isM2&&tA?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:700">M2</span>`:''}</td>
+            <td style="font-size:12px">${tA||'—'}${M2_NAMES.has(tA)?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
             <td style="font-size:12px;color:${tC?'var(--teal)':'var(--muted)'};font-weight:${tC?'600':'400'}">${hasSub?(tN?tN:(tC?'—':'=')):'—'}</td>
-            <td style="font-size:12px">${sA||'—'}</td>
+            <td style="font-size:12px">${sA||'—'}${M2_NAMES.has(sA)?`<span style="font-size:9px;background:#FEE2E2;color:var(--red);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">M2</span>`:''}</td>
             <td style="font-size:12px;color:${sC?'var(--teal)':'var(--muted)'};font-weight:${sC?'600':'400'}">${hasSub?(sN?sN:(sC?'—':'=')):'—'}</td>
             <td><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${hasSub?'#DCFCE7':'#FFF7ED'};color:${hasSub?'var(--green)':'var(--orange)'}">${hasSub?'✓ Sim':'✗ Não'}</span></td>
             <td>${ofOk?`<span style="font-size:9px;font-weight:700;color:var(--green)">✓ Sim</span>${ofURL?` <a href="${ofURL}" target="_blank" style="font-size:9px;color:var(--blue);font-weight:700">ver</a>`:''}`:`<span style="font-size:9px;color:var(--orange);font-weight:700">✗ Pend.</span>`}</td>
