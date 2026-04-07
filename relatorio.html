@@ -1046,7 +1046,7 @@ function buildCard(row, idx) {
       ${entName}
       ${sigla && sigla !== entName ? `<div class="ent-card-sigla">${sigla}</div>` : ''}
     </div>
-    ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato — avaliação plenária necessária</div>` : ''}
+    ${isM2 ? `<div class="m2-banner">⚠ Possui conselheiro(s) em 2º mandato</div>` : ''}
     ${!hasSub ? `<div class="no-sub-banner">⚠ Entidade não submeteu formulário de inscrição</div>` : ''}
     <div class="conselheiros">${consHTML}</div>
     <div class="ent-card-footer">
@@ -1340,7 +1340,7 @@ rows.forEach(r => {
   const ent = r['ENTIDADE'] || '';
   for (const [key, ids] of Object.entries(ROW_SEAT_IDS)) {
     // Se encontrar a entidade mapeada
-    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,30))) {
+    if (ent.toUpperCase().includes(key.toUpperCase().substring(0,40))) {
       // Soma quantos IDs dessa entidade específica estão na lista de M2
       m2Count += ids.filter(id => M2_IDS.has(id)).length;
       break; // Interrompe o loop para não contar a mesma entidade duas vezes
